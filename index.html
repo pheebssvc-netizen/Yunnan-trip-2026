@@ -26,7 +26,7 @@
             min-height: 100vh;
         }
 
-        /* ===== HEADER（溫暖大地色，無模糊圖案） ===== */
+        /* ===== HEADER（溫暖大地色） ===== */
         .app-header {
             background: linear-gradient(145deg, #2D241A 0%, #3D2E22 100%);
             position: sticky;
@@ -1084,7 +1084,7 @@
         <div class="alt-label" id="altLabel"></div>
     </div>
 
-    <!-- ===== Toast 容器（已改「今晚唔好沖涼住啦～」） ===== -->
+    <!-- ===== Toast 容器 ===== -->
     <div class="toast-container" id="toastContainer">
         <span class="toast-icon" id="toastIcon">🏔️</span>
         <div class="toast-title" id="toastTitle">Day 8 · 香格里拉</div>
@@ -1561,8 +1561,15 @@
                     renderDayTabs();
                     renderDayDetail(d.id);
                     drawAltitude(currentDayId);
-                    document.getElementById('dayDetailContainer').scrollIntoView({ behavior: 'smooth',
-                        block: 'start' });
+                    // 改為只 scroll 到 Day Head，保留 120px 空間
+                    setTimeout(() => {
+                        const head = document.querySelector('.day-detail .day-head');
+                        if (head) {
+                            const topOffset = 120;
+                            const elementPosition = head.getBoundingClientRect().top + window.pageYOffset;
+                            window.scrollTo({ top: elementPosition - topOffset, behavior: 'smooth' });
+                        }
+                    }, 100);
                 };
                 container.appendChild(btn);
             });
@@ -1885,12 +1892,12 @@
             ctx.beginPath();
             ctx.moveTo(padL, y3000);
             ctx.lineTo(w - padR, y3000);
-            ctx.strokeStyle = 'rgba(224, 122, 95, 0.30)'; // 加深
+            ctx.strokeStyle = 'rgba(224, 122, 95, 0.30)';
             ctx.lineWidth = 1.8;
             ctx.setLineDash([4, 6]);
             ctx.stroke();
             ctx.setLineDash([]);
-            ctx.fillStyle = 'rgba(224, 122, 95, 0.40)'; // 加深
+            ctx.fillStyle = 'rgba(224, 122, 95, 0.40)';
             ctx.font = '8px sans-serif';
             ctx.fillText('3000m', 2, y3000 - 3);
 
