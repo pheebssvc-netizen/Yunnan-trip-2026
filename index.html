@@ -26,69 +26,23 @@
             min-height: 100vh;
         }
 
-        /* ===== HEADER（新設計：日出山巒抽象層次） ===== */
+        /* ===== HEADER（溫暖大地色，無模糊圖案） ===== */
         .app-header {
+            background: linear-gradient(145deg, #2D241A 0%, #3D2E22 100%);
             position: sticky;
             top: 0;
             z-index: 50;
-            padding: 24px 20px 16px;
+            padding: 20px 20px 14px;
             text-align: center;
-            overflow: hidden;
-            background: #1A1410;
-            /* 深色底 */
-            border-bottom: 2px solid #E07A5F;
-            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.2);
+            border-bottom: 3px solid #E07A5F;
+            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.15);
         }
-        /* 山巒層次（用偽元素 + 漸層） */
-        .app-header::before {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
-            background:
-                /* 最遠山巒（淡） */
-                radial-gradient(ellipse 120% 40% at 0% 100%, rgba(180, 140, 100, 0.10) 0%, transparent 70%),
-                radial-gradient(ellipse 100% 35% at 30% 100%, rgba(160, 120, 80, 0.12) 0%, transparent 60%),
-                radial-gradient(ellipse 80% 30% at 70% 100%, rgba(140, 100, 70, 0.10) 0%, transparent 50%),
-                radial-gradient(ellipse 60% 25% at 100% 100%, rgba(120, 90, 60, 0.08) 0%, transparent 50%),
-                /* 日出光暈 */
-                radial-gradient(circle 30% at 50% 100%, rgba(233, 196, 106, 0.12) 0%, transparent 60%),
-                /* 底部漸層 */
-                linear-gradient(0deg, rgba(60, 40, 30, 0.3) 0%, transparent 50%);
-        }
-        /* 裝飾性「山峰」剪影（極簡） */
-        .app-header::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 40%;
-            pointer-events: none;
-            z-index: 0;
-            background:
-                /* 山峰形狀（用 clip-path 模擬） */
-                polygon(0% 100%, 5% 75%, 12% 85%, 20% 65%, 28% 80%, 35% 55%, 45% 70%, 55% 45%, 65% 65%, 75% 50%, 85% 70%, 92% 60%, 100% 75%, 100% 100%);
-            background: rgba(180, 150, 120, 0.06);
-            mask-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, transparent 100%);
-            -webkit-mask-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, transparent 100%);
-        }
-
-        .app-header * {
-            position: relative;
-            z-index: 1;
-        }
-
         .app-header h1 {
             font-size: 1.3rem;
             font-weight: 700;
             color: #fff;
             letter-spacing: 2px;
-            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
         .header-divider {
             display: flex;
@@ -110,7 +64,7 @@
             background: #E9C46A;
             border-radius: 50%;
             flex-shrink: 0;
-            box-shadow: 0 0 8px rgba(233, 196, 106, 0.3);
+            box-shadow: 0 0 8px rgba(233, 196, 106, 0.2);
         }
         .app-header .sub {
             font-size: 0.8rem;
@@ -118,19 +72,17 @@
             letter-spacing: 1px;
             opacity: 0.85;
             margin-top: 2px;
-            text-shadow: 0 1px 8px rgba(0, 0, 0, 0.3);
         }
 
         /* ===== TAB NAV ===== */
         .tab-nav {
             display: flex;
-            background: rgba(26, 20, 16, 0.92);
-            backdrop-filter: blur(6px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            background: #fff;
+            border-bottom: 2px solid #EDE7E0;
             position: sticky;
             top: 0;
             z-index: 45;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.10);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
         }
         .tab-nav button {
             flex: 1;
@@ -139,20 +91,19 @@
             background: transparent;
             font-size: 0.88rem;
             font-weight: 500;
-            color: rgba(255, 255, 255, 0.5);
+            color: #6B5A4A;
             cursor: pointer;
-            transition: 0.25s;
+            transition: 0.2s;
             border-bottom: 3px solid transparent;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
         }
         .tab-nav button.active {
-            color: #fff;
+            color: #E07A5F;
             border-bottom-color: #E07A5F;
             font-weight: 600;
-            background: rgba(224, 122, 95, 0.08);
         }
         .tab-nav button:active {
-            background: rgba(224, 122, 95, 0.15);
+            background: #FFF5F0;
         }
 
         /* ===== PAGES ===== */
@@ -168,8 +119,7 @@
 
         /* ===== 總覽 ===== */
         .overview-card {
-            background: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(4px);
+            background: #fff;
             border-radius: 16px;
             padding: 16px 18px;
             margin-bottom: 14px;
@@ -233,8 +183,7 @@
 
         /* ===== 重要資訊 ===== */
         .other-section {
-            background: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(4px);
+            background: #fff;
             border-radius: 16px;
             padding: 16px 18px;
             margin-bottom: 14px;
@@ -427,31 +376,41 @@
             background: #C96A50;
         }
 
-        /* 狀態列表 */
+        /* 狀態列表（重要資訊）- 酒店名欄加闊 */
         .status-list .row {
             display: flex;
             flex-wrap: wrap;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             padding: 6px 0;
             border-bottom: 1px solid #F5F0EB;
         }
         .status-list .day-label {
             font-weight: 600;
             color: #E07A5F;
-            min-width: 60px;
+            min-width: 55px;
             font-size: 0.85rem;
+            flex-shrink: 0;
         }
-        .status-list .hotel-input,
+        .status-list .hotel-input {
+            flex: 3 1 200px;
+            border: 1.5px solid #EDE7E0;
+            border-radius: 30px;
+            padding: 4px 14px;
+            font-size: 0.78rem;
+            background: #FFFBF5;
+            transition: 0.15s;
+            min-width: 120px;
+        }
         .status-list .status-input {
+            flex: 1 1 90px;
             border: 1.5px solid #EDE7E0;
             border-radius: 30px;
             padding: 4px 12px;
             font-size: 0.78rem;
             background: #FFFBF5;
             transition: 0.15s;
-            flex: 1 1 120px;
-            min-width: 80px;
+            min-width: 70px;
         }
         .status-list .hotel-input:focus,
         .status-list .status-input:focus {
@@ -460,16 +419,21 @@
             background: #fff;
         }
         @media (max-width: 480px) {
-            .status-list .hotel-input,
+            .status-list .hotel-input {
+                flex: 2 1 140px;
+                min-width: 100px;
+                font-size: 0.7rem;
+                padding: 3px 10px;
+            }
             .status-list .status-input {
+                flex: 1 1 70px;
+                min-width: 60px;
                 font-size: 0.7rem;
                 padding: 3px 8px;
-                min-width: 60px;
-                flex: 1 1 80px;
             }
             .status-list .day-label {
                 font-size: 0.75rem;
-                min-width: 50px;
+                min-width: 45px;
             }
         }
 
@@ -520,8 +484,7 @@
         }
 
         .day-detail {
-            background: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(4px);
+            background: #fff;
             border-radius: 16px;
             padding: 16px 16px 8px;
             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
@@ -782,7 +745,7 @@
             gap: 8px;
         }
 
-        /* ===== 底部海拔線（修正版：平滑為主，輕微手繪感） ===== */
+        /* ===== 底部海拔線 ===== */
         .altitude-footer {
             position: fixed;
             bottom: 0;
@@ -795,12 +758,11 @@
             z-index: 50;
             box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.04);
             height: 110px;
-            /* 底色：柔和天色漸層（唔再搶眼） */
             background-image: linear-gradient(90deg,
-                    rgba(200, 220, 240, 0.08) 0%,
-                    rgba(230, 210, 190, 0.06) 40%,
-                    rgba(240, 220, 200, 0.08) 70%,
-                    rgba(210, 180, 170, 0.06) 100%);
+                    rgba(200, 220, 240, 0.06) 0%,
+                    rgba(230, 210, 190, 0.04) 40%,
+                    rgba(240, 220, 200, 0.06) 70%,
+                    rgba(210, 180, 170, 0.04) 100%);
         }
         .altitude-footer canvas {
             width: 100%;
@@ -820,7 +782,7 @@
             letter-spacing: 0.3px;
         }
 
-        /* ===== Toast 提示（彩蛋） ===== */
+        /* ===== Toast 提示 ===== */
         .toast-container {
             position: fixed;
             top: 50%;
@@ -955,7 +917,7 @@
 </head>
 <body>
 
-    <!-- ===== HEADER（修正版：山巒抽象層次） ===== -->
+    <!-- ===== HEADER ===== -->
     <header class="app-header">
         <h1>🌄 雲南滇西12日 · 4人同行</h1>
         <div class="header-divider">
@@ -1122,12 +1084,12 @@
         <div class="alt-label" id="altLabel"></div>
     </div>
 
-    <!-- ===== Toast 容器 ===== -->
+    <!-- ===== Toast 容器（已改「今晚唔好沖涼住啦～」） ===== -->
     <div class="toast-container" id="toastContainer">
         <span class="toast-icon" id="toastIcon">🏔️</span>
         <div class="toast-title" id="toastTitle">Day 8 · 香格里拉</div>
         <div class="toast-sub" id="toastSub">3,300m</div>
-        <div class="toast-tip" id="toastTip">💡 今晚唔好沖涼，聽日精神爽！</div>
+        <div class="toast-tip" id="toastTip">💡 今晚唔好沖涼住啦～</div>
     </div>
 
     <!-- ============================================================ -->
@@ -1415,7 +1377,7 @@
         }];
 
         const TIPS = [
-            "今晚唔好沖涼，聽日精神爽！",
+            "今晚唔好沖涼住啦～",
             "海拔越高，心跳越快 ❤️",
             "記住飲多啲水，防高山症！",
             "慢啲行，享受每一刻 🚶",
@@ -1820,7 +1782,7 @@
         }
 
         // ================================================================
-        //  10. 海拔線（修正版：平滑為主，輕微手繪彎曲）
+        //  10. 海拔線
         // ================================================================
         let toastTimer = null;
 
@@ -1836,7 +1798,7 @@
             if (day.warnings && day.warnings.length) {
                 const raw = day.warnings[0];
                 if (raw.includes('嚴禁洗頭') || raw.includes('唔沖涼')) {
-                    tip = '🚿 今晚唔好沖涼，聽日精神爽！';
+                    tip = '今晚唔好沖涼住啦～';
                 } else if (raw.includes('車程')) {
                     tip = '🚗 車程較長，記得準備小食～';
                 } else if (raw.includes('海拔')) {
@@ -1879,32 +1841,24 @@
                 maxAlt = 3500,
                 range = maxAlt - minAlt;
 
-            // 平滑點（加輕微自然彎曲，唔再隨機抖動）
             const points = data.map((d, i) => {
                 const x = padL + (i / (n - 1)) * chartW;
                 const y = padT + chartH - ((d.altitude - minAlt) / range) * chartH;
-                // 輕微彎曲（用正弦波模擬自然手繪）
                 const wave = Math.sin(i / n * Math.PI * 2) * 1.2;
-                return {
-                    x: x,
-                    y: y + wave,
-                    alt: d.altitude,
-                    id: d.id,
-                    place: d.place
-                };
+                return { x, y: y + wave, alt: d.altitude, id: d.id, place: d.place };
             });
 
             ctx.clearRect(0, 0, w, h);
 
-            // 天色漸層背景（柔和）
+            // 底色
             const bgGrad = ctx.createLinearGradient(0, padT, 0, padT + chartH);
-            bgGrad.addColorStop(0, 'rgba(200, 215, 230, 0.06)');
-            bgGrad.addColorStop(0.5, 'rgba(220, 200, 180, 0.06)');
-            bgGrad.addColorStop(1, 'rgba(210, 180, 170, 0.06)');
+            bgGrad.addColorStop(0, 'rgba(200, 215, 230, 0.05)');
+            bgGrad.addColorStop(0.5, 'rgba(220, 200, 180, 0.05)');
+            bgGrad.addColorStop(1, 'rgba(210, 180, 170, 0.05)');
             ctx.fillStyle = bgGrad;
             ctx.fillRect(padL, padT, chartW, chartH);
 
-            // 主線：平滑漸變
+            // 主線
             const grad = ctx.createLinearGradient(0, padT, 0, padT + chartH);
             grad.addColorStop(0, '#1A3A5C');
             grad.addColorStop(0.3, '#2D6A4F');
@@ -1915,7 +1869,6 @@
             points.forEach((p, i) => {
                 if (i === 0) ctx.moveTo(p.x, p.y);
                 else {
-                    // 輕微曲線連接（模擬自然手繪）
                     const cpX = (points[i - 1].x + p.x) / 2;
                     const cpY = (points[i - 1].y + p.y) / 2 + (i % 2 === 0 ? 1 : -1) * 0.8;
                     ctx.quadraticCurveTo(cpX, cpY, p.x, p.y);
@@ -1927,21 +1880,21 @@
             ctx.lineCap = 'round';
             ctx.stroke();
 
-            // 3000m 參考線（虛線，柔和）
+            // 3000m 參考線（加深）
             const y3000 = padT + chartH - ((3000 - minAlt) / range) * chartH;
             ctx.beginPath();
             ctx.moveTo(padL, y3000);
             ctx.lineTo(w - padR, y3000);
-            ctx.strokeStyle = 'rgba(224, 122, 95, 0.12)';
-            ctx.lineWidth = 1.5;
+            ctx.strokeStyle = 'rgba(224, 122, 95, 0.30)'; // 加深
+            ctx.lineWidth = 1.8;
             ctx.setLineDash([4, 6]);
             ctx.stroke();
             ctx.setLineDash([]);
-            ctx.fillStyle = 'rgba(224, 122, 95, 0.2)';
+            ctx.fillStyle = 'rgba(224, 122, 95, 0.40)'; // 加深
             ctx.font = '8px sans-serif';
             ctx.fillText('3000m', 2, y3000 - 3);
 
-            // 點（菱形，顏色隨海拔）
+            // 點
             points.forEach((p) => {
                 const isActive = p.id === activeDayId;
                 const altRatio = (p.alt - minAlt) / range;
@@ -1963,7 +1916,6 @@
                 ctx.shadowBlur = 0;
                 ctx.restore();
 
-                // 當前點脈衝光環（減弱）
                 if (isActive) {
                     const time = Date.now() / 800;
                     const pulse = 0.7 + 0.3 * Math.sin(time);
@@ -1974,7 +1926,6 @@
                     ctx.stroke();
                 }
 
-                // 海拔標籤
                 ctx.fillStyle = isActive ? '#E07A5F' : 'rgba(80, 70, 60, 0.35)';
                 ctx.font = isActive ? 'bold 7px sans-serif' : '6px sans-serif';
                 ctx.textAlign = 'center';
@@ -1985,7 +1936,6 @@
             canvas._activeId = activeDayId;
         }
 
-        // 點擊事件
         document.getElementById('altitudeCanvas').addEventListener('click', function(e) {
             const rect = this.getBoundingClientRect();
             const x = e.clientX - rect.left;
@@ -2012,7 +1962,6 @@
             }
         });
 
-        // 脈衝動畫
         let pulseAnimId = null;
 
         function startPulseAnimation() {
@@ -2078,7 +2027,7 @@
             startPulseAnimation();
         }, 300);
 
-        console.log('🌄 雲南滇西12日行程網頁已啟動！（美術修正版）');
+        console.log('🌄 雲南滇西12日行程網頁已啟動！（實用美學版）');
         if (!db) console.warn('⚠️ Firebase 未連線');
         else console.log('✅ Firebase 已連線');
     </script>
