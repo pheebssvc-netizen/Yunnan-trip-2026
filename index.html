@@ -133,9 +133,9 @@
             color: #2D241A;
             font-weight: 500;
         }
-        .route-table .hotel-cell {
+        .route-table .place-cell {
             color: #6B5A4A;
-            font-size: 0.78rem;
+            font-size: 0.85rem;
         }
         @media (max-width: 600px) {
             .route-table th,
@@ -231,37 +231,49 @@
             font-weight: 400;
         }
 
-        /* 狀態列表（重要資訊內） */
-        .status-list {
-            font-size: 0.85rem;
-        }
+        /* 狀態列表（重要資訊）- 可編輯酒店名 + 狀態 */
         .status-list .row {
             display: flex;
-            justify-content: space-between;
-            padding: 4px 0;
-            border-bottom: 1px solid #F5F0EB;
+            flex-wrap: wrap;
             align-items: center;
+            gap: 6px;
+            padding: 6px 0;
+            border-bottom: 1px solid #F5F0EB;
         }
-        .status-list .hotel-input {
+        .status-list .day-label {
+            font-weight: 600;
+            color: #E07A5F;
+            min-width: 60px;
+            font-size: 0.85rem;
+        }
+        .status-list .hotel-input,
+        .status-list .status-input {
             border: 1.5px solid #EDE7E0;
             border-radius: 30px;
-            padding: 3px 12px;
-            font-size: 0.75rem;
-            width: 140px;
+            padding: 4px 12px;
+            font-size: 0.78rem;
             background: #FFFBF5;
             transition: 0.15s;
-            flex-shrink: 0;
+            flex: 1 1 120px;
+            min-width: 80px;
         }
-        .status-list .hotel-input:focus {
+        .status-list .hotel-input:focus,
+        .status-list .status-input:focus {
             border-color: #E07A5F;
             outline: none;
             background: #fff;
         }
         @media (max-width: 480px) {
-            .status-list .hotel-input {
-                width: 100px;
-                font-size: 0.65rem;
-                padding: 2px 8px;
+            .status-list .hotel-input,
+            .status-list .status-input {
+                font-size: 0.7rem;
+                padding: 3px 8px;
+                min-width: 60px;
+                flex: 1 1 80px;
+            }
+            .status-list .day-label {
+                font-size: 0.75rem;
+                min-width: 50px;
             }
         }
 
@@ -691,12 +703,12 @@
                         <th>Day</th>
                         <th>日期</th>
                         <th>行程</th>
-                        <th>住宿</th>
+                        <th>住宿地點</th>
                     </tr>
                 </thead>
                 <tbody id="routeTableBody"></tbody>
             </table>
-            <div style="font-size:0.7rem;color:#8A7A6A;margin-top:8px;">💡 住宿確認狀態請到「重要資訊」頁面查看及修改</div>
+            <div style="font-size:0.7rem;color:#8A7A6A;margin-top:8px;">💡 住宿確認狀態及酒店名稱請到「重要資訊」頁面修改</div>
         </div>
         <div class="footer-bar">📌 詳細行程及備註請到「每日行程」頁</div>
     </div>
@@ -713,11 +725,11 @@
     <!-- ===== PAGE 3: 重要資訊 ===== -->
     <div class="page" id="page-other">
 
-        <!-- 住宿確認狀態列表 -->
+        <!-- 住宿可編輯（酒店名 + 狀態） -->
         <div class="other-section">
-            <h3>🏨 住宿確認狀態（點擊修改）</h3>
+            <h3>🏨 住宿編輯（可修改酒店名及狀態）</h3>
             <div class="status-list" id="statusList"></div>
-            <div style="font-size:0.7rem;color:#8A7A6A;margin-top:6px;">💡 修改後會自動儲存喺你呢個瀏覽器</div>
+            <div style="font-size:0.7rem;color:#8A7A6A;margin-top:6px;">💡 修改後會自動儲存，並同步到「每日行程」頭部</div>
         </div>
 
         <!-- 航班 -->
@@ -835,7 +847,7 @@
         const db = firebaseInitialized ? firebase.database() : null;
 
         // ================================================================
-        //  2. 行程數據
+        //  2. 行程數據（加入 place 字段）
         // ================================================================
         const DAYS_DATA = [{
             id: 1,
@@ -844,6 +856,7 @@
             title: "香港 ✈️ 昆明（夜機）",
             hotel: "昆明長水國際機場美居酒店",
             hotelStatus: "✅ 已確認",
+            place: "昆明",
             altitude: 1900,
             breakfast: "酒店早餐（可選）",
             lunch: "機上／機場",
@@ -862,6 +875,7 @@
             title: "昆明 → 高鐵 → 大理 → 雙廊",
             hotel: "大理牧心堡·法式懸崖海景度假莊園",
             hotelStatus: "✅ 訂單可保留",
+            place: "大理",
             altitude: 1970,
             breakfast: "酒店早餐 (約¥58/人)",
             lunch: "高鐵上／大理市區",
@@ -883,6 +897,7 @@
             title: "雙廊 → 沙溪古鎮（深度遊）",
             hotel: "沙溪古鎮五柳心宿",
             hotelStatus: "✅ 已確認",
+            place: "沙溪",
             altitude: 2100,
             breakfast: "酒店早餐",
             lunch: "沙溪地道農家菜 (推薦沙溪火腿)",
@@ -903,6 +918,7 @@
             title: "沙溪 → 麗江古城",
             hotel: "麗江古城大水車亞朵酒店",
             hotelStatus: "✅ 已確認",
+            place: "麗江",
             altitude: 2400,
             breakfast: "早餐後退房",
             lunch: "麗江古城",
@@ -923,6 +939,7 @@
             title: "麗江 → 瀘沽湖",
             hotel: "瀘沽湖水天壹舍",
             hotelStatus: "✅ 已確認 (連住2晚)",
+            place: "瀘沽湖",
             altitude: 2690,
             breakfast: "酒店早餐",
             lunch: "寧蒗縣城 (途中午餐)",
@@ -942,6 +959,7 @@
             title: "瀘沽湖環湖全日",
             hotel: "瀘沽湖水天壹舍",
             hotelStatus: "✅ 已確認",
+            place: "瀘沽湖",
             altitude: 2690,
             breakfast: "酒店早餐",
             lunch: "里格半島或四川側",
@@ -968,6 +986,7 @@
             title: "瀘沽湖 → 束河古鎮 → 白沙古鎮",
             hotel: "不晚里予·Wild Aurora",
             hotelStatus: "✅ 已確認",
+            place: "白沙",
             altitude: 2500,
             breakfast: "早餐後退房",
             lunch: "束河古鎮",
@@ -989,6 +1008,7 @@
             title: "白沙 → 虎跳峽 → 白水台 → 香格里拉",
             hotel: "香格里拉（待定）",
             hotelStatus: "⏳ 未確認",
+            place: "香格里拉",
             altitude: 3300,
             breakfast: "早餐後退房",
             lunch: "虎跳峽附近",
@@ -1010,6 +1030,7 @@
             title: "普達措國家公園全日",
             hotel: "香格里拉（待定）",
             hotelStatus: "⏳ 未確認",
+            place: "香格里拉",
             altitude: 3300,
             breakfast: "酒店早餐",
             lunch: "景區內或自備乾糧",
@@ -1029,6 +1050,7 @@
             title: "香格里拉 → 納帕海 → 松贊林寺 → 麗江",
             hotel: "麗江古城大水車亞朵酒店（加訂）",
             hotelStatus: "⏳ 需加訂1晚",
+            place: "麗江",
             altitude: 2400,
             breakfast: "酒店早餐",
             lunch: "香格里拉",
@@ -1048,6 +1070,7 @@
             title: "麗江 → 高鐵 → 昆明",
             hotel: "昆明南屏步行街老街亞朵酒店",
             hotelStatus: "✅ 已確認",
+            place: "昆明",
             altitude: 1900,
             breakfast: "自然醒 · 酒店早餐",
             lunch: "麗江",
@@ -1067,6 +1090,7 @@
             title: "昆明半日遊 → ✈️ 香港",
             hotel: "-",
             hotelStatus: "-",
+            place: "昆明",
             altitude: 1900,
             breakfast: "自然醒 · 酒店早餐",
             lunch: "昆明 (過橋米線)",
@@ -1086,7 +1110,6 @@
         //  3. 工具函數
         // ================================================================
         function getNoteKey(dayId, category, index) {
-            // category: breakfast, lunch, dinner, attraction, shop, other
             if (category === 'attraction') return `day-${dayId}-attr-${index}`;
             if (category === 'shop') return `day-${dayId}-shop-${index}`;
             if (category === 'other') return `day-${dayId}-other-${index}`;
@@ -1100,7 +1123,7 @@
         }
 
         // ================================================================
-        //  4. 行程總覽（動線表格）
+        //  4. 行程總覽（動線表格）- 使用 place
         // ================================================================
         function renderRouteTable() {
             const tbody = document.getElementById('routeTableBody');
@@ -1111,42 +1134,73 @@
                     <td class="day-cell">Day ${d.id}</td>
                     <td>${d.date}</td>
                     <td class="route-cell">${d.title}</td>
-                    <td class="hotel-cell">${d.hotel !== '-' ? d.hotel : '—'}</td>
+                    <td class="place-cell">${d.place || '—'}</td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
         // ================================================================
-        //  5. 狀態列表（重要資訊）
+        //  5. 狀態列表（重要資訊）- 可編輯酒店名 + 狀態
         // ================================================================
         function renderStatusList() {
             const container = document.getElementById('statusList');
             container.innerHTML = '';
             DAYS_DATA.forEach(d => {
                 if (d.hotel && d.hotel !== '-') {
-                    const storageKey = `hotelStatus-${d.id}`;
-                    const saved = localStorage.getItem(storageKey) || d.hotelStatus || '';
-                    if (saved) d.hotelStatus = saved;
+                    // 從 localStorage 讀取已儲存的值
+                    const storedHotel = localStorage.getItem(`hotelName-${d.id}`);
+                    const storedStatus = localStorage.getItem(`hotelStatus-${d.id}`);
+                    if (storedHotel !== null) d.hotel = storedHotel;
+                    if (storedStatus !== null) d.hotelStatus = storedStatus;
 
                     const row = document.createElement('div');
                     row.className = 'row';
                     row.innerHTML = `
-                        <span style="font-weight:500;">Day ${d.id} · ${d.hotel}</span>
-                        <input type="text" class="hotel-input" data-day="${d.id}" value="${escapeHtml(saved)}" placeholder="輸入狀態" />
+                        <span class="day-label">Day ${d.id}</span>
+                        <input type="text" class="hotel-input" data-day="${d.id}" value="${escapeHtml(d.hotel)}" placeholder="酒店名" />
+                        <input type="text" class="status-input" data-day="${d.id}" value="${escapeHtml(d.hotelStatus)}" placeholder="狀態" />
                     `;
                     container.appendChild(row);
                 }
             });
+
+            // 綁定修改事件
             container.querySelectorAll('.hotel-input').forEach(input => {
-                const dayId = parseInt(input.dataset.day);
                 input.addEventListener('change', function() {
+                    const dayId = parseInt(this.dataset.day);
+                    const val = this.value.trim();
+                    localStorage.setItem(`hotelName-${dayId}`, val);
+                    const dayData = DAYS_DATA.find(d => d.id === dayId);
+                    if (dayData) dayData.hotel = val;
+                    // 如果當前顯示的是每日行程頁，刷新頭部
+                    updateDailyHeaderIfVisible(dayId);
+                });
+            });
+
+            container.querySelectorAll('.status-input').forEach(input => {
+                input.addEventListener('change', function() {
+                    const dayId = parseInt(this.dataset.day);
                     const val = this.value.trim();
                     localStorage.setItem(`hotelStatus-${dayId}`, val);
                     const dayData = DAYS_DATA.find(d => d.id === dayId);
                     if (dayData) dayData.hotelStatus = val;
+                    updateDailyHeaderIfVisible(dayId);
                 });
             });
+        }
+
+        // 輔助：如果當前顯示的是每日行程頁，且當前 day 為 dayId，則重新渲染頭部（不重新生成整個細節）
+        // 簡單做法：重新渲染整個 dayDetail（因為內容不複雜）
+        function updateDailyHeaderIfVisible(dayId) {
+            const dailyPage = document.getElementById('page-daily');
+            if (dailyPage.classList.contains('active')) {
+                // 重新渲染當前 day
+                const currentDay = currentDayId; // 用全局變數
+                if (currentDay === dayId) {
+                    renderDayDetail(currentDay);
+                }
+            }
         }
 
         // ================================================================
@@ -1167,8 +1221,8 @@
                     renderDayTabs();
                     renderDayDetail(d.id);
                     drawAltitude(currentDayId);
-                    // scroll to top of detail
-                    document.getElementById('dayDetailContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    document.getElementById('dayDetailContainer').scrollIntoView({ behavior: 'smooth',
+                        block: 'start' });
                 };
                 container.appendChild(btn);
             });
@@ -1193,7 +1247,7 @@
                 html += `<div class="warning-banner"><strong>⚠️ 提示</strong>${day.warnings.join(' · ')}</div>`;
             }
 
-            // ---- 餐飲區塊（淺色背景） ----
+            // 餐飲
             const mealCategories = [
                 { key: 'breakfast', emoji: '🍳', label: '早餐', value: day.breakfast, cls: 'breakfast' },
                 { key: 'lunch', emoji: '🥢', label: '午餐', value: day.lunch, cls: 'lunch' },
@@ -1203,7 +1257,7 @@
                 html += renderMealItem(day.id, cat.key, `${cat.emoji} ${cat.label}`, cat.value, cat.cls);
             });
 
-            // ---- 景點區塊（白色背景，加標題分隔） ----
+            // 景點
             html += `<div class="attractions-header">📍 景點</div>`;
             if (day.attractions && day.attractions.length) {
                 day.attractions.forEach((attr, idx) => {
@@ -1213,13 +1267,13 @@
                 });
             }
 
-            // ---- 其他（淺色背景） ----
+            // 其他
             html += renderMealItem(day.id, 'other', '📌 其他', '', 'other');
 
             html += `</div>`;
             container.innerHTML = html;
 
-            // 綁定所有 add button
+            // 綁定事件（同之前）
             container.querySelectorAll('.add-btn').forEach(btn => {
                 btn.onclick = function(e) {
                     e.stopPropagation();
@@ -1234,7 +1288,6 @@
                 };
             });
 
-            // 綁定 submit
             container.querySelectorAll('.submit-btn').forEach(btn => {
                 btn.onclick = function() {
                     const form = this.closest('.add-note-form');
@@ -1245,7 +1298,7 @@
                     const text = msgInput.value.trim();
                     if (!text) { alert('請輸入內容'); return; }
                     if (!db) {
-                        alert('❌ Firebase 未連線，請檢查網絡或設定');
+                        alert('❌ Firebase 未連線');
                         return;
                     }
                     const key = getNoteKey(dayId, category, index);
@@ -1545,5 +1598,6 @@
         if (!db) console.warn('⚠️ Firebase 未連線');
         else console.log('✅ Firebase 已連線');
     </script>
+
 </body>
 </html>
