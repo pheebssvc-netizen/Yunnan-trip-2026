@@ -118,29 +118,38 @@
             border-bottom: 2px solid #EDE7E0;
             color: #2D241A;
             font-weight: 600;
+            font-size: 0.8rem;
         }
         .route-table td {
             padding: 6px 8px;
             border-bottom: 1px solid #F5F0EB;
             vertical-align: middle;
+            font-size: 0.8rem;
         }
         .route-table .day-cell {
             font-weight: 600;
             color: #E07A5F;
             white-space: nowrap;
+            font-size: 0.8rem;
         }
         .route-table .route-cell {
             color: #2D241A;
             font-weight: 500;
+            font-size: 0.8rem;
         }
         .route-table .place-cell {
             color: #6B5A4A;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
         }
         @media (max-width: 600px) {
             .route-table th,
             .route-table td {
                 padding: 4px 4px;
+                font-size: 0.7rem;
+            }
+            .route-table .day-cell,
+            .route-table .route-cell,
+            .route-table .place-cell {
                 font-size: 0.7rem;
             }
         }
@@ -229,6 +238,115 @@
         }
         .altitude-table .row .val {
             font-weight: 400;
+        }
+
+        /* 高鐵輸入區 */
+        .train-input-area {
+            margin-top: 8px;
+        }
+        .train-input-area .train-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            align-items: center;
+            padding: 4px 0;
+            border-bottom: 1px solid #F5F0EB;
+        }
+        .train-input-area .train-row .label {
+            font-weight: 500;
+            font-size: 0.85rem;
+            color: #2D241A;
+            min-width: 60px;
+        }
+        .train-input-area .train-row input {
+            flex: 1 1 120px;
+            padding: 4px 12px;
+            border-radius: 30px;
+            border: 1.5px solid #EDE7E0;
+            font-size: 0.78rem;
+            background: #FFFBF5;
+            transition: 0.15s;
+            min-width: 80px;
+        }
+        .train-input-area .train-row input:focus {
+            border-color: #E07A5F;
+            outline: none;
+            background: #fff;
+        }
+
+        /* 團友備註 */
+        .group-note-item {
+            background: #FEF9E7;
+            border-radius: 10px;
+            padding: 8px 12px;
+            margin: 6px 0;
+            font-size: 0.88rem;
+            border-left: 3px solid #E9C46A;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+        }
+        .group-note-item .note-text {
+            flex: 1;
+            color: #2D241A;
+        }
+        .group-note-item .del-btn {
+            background: none;
+            border: none;
+            color: #C07A5A;
+            font-size: 0.9rem;
+            cursor: pointer;
+            padding: 0 4px;
+            opacity: 0.6;
+            flex-shrink: 0;
+        }
+        .group-note-item .del-btn:active {
+            opacity: 1;
+            transform: scale(1.2);
+        }
+        .group-note-empty {
+            color: #B0A090;
+            font-size: 0.8rem;
+            font-style: italic;
+            padding: 4px 0 2px 6px;
+        }
+        .group-note-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+            align-items: center;
+        }
+        .group-note-form input[type="text"] {
+            flex: 2 1 180px;
+            padding: 8px 14px;
+            border-radius: 30px;
+            border: 1.5px solid #EDE7E0;
+            font-size: 0.88rem;
+            background: #fff;
+            outline: none;
+            transition: 0.15s;
+            min-width: 100px;
+        }
+        .group-note-form input[type="text"]:focus {
+            border-color: #E07A5F;
+        }
+        .group-note-form .submit-btn {
+            padding: 8px 20px;
+            border-radius: 30px;
+            border: none;
+            background: #E07A5F;
+            color: #fff;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.15s;
+            white-space: nowrap;
+        }
+        .group-note-form .submit-btn:active {
+            transform: scale(0.94);
+            background: #C96A50;
         }
 
         /* 狀態列表（重要資訊）- 可編輯酒店名 + 狀態 */
@@ -373,7 +491,6 @@
             color: #7A3A1A;
         }
 
-        /* 餐飲區塊 - 淺色背景 */
         .day-item-meal {
             margin-bottom: 12px;
             border-radius: 12px;
@@ -428,7 +545,6 @@
             background: #D4B05A;
         }
 
-        /* 景點區塊 - 白色背景，分隔明顯 */
         .day-item-attraction {
             margin-bottom: 12px;
             border-bottom: 1px dashed #EDE7E0;
@@ -470,7 +586,6 @@
             background: #D4B05A;
         }
 
-        /* 備註區 - 共用 */
         .note-area {
             margin-top: 6px;
             padding-left: 4px;
@@ -575,7 +690,6 @@
             background: #F5F0EB;
         }
 
-        /* ===== 景點分隔標題 ===== */
         .attractions-header {
             font-size: 0.85rem;
             font-weight: 600;
@@ -665,6 +779,12 @@
             }
             .day-item-meal {
                 padding: 8px 10px;
+            }
+            .train-input-area .train-row input {
+                font-size: 0.7rem;
+                padding: 3px 8px;
+                min-width: 60px;
+                flex: 1 1 80px;
             }
         }
         @media (max-width: 380px) {
@@ -773,11 +893,19 @@
             </div>
         </div>
 
-        <!-- 高鐵 -->
+        <!-- 高鐵（加入輸入欄位） -->
         <div class="other-section">
             <h3>🚄 高鐵</h3>
-            <div class="row"><span class="lbl">昆明→大理 (C4322 11:11)</span><span class="val">約 ¥114/人</span></div>
-            <div class="row"><span class="lbl">麗江→昆明 (14:30左右)</span><span class="val">約 ¥190/人</span></div>
+            <div class="train-input-area" id="trainInputArea">
+                <div class="train-row">
+                    <span class="label">昆明→大理</span>
+                    <input type="text" class="train-input" data-train="kunming-dali" placeholder="班次／時間／票價" />
+                </div>
+                <div class="train-row">
+                    <span class="label">麗江→昆明</span>
+                    <input type="text" class="train-input" data-train="lijiang-kunming" placeholder="班次／時間／票價" />
+                </div>
+            </div>
             <div style="font-size:0.78rem;color:#6B5A4A;margin-top:6px;">⏰ 昆明→大理：10月29日 14:30 起售</div>
         </div>
 
@@ -810,6 +938,18 @@
                 <div class="cat">🔋 其他</div>
                 <div class="item">保溫瓶、充電器、相機</div>
                 <div class="item">氧氣樽 (麗江/香格里拉買 ¥20-30)</div>
+            </div>
+        </div>
+
+        <!-- 團友備註（新增） -->
+        <div class="other-section">
+            <h3>💬 團友備註</h3>
+            <div id="groupNoteContainer">
+                <div class="group-note-empty" id="groupNoteEmpty">📝 未有備註，你嚟加第一條！</div>
+            </div>
+            <div class="group-note-form">
+                <input type="text" id="groupNoteInput" placeholder="寫低任何想分享嘅資訊..." />
+                <button class="submit-btn" id="groupNoteSubmit">➕ 新增</button>
             </div>
         </div>
 
@@ -847,11 +987,11 @@
         const db = firebaseInitialized ? firebase.database() : null;
 
         // ================================================================
-        //  2. 行程數據（加入 place 字段）
+        //  2. 行程數據
         // ================================================================
         const DAYS_DATA = [{
             id: 1,
-            date: "11月11日",
+            date: "11 Nov",
             weekday: "三",
             title: "香港 ✈️ 昆明（夜機）",
             hotel: "昆明長水國際機場美居酒店",
@@ -870,7 +1010,7 @@
             warnings: ["建議提前2-3小時到機場"]
         }, {
             id: 2,
-            date: "11月12日",
+            date: "12 Nov",
             weekday: "四",
             title: "昆明 → 高鐵 → 大理 → 雙廊",
             hotel: "大理牧心堡·法式懸崖海景度假莊園",
@@ -892,7 +1032,7 @@
             warnings: ["包車正式開始 · 大理站→雙廊 約50公里"]
         }, {
             id: 3,
-            date: "11月13日",
+            date: "13 Nov",
             weekday: "五",
             title: "雙廊 → 沙溪古鎮（深度遊）",
             hotel: "沙溪古鎮五柳心宿",
@@ -913,7 +1053,7 @@
             warnings: ["雙廊→沙溪 約110公里 · 車程2小時"]
         }, {
             id: 4,
-            date: "11月14日",
+            date: "14 Nov",
             weekday: "六",
             title: "沙溪 → 麗江古城",
             hotel: "麗江古城大水車亞朵酒店",
@@ -934,7 +1074,7 @@
             warnings: ["⚠️ 海拔2,400m · 今晚嚴禁洗頭洗澡 · 嚴禁飲酒跑跳"]
         }, {
             id: 5,
-            date: "11月15日",
+            date: "15 Nov",
             weekday: "日",
             title: "麗江 → 瀘沽湖",
             hotel: "瀘沽湖水天壹舍",
@@ -954,7 +1094,7 @@
             warnings: ["⚠️ 海拔2,690m · 今晚嚴禁洗頭洗澡 · 車程約4小時"]
         }, {
             id: 6,
-            date: "11月16日",
+            date: "16 Nov",
             weekday: "一",
             title: "瀘沽湖環湖全日",
             hotel: "瀘沽湖水天壹舍",
@@ -981,7 +1121,7 @@
             warnings: ["環湖約70公里 · 逆時針方向 · 篝火晚會可選"]
         }, {
             id: 7,
-            date: "11月17日",
+            date: "17 Nov",
             weekday: "二",
             title: "瀘沽湖 → 束河古鎮 → 白沙古鎮",
             hotel: "不晚里予·Wild Aurora",
@@ -1003,7 +1143,7 @@
             warnings: ["瀘沽湖→束河 約200公里 · 車程4小時"]
         }, {
             id: 8,
-            date: "11月18日",
+            date: "18 Nov",
             weekday: "三",
             title: "白沙 → 虎跳峽 → 白水台 → 香格里拉",
             hotel: "香格里拉（待定）",
@@ -1025,7 +1165,7 @@
             warnings: ["⭐ 最高海拔 · 3,300m · 今晚嚴禁洗頭洗澡"]
         }, {
             id: 9,
-            date: "11月19日",
+            date: "19 Nov",
             weekday: "四",
             title: "普達措國家公園全日",
             hotel: "香格里拉（待定）",
@@ -1045,7 +1185,7 @@
             warnings: ["海拔3,400m · 週一閉園 · 嚴禁洗頭洗澡"]
         }, {
             id: 10,
-            date: "11月20日",
+            date: "20 Nov",
             weekday: "五",
             title: "香格里拉 → 納帕海 → 松贊林寺 → 麗江",
             hotel: "麗江古城大水車亞朵酒店（加訂）",
@@ -1065,7 +1205,7 @@
             warnings: ["海拔回落至2,400m · 今晚可以舒服沖涼 🎉"]
         }, {
             id: 11,
-            date: "11月21日",
+            date: "21 Nov",
             weekday: "六",
             title: "麗江 → 高鐵 → 昆明",
             hotel: "昆明南屏步行街老街亞朵酒店",
@@ -1085,7 +1225,7 @@
             warnings: ["包車服務結束 · 高鐵約3.5-4小時"]
         }, {
             id: 12,
-            date: "11月22日",
+            date: "22 Nov",
             weekday: "日",
             title: "昆明半日遊 → ✈️ 香港",
             hotel: "-",
@@ -1123,7 +1263,7 @@
         }
 
         // ================================================================
-        //  4. 行程總覽（動線表格）- 使用 place
+        //  4. 行程總覽（動線表格）
         // ================================================================
         function renderRouteTable() {
             const tbody = document.getElementById('routeTableBody');
@@ -1141,14 +1281,13 @@
         }
 
         // ================================================================
-        //  5. 狀態列表（重要資訊）- 可編輯酒店名 + 狀態
+        //  5. 狀態列表（可編輯酒店名 + 狀態）
         // ================================================================
         function renderStatusList() {
             const container = document.getElementById('statusList');
             container.innerHTML = '';
             DAYS_DATA.forEach(d => {
                 if (d.hotel && d.hotel !== '-') {
-                    // 從 localStorage 讀取已儲存的值
                     const storedHotel = localStorage.getItem(`hotelName-${d.id}`);
                     const storedStatus = localStorage.getItem(`hotelStatus-${d.id}`);
                     if (storedHotel !== null) d.hotel = storedHotel;
@@ -1165,7 +1304,6 @@
                 }
             });
 
-            // 綁定修改事件
             container.querySelectorAll('.hotel-input').forEach(input => {
                 input.addEventListener('change', function() {
                     const dayId = parseInt(this.dataset.day);
@@ -1173,7 +1311,6 @@
                     localStorage.setItem(`hotelName-${dayId}`, val);
                     const dayData = DAYS_DATA.find(d => d.id === dayId);
                     if (dayData) dayData.hotel = val;
-                    // 如果當前顯示的是每日行程頁，刷新頭部
                     updateDailyHeaderIfVisible(dayId);
                 });
             });
@@ -1190,13 +1327,10 @@
             });
         }
 
-        // 輔助：如果當前顯示的是每日行程頁，且當前 day 為 dayId，則重新渲染頭部（不重新生成整個細節）
-        // 簡單做法：重新渲染整個 dayDetail（因為內容不複雜）
         function updateDailyHeaderIfVisible(dayId) {
             const dailyPage = document.getElementById('page-daily');
             if (dailyPage.classList.contains('active')) {
-                // 重新渲染當前 day
-                const currentDay = currentDayId; // 用全局變數
+                const currentDay = currentDayId;
                 if (currentDay === dayId) {
                     renderDayDetail(currentDay);
                 }
@@ -1204,7 +1338,71 @@
         }
 
         // ================================================================
-        //  6. 每日行程渲染
+        //  6. 高鐵輸入（localStorage）
+        // ================================================================
+        function initTrainInputs() {
+            const inputs = document.querySelectorAll('.train-input');
+            inputs.forEach(input => {
+                const key = `train-${input.dataset.train}`;
+                const saved = localStorage.getItem(key);
+                if (saved !== null) input.value = saved;
+                input.addEventListener('change', function() {
+                    localStorage.setItem(`train-${this.dataset.train}`, this.value.trim());
+                });
+            });
+        }
+
+        // ================================================================
+        //  7. 團友備註（localStorage）
+        // ================================================================
+        function renderGroupNotes() {
+            const container = document.getElementById('groupNoteContainer');
+            const notes = JSON.parse(localStorage.getItem('groupNotes') || '[]');
+            const emptyMsg = document.getElementById('groupNoteEmpty');
+
+            // 移除舊的 note items（保留 empty msg）
+            container.querySelectorAll('.group-note-item').forEach(el => el.remove());
+
+            if (notes.length === 0) {
+                emptyMsg.style.display = 'block';
+                return;
+            }
+            emptyMsg.style.display = 'none';
+
+            notes.forEach((note, idx) => {
+                const div = document.createElement('div');
+                div.className = 'group-note-item';
+                div.innerHTML = `
+                    <span class="note-text">${escapeHtml(note)}</span>
+                    <button class="del-btn" data-idx="${idx}">✕</button>
+                `;
+                container.appendChild(div);
+            });
+
+            container.querySelectorAll('.group-note-item .del-btn').forEach(btn => {
+                btn.onclick = function() {
+                    const idx = parseInt(this.dataset.idx);
+                    const notes = JSON.parse(localStorage.getItem('groupNotes') || '[]');
+                    notes.splice(idx, 1);
+                    localStorage.setItem('groupNotes', JSON.stringify(notes));
+                    renderGroupNotes();
+                };
+            });
+        }
+
+        function addGroupNote() {
+            const input = document.getElementById('groupNoteInput');
+            const text = input.value.trim();
+            if (!text) { alert('請輸入內容'); return; }
+            const notes = JSON.parse(localStorage.getItem('groupNotes') || '[]');
+            notes.push(text);
+            localStorage.setItem('groupNotes', JSON.stringify(notes));
+            input.value = '';
+            renderGroupNotes();
+        }
+
+        // ================================================================
+        //  8. 每日行程渲染
         // ================================================================
         let currentDayId = 1;
 
@@ -1247,7 +1445,6 @@
                 html += `<div class="warning-banner"><strong>⚠️ 提示</strong>${day.warnings.join(' · ')}</div>`;
             }
 
-            // 餐飲
             const mealCategories = [
                 { key: 'breakfast', emoji: '🍳', label: '早餐', value: day.breakfast, cls: 'breakfast' },
                 { key: 'lunch', emoji: '🥢', label: '午餐', value: day.lunch, cls: 'lunch' },
@@ -1257,7 +1454,6 @@
                 html += renderMealItem(day.id, cat.key, `${cat.emoji} ${cat.label}`, cat.value, cat.cls);
             });
 
-            // 景點
             html += `<div class="attractions-header">📍 景點</div>`;
             if (day.attractions && day.attractions.length) {
                 day.attractions.forEach((attr, idx) => {
@@ -1267,13 +1463,11 @@
                 });
             }
 
-            // 其他
             html += renderMealItem(day.id, 'other', '📌 其他', '', 'other');
 
             html += `</div>`;
             container.innerHTML = html;
 
-            // 綁定事件（同之前）
             container.querySelectorAll('.add-btn').forEach(btn => {
                 btn.onclick = function(e) {
                     e.stopPropagation();
@@ -1374,7 +1568,7 @@
         }
 
         // ================================================================
-        //  7. Firebase 監聽
+        //  9. Firebase 監聽
         // ================================================================
         function setupAllListeners() {
             if (!db) {
@@ -1446,7 +1640,7 @@
         }
 
         // ================================================================
-        //  8. 海拔線
+        //  10. 海拔線
         // ================================================================
         function drawAltitude(activeDayId) {
             const canvas = document.getElementById('altitudeCanvas');
@@ -1558,7 +1752,7 @@
         });
 
         // ================================================================
-        //  9. Tab 切換
+        //  11. Tab 切換
         // ================================================================
         document.getElementById('tabNav').addEventListener('click', (e) => {
             const btn = e.target.closest('button');
@@ -1577,7 +1771,15 @@
         });
 
         // ================================================================
-        //  10. Resize
+        //  12. 團友備註事件綁定
+        // ================================================================
+        document.getElementById('groupNoteSubmit').addEventListener('click', addGroupNote);
+        document.getElementById('groupNoteInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') addGroupNote();
+        });
+
+        // ================================================================
+        //  13. Resize
         // ================================================================
         let resizeTimer;
         window.addEventListener('resize', () => {
@@ -1586,13 +1788,15 @@
         });
 
         // ================================================================
-        //  11. 啟動
+        //  14. 啟動
         // ================================================================
         renderRouteTable();
         renderStatusList();
         renderDayTabs();
         renderDayDetail(1);
         setupAllListeners();
+        initTrainInputs();
+        renderGroupNotes();
         setTimeout(() => drawAltitude(1), 300);
         console.log('🌄 雲南滇西12日行程網頁已啟動！');
         if (!db) console.warn('⚠️ Firebase 未連線');
