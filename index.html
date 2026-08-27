@@ -23,7 +23,6 @@
             background: #FFFBF5;
             color: #2D241A;
             padding: 0 0 110px 0;
-            /* 預留底部海拔線空間 */
             min-height: 100vh;
         }
 
@@ -397,7 +396,7 @@
             background: #F5F0EB;
         }
 
-        /* ===== 其他頁 ===== */
+        /* ===== 重要資訊 ===== */
         .other-section {
             background: #fff;
             border-radius: 16px;
@@ -432,32 +431,6 @@
             margin-top: 4px;
             font-weight: 600;
         }
-        .other-section .list-item {
-            font-size: 0.88rem;
-            padding: 5px 0;
-            border-bottom: 1px solid #F5F0EB;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .other-section .list-item .status {
-            font-size: 0.7rem;
-            padding: 2px 12px;
-            border-radius: 30px;
-            font-weight: 500;
-        }
-        .status.confirmed {
-            background: #E8F5E8;
-            color: #2D6A2D;
-        }
-        .status.pending {
-            background: #FCE4D6;
-            color: #A3512B;
-        }
-        .status.info {
-            background: #E8EEF5;
-            color: #2A4A6A;
-        }
         .packing-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -489,6 +462,67 @@
             font-weight: 400;
         }
 
+        /* 行程總覽表格 */
+        .trip-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.82rem;
+        }
+        .trip-table th {
+            text-align: left;
+            background: #F5F0EB;
+            padding: 6px 8px;
+            border-bottom: 2px solid #EDE7E0;
+            color: #2D241A;
+            font-weight: 600;
+        }
+        .trip-table td {
+            padding: 6px 8px;
+            border-bottom: 1px solid #F5F0EB;
+            vertical-align: middle;
+        }
+        .trip-table .hotel-input {
+            border: 1.5px solid #EDE7E0;
+            border-radius: 30px;
+            padding: 4px 10px;
+            font-size: 0.75rem;
+            width: 100%;
+            min-width: 80px;
+            background: #FFFBF5;
+            transition: 0.15s;
+        }
+        .trip-table .hotel-input:focus {
+            border-color: #E07A5F;
+            outline: none;
+            background: #fff;
+        }
+        .trip-table .day-cell {
+            font-weight: 600;
+            color: #E07A5F;
+            white-space: nowrap;
+        }
+        .trip-table .route-cell {
+            color: #2D241A;
+            font-weight: 500;
+        }
+        .trip-table .hotel-cell {
+            min-width: 120px;
+        }
+        @media (max-width: 600px) {
+            .trip-table th, .trip-table td {
+                padding: 4px 4px;
+                font-size: 0.7rem;
+            }
+            .trip-table .hotel-input {
+                font-size: 0.65rem;
+                padding: 3px 6px;
+                min-width: 60px;
+            }
+            .trip-table .hotel-cell {
+                min-width: 80px;
+            }
+        }
+
         /* ===== 底部海拔線 ===== */
         .altitude-footer {
             position: fixed;
@@ -518,12 +552,7 @@
             padding: 0 4px;
             margin-top: -2px;
         }
-        .altitude-footer .alt-label span {
-            flex: 1;
-            text-align: center;
-        }
 
-        /* ===== FOOTER BAR ===== */
         .footer-bar {
             text-align: center;
             font-size: 0.7rem;
@@ -533,7 +562,6 @@
             margin-top: 10px;
         }
 
-        /* ===== RESPONSIVE ===== */
         @media (max-width: 480px) {
             .app-header h1 {
                 font-size: 1.0rem;
@@ -583,42 +611,21 @@
 </head>
 <body>
 
-    <!-- ===== HEADER ===== -->
+    <!-- HEADER -->
     <header class="app-header">
         <h1>🌄 雲南滇西12日 · 4人同行</h1>
         <div class="sub">2026.11.11 – 11.22 ｜ Chill · Hea · 慢慢行</div>
     </header>
 
-    <!-- ===== TAB NAV ===== -->
+    <!-- TAB NAV -->
     <nav class="tab-nav" id="tabNav">
         <button class="active" data-page="overview">📋 總覽</button>
         <button data-page="daily">📅 每日行程</button>
-        <button data-page="other">📌 其他</button>
+        <button data-page="other">📌 重要資訊</button>
     </nav>
 
-    <!-- ============================================================ -->
-    <!-- PAGE 1: 總覽 -->
-    <!-- ============================================================ -->
+    <!-- ===== PAGE 1: 總覽 (精簡版，只放快速統計) ===== -->
     <div class="page active" id="page-overview">
-
-        <div class="overview-card">
-            <h2>✈️ 航班</h2>
-            <div class="flight-row"><span class="label">去程 (11/11)</span><span class="value">MU9658 21:15 HKG → 23:55 KMG</span></div>
-            <div class="flight-row"><span class="label">回程 (11/22)</span><span class="value">MU733 13:50 KMG → 16:05 HKG</span></div>
-            <div class="flight-row" style="border-bottom:none;margin-top:2px;"><span class="label">人均機票</span><span class="value">HK$2,373</span></div>
-        </div>
-
-        <div class="overview-card">
-            <h2>🚗 包車</h2>
-            <div class="flight-row"><span class="label">天數</span><span class="value">10天 (Day 2 → Day 11)</span></div>
-            <div class="flight-row" style="border-bottom:none;"><span class="label">費用</span><span class="value">¥8,600 (已確認)</span></div>
-        </div>
-
-        <div class="overview-card">
-            <h2>🏨 住宿一覽</h2>
-            <div class="overview-grid" id="hotelGrid"></div>
-        </div>
-
         <div class="overview-card">
             <h2>📊 快速一覽</h2>
             <div class="overview-grid">
@@ -630,35 +637,64 @@
                 <div class="item"><strong>⚠️ 禁沖涼</strong> 4晚 (麗江・瀘沽湖・香格里拉x2)</div>
             </div>
         </div>
-
         <div class="overview-card">
-            <h2>💰 預算 (4人)</h2>
-            <div class="flight-row"><span class="label">包車</span><span class="value">¥8,600</span></div>
-            <div class="flight-row"><span class="label">住宿</span><span class="value">約 ¥10,000–13,000</span></div>
-            <div class="flight-row"><span class="label">高鐵</span><span class="value">約 ¥1,216</span></div>
-            <div class="flight-row"><span class="label">門票</span><span class="value">約 ¥2,200–2,600</span></div>
-            <div class="flight-row"><span class="label">餐飲</span><span class="value">約 ¥7,200–9,600</span></div>
-            <div class="flight-row highlight"><span class="label">人均 (人民幣)</span><span class="value">約 ¥7,250–8,750</span></div>
-            <div class="flight-row" style="border-bottom:none;font-weight:600;"><span class="label">人均 (港幣 連機票)</span><span class="value">約 HK$10,200–11,800</span></div>
+            <h2>✈️ 航班</h2>
+            <div class="flight-row"><span class="label">去程 (11/11)</span><span class="value">MU9658 21:15 HKG → 23:55 KMG</span></div>
+            <div class="flight-row"><span class="label">回程 (11/22)</span><span class="value">MU733 13:50 KMG → 16:05 HKG</span></div>
+            <div class="flight-row" style="border-bottom:none;"><span class="label">人均機票</span><span class="value">HK$2,373</span></div>
         </div>
-
-        <div class="footer-bar">✏️ 所有備註即時同步 · 4人共享</div>
+        <div class="overview-card">
+            <h2>🚗 包車</h2>
+            <div class="flight-row"><span class="label">天數</span><span class="value">10天 (Day 2 → Day 11)</span></div>
+            <div class="flight-row" style="border-bottom:none;"><span class="label">費用</span><span class="value">¥8,600 (已確認)</span></div>
+        </div>
+        <div class="footer-bar">📌 詳細行程及編輯狀態請到「重要資訊」頁面</div>
     </div>
 
-    <!-- ============================================================ -->
-    <!-- PAGE 2: 每日行程 -->
-    <!-- ============================================================ -->
+    <!-- ===== PAGE 2: 每日行程 ===== -->
     <div class="page" id="page-daily">
         <div class="day-tabs" id="dayTabs"></div>
         <div id="dayDetailContainer"></div>
         <div class="footer-bar">✏️ 撳 [＋] 加備註 · 全部人即時睇到</div>
     </div>
 
-    <!-- ============================================================ -->
-    <!-- PAGE 3: 其他 -->
-    <!-- ============================================================ -->
+    <!-- ===== PAGE 3: 重要資訊 ===== -->
     <div class="page" id="page-other">
 
+        <!-- 行程總覽表格（可編輯狀態） -->
+        <div class="other-section">
+            <h3>📅 行程總覽（點擊狀態即可修改）</h3>
+            <div id="tripOverviewTable"></div>
+        </div>
+
+        <!-- 航班 -->
+        <div class="other-section">
+            <h3>✈️ 航班</h3>
+            <div class="flight-row"><span class="lbl">去程 (11/11)</span><span class="val">MU9658 21:15 HKG → 23:55 KMG</span></div>
+            <div class="flight-row"><span class="lbl">回程 (11/22)</span><span class="val">MU733 13:50 KMG → 16:05 HKG</span></div>
+            <div class="flight-row" style="border-bottom:none;"><span class="lbl">人均機票</span><span class="val">HK$2,373</span></div>
+        </div>
+
+        <!-- 包車 -->
+        <div class="other-section">
+            <h3>🚗 包車</h3>
+            <div class="flight-row"><span class="lbl">天數</span><span class="val">10天 (Day 2 → Day 11)</span></div>
+            <div class="flight-row" style="border-bottom:none;"><span class="lbl">費用</span><span class="val">¥8,600 (已確認)</span></div>
+        </div>
+
+        <!-- 預算 -->
+        <div class="other-section">
+            <h3>💰 預算 (4人)</h3>
+            <div class="flight-row"><span class="lbl">包車</span><span class="val">¥8,600</span></div>
+            <div class="flight-row"><span class="lbl">住宿</span><span class="val">約 ¥10,000–13,000</span></div>
+            <div class="flight-row"><span class="lbl">高鐵</span><span class="val">約 ¥1,216</span></div>
+            <div class="flight-row"><span class="lbl">門票</span><span class="val">約 ¥2,200–2,600</span></div>
+            <div class="flight-row"><span class="lbl">餐飲</span><span class="val">約 ¥7,200–9,600</span></div>
+            <div class="flight-row highlight-row"><span class="lbl">人均 (人民幣)</span><span class="val">約 ¥7,250–8,750</span></div>
+            <div class="flight-row" style="border-bottom:none;font-weight:600;"><span class="lbl">人均 (港幣 連機票)</span><span class="val">約 HK$10,200–11,800</span></div>
+        </div>
+
+        <!-- 包車詳情 -->
         <div class="other-section">
             <h3>🚗 包車詳情</h3>
             <div class="row"><span class="lbl">基礎用車 (10天 × ¥800)</span><span class="val">¥8,000</span></div>
@@ -672,6 +708,7 @@
             </div>
         </div>
 
+        <!-- 高鐵 -->
         <div class="other-section">
             <h3>🚄 高鐵</h3>
             <div class="row"><span class="lbl">昆明→大理 (C4322 11:11)</span><span class="val">約 ¥114/人</span></div>
@@ -679,6 +716,7 @@
             <div style="font-size:0.78rem;color:#6B5A4A;margin-top:6px;">⏰ 昆明→大理：10月29日 14:30 起售</div>
         </div>
 
+        <!-- 海拔 & 洗澡提醒 -->
         <div class="other-section">
             <h3>⚠️ 海拔 &amp; 洗澡提醒</h3>
             <div class="altitude-table">
@@ -690,6 +728,7 @@
             </div>
         </div>
 
+        <!-- 行李清單 -->
         <div class="other-section">
             <h3>🎒 建議行李</h3>
             <div class="packing-grid">
@@ -709,19 +748,10 @@
             </div>
         </div>
 
-        <div class="other-section">
-            <h3>📌 重要待辦</h3>
-            <div class="list-item"><span>🔴 香格里拉酒店 (18-19日, 2晚)</span><span class="status pending">未確認</span></div>
-            <div class="list-item"><span>🔴 麗江亞朵加訂 (11月20日, 1晚)</span><span class="status pending">需加訂</span></div>
-            <div class="list-item"><span>🟡 與司機確認師傅餐飲安排</span><span class="status info">待確認</span></div>
-        </div>
-
         <div class="footer-bar">📌 按行程 v.7.1 整理</div>
     </div>
 
-    <!-- ============================================================ -->
-    <!-- 底部海拔線 (固定) -->
-    <!-- ============================================================ -->
+    <!-- 底部海拔線 -->
     <div class="altitude-footer" id="altitudeFooter">
         <canvas id="altitudeCanvas"></canvas>
         <div class="alt-label" id="altLabel"></div>
@@ -732,29 +762,36 @@
     <!-- ============================================================ -->
     <script>
         // ================================================================
-//  1. FIREBASE CONFIG (請貼上你自己嘅 Config)
-// ================================================================
-const firebaseConfig = {
-    apiKey: "AIzaSyAtthBBNoHJkN6B_e8DVjzDpK_eB0wfExo",
-    authDomain: "yunnan-trip-d5626.firebaseapp.com",
-    databaseURL: "https://yunnan-trip-d5626-default-rtdb.asia-southeast1.firebasedatabase.app/",
-    projectId: "yunnan-trip-d5626",
-    storageBucket: "yunnan-trip-d5626.firebasestorage.app",
-    messagingSenderId: "956753515518",
-    appId: "1:956753515518:web:ef19ac8a7b45bdf83426af"
-};
+        //  1. FIREBASE CONFIG (請貼上你自己嘅 Config)
+        // ================================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyAtthBBNoHJkN6B_e8DVjzDpK_eB0wfExo",
+            authDomain: "yunnan-trip-d5626.firebaseapp.com",
+            databaseURL: "https://yunnan-trip-d5626-default-rtdb.asia-southeast1.firebasedatabase.app/",
+            projectId: "yunnan-trip-d5626",
+            storageBucket: "yunnan-trip-d5626.firebasestorage.app",
+            messagingSenderId: "956753515518",
+            appId: "1:956753515518:web:ef19ac8a7b45bdf83426af"
+        };
 
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
+        // 初始化 Firebase
+        let firebaseInitialized = false;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            firebaseInitialized = true;
+        } catch (e) {
+            console.warn('Firebase init error:', e);
+        }
+        const db = firebaseInitialized ? firebase.database() : null;
 
         // ================================================================
-        //  2. 行程數據
+        //  2. 行程數據 (根據你提供嘅總覽更新)
         // ================================================================
         const DAYS_DATA = [{
             id: 1,
             date: "11月11日",
             weekday: "三",
-            title: "香港 ✈️ 昆明",
+            title: "香港 ✈️ 昆明（夜機）",
             hotel: "昆明長水國際機場美居酒店",
             hotelStatus: "✅ 已確認",
             altitude: 1900,
@@ -793,8 +830,8 @@ const firebaseConfig = {
             id: 3,
             date: "11月13日",
             weekday: "五",
-            title: "雙廊 → 沙溪古鎮",
-            hotel: "沙溪古鎮五柳心宿 (玉津橋店)",
+            title: "雙廊 → 沙溪古鎮（深度遊）",
+            hotel: "沙溪古鎮五柳心宿",
             hotelStatus: "✅ 已確認",
             altitude: 2100,
             breakfast: "酒店早餐",
@@ -834,7 +871,7 @@ const firebaseConfig = {
             date: "11月15日",
             weekday: "日",
             title: "麗江 → 瀘沽湖",
-            hotel: "瀘沽湖水天壹舍 loft湖景度假民宿",
+            hotel: "瀘沽湖水天壹舍",
             hotelStatus: "✅ 已確認 (連住2晚)",
             altitude: 2690,
             breakfast: "酒店早餐",
@@ -853,7 +890,7 @@ const firebaseConfig = {
             date: "11月16日",
             weekday: "一",
             title: "瀘沽湖環湖全日",
-            hotel: "瀘沽湖水天壹舍 (連住)",
+            hotel: "瀘沽湖水天壹舍",
             hotelStatus: "✅ 已確認",
             altitude: 2690,
             breakfast: "酒店早餐",
@@ -878,8 +915,8 @@ const firebaseConfig = {
             id: 7,
             date: "11月17日",
             weekday: "二",
-            title: "瀘沽湖 → 束河 → 白沙",
-            hotel: "不晚里予·Wild Aurora 日照金山牧野心宿",
+            title: "瀘沽湖 → 束河古鎮 → 白沙古鎮",
+            hotel: "不晚里予·Wild Aurora",
             hotelStatus: "✅ 已確認",
             altitude: 2500,
             breakfast: "早餐後退房",
@@ -900,7 +937,7 @@ const firebaseConfig = {
             date: "11月18日",
             weekday: "三",
             title: "白沙 → 虎跳峽 → 白水台 → 香格里拉",
-            hotel: "香格里拉 (待定，建議亞朵見野酒店)",
+            hotel: "香格里拉（待定）",
             hotelStatus: "⏳ 未確認",
             altitude: 3300,
             breakfast: "早餐後退房",
@@ -921,7 +958,7 @@ const firebaseConfig = {
             date: "11月19日",
             weekday: "四",
             title: "普達措國家公園全日",
-            hotel: "香格里拉 (待定)",
+            hotel: "香格里拉（待定）",
             hotelStatus: "⏳ 未確認",
             altitude: 3300,
             breakfast: "酒店早餐",
@@ -940,7 +977,7 @@ const firebaseConfig = {
             date: "11月20日",
             weekday: "五",
             title: "香格里拉 → 納帕海 → 松贊林寺 → 麗江",
-            hotel: "麗江古城大水車亞朵酒店 (需加訂)",
+            hotel: "麗江古城大水車亞朵酒店（加訂）",
             hotelStatus: "⏳ 需加訂1晚",
             altitude: 2400,
             breakfast: "酒店早餐",
@@ -1012,27 +1049,11 @@ const firebaseConfig = {
         }
 
         // ================================================================
-        //  4. 渲染：總覽
+        //  4. 總覽 (快速統計) 已存在 HTML 中，無需額外渲染
         // ================================================================
-        function renderOverview() {
-            const grid = document.getElementById('hotelGrid');
-            grid.innerHTML = '';
-            DAYS_DATA.forEach(d => {
-                if (d.hotel && d.hotel !== '-') {
-                    const div = document.createElement('div');
-                    div.className = 'item';
-                    const cls = d.hotelStatus.includes('✅') ? 'tag-ok' : 'tag-warn';
-                    div.innerHTML = `
-                        <strong>Day ${d.id}</strong> ${d.hotel}
-                        <span class="tag ${cls}" style="float:right;">${d.hotelStatus}</span>
-                    `;
-                    grid.appendChild(div);
-                }
-            });
-        }
 
         // ================================================================
-        //  5. 渲染：每日行程
+        //  5. 每日行程渲染
         // ================================================================
         let currentDayId = 1;
 
@@ -1061,7 +1082,6 @@ const firebaseConfig = {
 
             let html = `<div class="day-detail">`;
 
-            // 標題
             html += `
                 <div class="day-head">
                     <span class="day-label">Day ${day.id} · ${day.date} (${day.weekday})</span>
@@ -1070,12 +1090,10 @@ const firebaseConfig = {
                 </div>
             `;
 
-            // 警告
             if (day.warnings && day.warnings.length) {
                 html += `<div class="warning-banner"><strong>⚠️ 提示</strong>${day.warnings.join(' · ')}</div>`;
             }
 
-            // 各分類
             const categories = [
                 { key: 'breakfast', emoji: '🍳', label: '早餐', value: day.breakfast },
                 { key: 'lunch', emoji: '🥢', label: '午餐', value: day.lunch },
@@ -1085,7 +1103,6 @@ const firebaseConfig = {
                 html += renderItem(day.id, cat.key, `${cat.emoji} ${cat.label}`, cat.value);
             });
 
-            // 景點
             if (day.attractions && day.attractions.length) {
                 day.attractions.forEach((attr, idx) => {
                     const label = `📍 ${attr.name}`;
@@ -1094,7 +1111,6 @@ const firebaseConfig = {
                 });
             }
 
-            // 商店
             if (day.shops && day.shops.length) {
                 day.shops.forEach((shop, idx) => {
                     const label = `🛍️ ${shop.name}`;
@@ -1103,21 +1119,13 @@ const firebaseConfig = {
                 });
             }
 
-            // 其他 (預設空，但保留加嘅功能)
-            if (day.others && day.others.length) {
-                day.others.forEach((other, idx) => {
-                    const label = `📌 ${other.name}`;
-                    const timeStr = other.time ? ` · <span class="time-tag">${other.time}</span>` : '';
-                    html += renderItem(day.id, 'other', label + timeStr, '', idx);
-                });
-            }
-            // 顯示一個空的「其他」讓團友可以加
+            // 其他 (預留)
             html += renderItem(day.id, 'other', '📌 其他', '', -1);
 
             html += `</div>`;
             container.innerHTML = html;
 
-            // 為所有 ＋ 按鈕綁定事件
+            // 綁定事件
             container.querySelectorAll('.add-btn').forEach(btn => {
                 btn.onclick = function(e) {
                     e.stopPropagation();
@@ -1131,7 +1139,6 @@ const firebaseConfig = {
                 };
             });
 
-            // 為所有 submit / cancel 綁定事件
             container.querySelectorAll('.submit-btn').forEach(btn => {
                 btn.onclick = function() {
                     const form = this.closest('.add-note-form');
@@ -1141,12 +1148,13 @@ const firebaseConfig = {
                     const msgInput = form.querySelector('.msg-input');
                     const text = msgInput.value.trim();
                     if (!text) { alert('請輸入內容'); return; }
+                    if (!db) { alert('Firebase 未連線，請檢查設定'); return; }
                     const key = getNoteKey(dayId, category, index);
                     db.ref(key).once('value').then(snap => {
                         const existing = snap.val() || [];
                         existing.push({ text, time: Date.now() });
                         db.ref(key).set(existing);
-                    });
+                    }).catch(e => alert('儲存失敗: ' + e.message));
                     msgInput.value = '';
                     form.classList.remove('open');
                 };
@@ -1166,7 +1174,7 @@ const firebaseConfig = {
             const hasDefault = defaultValue && defaultValue.length > 0;
             const idxAttr = index !== undefined ? `data-index="${index}"` : '';
 
-            let html = `
+            return `
                 <div class="day-item" data-key="${key}">
                     <div class="item-label">
                         <span>${label}</span>
@@ -1183,13 +1191,19 @@ const firebaseConfig = {
                     </div>
                 </div>
             `;
-            return html;
         }
 
         // ================================================================
-        //  6. Firebase 監聽
+        //  6. Firebase 監聽 (連線檢查)
         // ================================================================
         function setupAllListeners() {
+            if (!db) {
+                // 如果 Firebase 未初始化，顯示錯誤
+                document.querySelectorAll('.note-area').forEach(el => {
+                    el.innerHTML = `<div class="empty-msg" style="color:#C07A5A;">❌ Firebase 未連線，請檢查 Config</div>`;
+                });
+                return;
+            }
             DAYS_DATA.forEach(day => {
                 const cats = ['breakfast', 'lunch', 'dinner'];
                 day.attractions.forEach((_, idx) => {
@@ -1200,7 +1214,6 @@ const firebaseConfig = {
                     const key = getNoteKey(day.id, 'shop', idx);
                     listenNote(key);
                 });
-                // others: 用 -1 代表通用其他 (但實際儲存時用 index，所以我們監聽 0-9 預留)
                 for (let i = 0; i < 10; i++) {
                     const key = getNoteKey(day.id, 'other', i);
                     listenNote(key);
@@ -1213,6 +1226,7 @@ const firebaseConfig = {
         }
 
         function listenNote(key) {
+            if (!db) return;
             db.ref(key).on('value', (snap) => {
                 const notes = snap.val() || [];
                 const area = document.getElementById(`note-area-${key}`);
@@ -1240,6 +1254,7 @@ const firebaseConfig = {
                     btn.onclick = function() {
                         const k = this.dataset.key;
                         const idx = parseInt(this.dataset.idx);
+                        if (!db) return;
                         db.ref(k).once('value').then(snap => {
                             const arr = snap.val() || [];
                             arr.splice(idx, 1);
@@ -1247,11 +1262,76 @@ const firebaseConfig = {
                         });
                     };
                 });
+            }, (error) => {
+                console.warn('Firebase read error:', error);
+                const area = document.getElementById(`note-area-${key}`);
+                if (area) {
+                    area.innerHTML = `<div class="empty-msg" style="color:#C07A5A;">⚠️ 讀取失敗，請檢查網絡或 Firebase 設定</div>`;
+                }
             });
         }
 
         // ================================================================
-        //  7. 海拔線 (Canvas)
+        //  7. 行程總覽表格 (可編輯狀態)
+        // ================================================================
+        function renderTripOverviewTable() {
+            const container = document.getElementById('tripOverviewTable');
+            if (!container) return;
+
+            let html = `
+                <table class="trip-table">
+                    <thead>
+                        <tr>
+                            <th>Day</th>
+                            <th>日期</th>
+                            <th>行程</th>
+                            <th>住宿</th>
+                            <th style="min-width:90px;">狀態</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            DAYS_DATA.forEach(d => {
+                const storageKey = `hotelStatus-${d.id}`;
+                const saved = localStorage.getItem(storageKey) || d.hotelStatus || '';
+                // 同步更新 DAYS_DATA
+                if (saved) d.hotelStatus = saved;
+
+                html += `
+                    <tr>
+                        <td class="day-cell">Day ${d.id}</td>
+                        <td>${d.date}</td>
+                        <td class="route-cell">${d.title}</td>
+                        <td class="hotel-cell">${d.hotel !== '-' ? d.hotel : '—'}</td>
+                        <td>
+                            <input type="text" class="hotel-input" data-day="${d.id}" value="${escapeHtml(saved)}" placeholder="輸入狀態" />
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                    </tbody>
+                </table>
+                <div style="font-size:0.7rem;color:#8A7A6A;margin-top:6px;">💡 修改狀態後會自動儲存喺你呢個瀏覽器</div>
+            `;
+
+            container.innerHTML = html;
+
+            container.querySelectorAll('.hotel-input').forEach(input => {
+                const dayId = parseInt(input.dataset.day);
+                input.addEventListener('change', function() {
+                    const val = this.value.trim();
+                    localStorage.setItem(`hotelStatus-${dayId}`, val);
+                    const dayData = DAYS_DATA.find(d => d.id === dayId);
+                    if (dayData) dayData.hotelStatus = val;
+                });
+            });
+        }
+
+        // ================================================================
+        //  8. 海拔線 (Canvas)
         // ================================================================
         function drawAltitude(activeDayId) {
             const canvas = document.getElementById('altitudeCanvas');
@@ -1279,17 +1359,14 @@ const firebaseConfig = {
             const maxAlt = 3500;
             const range = maxAlt - minAlt;
 
-            // 計算點座標
             const points = data.map((d, i) => {
                 const x = padL + (i / (n - 1)) * chartW;
                 const y = padT + chartH - ((d.altitude - minAlt) / range) * chartH;
                 return { x, y, alt: d.altitude, id: d.id };
             });
 
-            // 清空
             ctx.clearRect(0, 0, w, h);
 
-            // 漸變線
             const grad = ctx.createLinearGradient(0, padT, 0, padT + chartH);
             grad.addColorStop(0, '#E07A5F');
             grad.addColorStop(0.5, '#E9C46A');
@@ -1305,7 +1382,6 @@ const firebaseConfig = {
             ctx.lineCap = 'round';
             ctx.stroke();
 
-            // 3000m 參考線
             const y3000 = padT + chartH - ((3000 - minAlt) / range) * chartH;
             ctx.beginPath();
             ctx.moveTo(padL, y3000);
@@ -1319,7 +1395,6 @@ const firebaseConfig = {
             ctx.font = '9px sans-serif';
             ctx.fillText('3000m', 2, y3000 - 3);
 
-            // 點
             points.forEach((p) => {
                 const isActive = p.id === activeDayId;
                 const radius = isActive ? 7 : 4.5;
@@ -1336,7 +1411,6 @@ const firebaseConfig = {
                 }
                 ctx.fill();
                 ctx.shadowBlur = 0;
-                // 外圈 light
                 if (isActive) {
                     ctx.beginPath();
                     ctx.arc(p.x, p.y, 10, 0, Math.PI * 2);
@@ -1344,18 +1418,15 @@ const firebaseConfig = {
                     ctx.lineWidth = 2;
                     ctx.stroke();
                 }
-                // 海拔標籤
                 ctx.fillStyle = isActive ? '#E07A5F' : '#8A7A6A';
                 ctx.font = isActive ? 'bold 8px sans-serif' : '7px sans-serif';
                 ctx.textAlign = 'center';
                 ctx.fillText(p.alt + 'm', p.x, p.y - 10);
             });
 
-            // 存 click 數據
             canvas._points = points;
         }
 
-        // 海拔點擊事件
         document.getElementById('altitudeCanvas').addEventListener('click', function(e) {
             const rect = this.getBoundingClientRect();
             const x = e.clientX - rect.left;
@@ -1374,7 +1445,6 @@ const firebaseConfig = {
                 renderDayTabs();
                 renderDayDetail(currentDayId);
                 drawAltitude(currentDayId);
-                // 切換到每日行程 tab
                 document.querySelectorAll('.tab-nav button').forEach(b => b.classList.remove('active'));
                 document.querySelector('[data-page="daily"]').classList.add('active');
                 document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -1383,7 +1453,7 @@ const firebaseConfig = {
         });
 
         // ================================================================
-        //  8. Tab 切換
+        //  9. Tab 切換
         // ================================================================
         document.getElementById('tabNav').addEventListener('click', (e) => {
             const btn = e.target.closest('button');
@@ -1398,13 +1468,12 @@ const firebaseConfig = {
                 drawAltitude(currentDayId);
             }
             if (page === 'overview' || page === 'other') {
-                // 海拔線仍然顯示，但 highlight 保持 current
                 drawAltitude(currentDayId);
             }
         });
 
         // ================================================================
-        //  9. 視窗 resize 重繪海拔
+        //  10. 視窗 resize
         // ================================================================
         let resizeTimer;
         window.addEventListener('resize', () => {
@@ -1415,17 +1484,21 @@ const firebaseConfig = {
         });
 
         // ================================================================
-        //  10. 啟動
+        //  11. 啟動
         // ================================================================
-        renderOverview();
         renderDayTabs();
         renderDayDetail(1);
+        renderTripOverviewTable();
         setupAllListeners();
-        setTimeout(() => drawAltitude(1), 100);
+        setTimeout(() => drawAltitude(1), 300);
 
         console.log('🌄 雲南滇西12日行程網頁已啟動！');
-        console.log('💡 請將 firebaseConfig 換成你自己嘅 Config！');
+        if (!db) {
+            console.warn('⚠️ Firebase 未連線，請檢查 Config 及網絡');
+        } else {
+            console.log('✅ Firebase 已連線');
+        }
     </script>
 
 </body>
-  </html>
+</html>
