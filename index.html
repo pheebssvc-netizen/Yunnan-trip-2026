@@ -33,7 +33,7 @@
             padding: 16px 20px 12px;
             position: sticky;
             top: 0;
-            z-index: 40;
+            z-index: 50;
             box-shadow: 0 2px 12px rgba(224, 122, 95, 0.25);
         }
         .app-header h1 {
@@ -54,7 +54,7 @@
             border-bottom: 2px solid #EDE7E0;
             position: sticky;
             top: 68px;
-            z-index: 35;
+            z-index: 45;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
         }
         .tab-nav button {
@@ -90,7 +90,7 @@
             display: block;
         }
 
-        /* ===== 總覽（行程總覽表格） ===== */
+        /* ===== 總覽（行程動線） ===== */
         .overview-card {
             background: #fff;
             border-radius: 16px;
@@ -106,12 +106,12 @@
             margin-bottom: 10px;
         }
 
-        .trip-table {
+        .route-table {
             width: 100%;
             border-collapse: collapse;
             font-size: 0.82rem;
         }
-        .trip-table th {
+        .route-table th {
             text-align: left;
             background: #F5F0EB;
             padding: 6px 8px;
@@ -119,51 +119,29 @@
             color: #2D241A;
             font-weight: 600;
         }
-        .trip-table td {
+        .route-table td {
             padding: 6px 8px;
             border-bottom: 1px solid #F5F0EB;
             vertical-align: middle;
         }
-        .trip-table .hotel-input {
-            border: 1.5px solid #EDE7E0;
-            border-radius: 30px;
-            padding: 4px 10px;
-            font-size: 0.75rem;
-            width: 100%;
-            min-width: 80px;
-            background: #FFFBF5;
-            transition: 0.15s;
-        }
-        .trip-table .hotel-input:focus {
-            border-color: #E07A5F;
-            outline: none;
-            background: #fff;
-        }
-        .trip-table .day-cell {
+        .route-table .day-cell {
             font-weight: 600;
             color: #E07A5F;
             white-space: nowrap;
         }
-        .trip-table .route-cell {
+        .route-table .route-cell {
             color: #2D241A;
             font-weight: 500;
         }
-        .trip-table .hotel-cell {
-            min-width: 120px;
+        .route-table .hotel-cell {
+            color: #6B5A4A;
+            font-size: 0.78rem;
         }
         @media (max-width: 600px) {
-            .trip-table th,
-            .trip-table td {
+            .route-table th,
+            .route-table td {
                 padding: 4px 4px;
                 font-size: 0.7rem;
-            }
-            .trip-table .hotel-input {
-                font-size: 0.65rem;
-                padding: 3px 6px;
-                min-width: 60px;
-            }
-            .trip-table .hotel-cell {
-                min-width: 80px;
             }
         }
 
@@ -253,12 +231,56 @@
             font-weight: 400;
         }
 
+        /* 狀態列表（重要資訊內） */
+        .status-list {
+            font-size: 0.85rem;
+        }
+        .status-list .row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            border-bottom: 1px solid #F5F0EB;
+            align-items: center;
+        }
+        .status-list .hotel-input {
+            border: 1.5px solid #EDE7E0;
+            border-radius: 30px;
+            padding: 3px 12px;
+            font-size: 0.75rem;
+            width: 140px;
+            background: #FFFBF5;
+            transition: 0.15s;
+            flex-shrink: 0;
+        }
+        .status-list .hotel-input:focus {
+            border-color: #E07A5F;
+            outline: none;
+            background: #fff;
+        }
+        @media (max-width: 480px) {
+            .status-list .hotel-input {
+                width: 100px;
+                font-size: 0.65rem;
+                padding: 2px 8px;
+            }
+        }
+
         /* ===== 每日行程 ===== */
+        .day-tabs-wrapper {
+            position: sticky;
+            top: 116px;
+            z-index: 40;
+            background: #FFFBF5;
+            padding: 4px 0 12px;
+            margin: 0 -16px;
+            padding-left: 16px;
+            padding-right: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
         .day-tabs {
             display: flex;
             overflow-x: auto;
             gap: 6px;
-            padding: 4px 0 14px;
             -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
             flex-wrap: nowrap;
@@ -339,16 +361,27 @@
             color: #7A3A1A;
         }
 
-        .day-item {
-            margin-bottom: 14px;
-            border-bottom: 1px dashed #EDE7E0;
-            padding-bottom: 10px;
+        /* 餐飲區塊 - 淺色背景 */
+        .day-item-meal {
+            margin-bottom: 12px;
+            border-radius: 12px;
+            padding: 10px 14px;
+            border: none;
         }
-        .day-item:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
+        .day-item-meal.breakfast {
+            background: #FFF0EE;
         }
-        .day-item .item-label {
+        .day-item-meal.lunch {
+            background: #FFF8E7;
+        }
+        .day-item-meal.dinner {
+            background: #EEF4FF;
+        }
+        .day-item-meal.other {
+            background: #F5EEFF;
+        }
+
+        .day-item-meal .item-label {
             font-weight: 600;
             font-size: 0.92rem;
             color: #2D241A;
@@ -357,20 +390,15 @@
             gap: 6px;
             flex-wrap: wrap;
         }
-        .day-item .item-label .badge {
+        .day-item-meal .item-label .badge {
             font-weight: 400;
             font-size: 0.78rem;
             color: #6B5A4A;
-            background: #F5F0EB;
+            background: rgba(255, 255, 255, 0.6);
             padding: 0 12px;
             border-radius: 30px;
         }
-        .day-item .item-label .time-tag {
-            font-weight: 400;
-            font-size: 0.75rem;
-            color: #8A7A6A;
-        }
-        .day-item .item-label .add-btn {
+        .day-item-meal .item-label .add-btn {
             margin-left: auto;
             background: #E9C46A;
             border: none;
@@ -383,11 +411,54 @@
             transition: 0.15s;
             flex-shrink: 0;
         }
-        .day-item .item-label .add-btn:active {
+        .day-item-meal .item-label .add-btn:active {
             transform: scale(0.92);
             background: #D4B05A;
         }
 
+        /* 景點區塊 - 白色背景，分隔明顯 */
+        .day-item-attraction {
+            margin-bottom: 12px;
+            border-bottom: 1px dashed #EDE7E0;
+            padding-bottom: 10px;
+        }
+        .day-item-attraction:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        .day-item-attraction .item-label {
+            font-weight: 600;
+            font-size: 0.92rem;
+            color: #2D241A;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .day-item-attraction .item-label .time-tag {
+            font-weight: 400;
+            font-size: 0.75rem;
+            color: #8A7A6A;
+        }
+        .day-item-attraction .item-label .add-btn {
+            margin-left: auto;
+            background: #E9C46A;
+            border: none;
+            border-radius: 30px;
+            padding: 2px 14px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #2D241A;
+            cursor: pointer;
+            transition: 0.15s;
+            flex-shrink: 0;
+        }
+        .day-item-attraction .item-label .add-btn:active {
+            transform: scale(0.92);
+            background: #D4B05A;
+        }
+
+        /* 備註區 - 共用 */
         .note-area {
             margin-top: 6px;
             padding-left: 4px;
@@ -492,6 +563,19 @@
             background: #F5F0EB;
         }
 
+        /* ===== 景點分隔標題 ===== */
+        .attractions-header {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #2B3A67;
+            margin: 14px 0 10px 0;
+            padding-bottom: 4px;
+            border-bottom: 2px solid #EDE7E0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         /* ===== 底部海拔線 ===== */
         .altitude-footer {
             position: fixed;
@@ -539,6 +623,10 @@
                 font-size: 0.78rem;
                 padding: 12px 4px;
             }
+            .day-tabs-wrapper {
+                top: 108px;
+                padding: 2px 8px 10px;
+            }
             .day-tabs button {
                 font-size: 0.7rem;
                 padding: 6px 12px;
@@ -562,6 +650,9 @@
             }
             body {
                 padding-bottom: 100px;
+            }
+            .day-item-meal {
+                padding: 8px 10px;
             }
         }
         @media (max-width: 380px) {
@@ -590,25 +681,44 @@
         <button data-page="other">📌 重要資訊</button>
     </nav>
 
-    <!-- ===== PAGE 1: 行程總覽（表格） ===== -->
+    <!-- ===== PAGE 1: 行程總覽（動線為主） ===== -->
     <div class="page active" id="page-overview">
         <div class="overview-card">
-            <h2>📅 12日行程一覽（點擊狀態即可修改）</h2>
-            <div id="tripOverviewTable"></div>
-            <div style="font-size:0.7rem;color:#8A7A6A;margin-top:8px;">💡 修改狀態後會自動儲存喺你呢個瀏覽器</div>
+            <h2>🗺️ 12日行程動線</h2>
+            <table class="route-table">
+                <thead>
+                    <tr>
+                        <th>Day</th>
+                        <th>日期</th>
+                        <th>行程</th>
+                        <th>住宿</th>
+                    </tr>
+                </thead>
+                <tbody id="routeTableBody"></tbody>
+            </table>
+            <div style="font-size:0.7rem;color:#8A7A6A;margin-top:8px;">💡 住宿確認狀態請到「重要資訊」頁面查看及修改</div>
         </div>
-        <div class="footer-bar">📌 詳細行程、備註請到「每日行程」頁</div>
+        <div class="footer-bar">📌 詳細行程及備註請到「每日行程」頁</div>
     </div>
 
     <!-- ===== PAGE 2: 每日行程 ===== -->
     <div class="page" id="page-daily">
-        <div class="day-tabs" id="dayTabs"></div>
+        <div class="day-tabs-wrapper">
+            <div class="day-tabs" id="dayTabs"></div>
+        </div>
         <div id="dayDetailContainer"></div>
         <div class="footer-bar">✏️ 撳 [＋] 加備註 · 全部人即時睇到</div>
     </div>
 
     <!-- ===== PAGE 3: 重要資訊 ===== -->
     <div class="page" id="page-other">
+
+        <!-- 住宿確認狀態列表 -->
+        <div class="other-section">
+            <h3>🏨 住宿確認狀態（點擊修改）</h3>
+            <div class="status-list" id="statusList"></div>
+            <div style="font-size:0.7rem;color:#8A7A6A;margin-top:6px;">💡 修改後會自動儲存喺你呢個瀏覽器</div>
+        </div>
 
         <!-- 航班 -->
         <div class="other-section">
@@ -705,7 +815,7 @@
     <!-- ============================================================ -->
     <script>
         // ================================================================
-        //  1. FIREBASE CONFIG (請貼上你自己嘅 Config)
+        //  1. FIREBASE CONFIG
         // ================================================================
         const firebaseConfig = {
             apiKey: "AIzaSyAtthBBNoHJkN6B_e8DVjzDpK_eB0wfExo",
@@ -717,14 +827,11 @@
             appId: "1:956753515518:web:ef19ac8a7b45bdf83426af"
         };
 
-        // 初始化 Firebase
         let firebaseInitialized = false;
         try {
             firebase.initializeApp(firebaseConfig);
             firebaseInitialized = true;
-        } catch (e) {
-            console.warn('Firebase init error:', e);
-        }
+        } catch (e) { console.warn('Firebase init error:', e); }
         const db = firebaseInitialized ? firebase.database() : null;
 
         // ================================================================
@@ -763,8 +870,8 @@
                 { name: "昆明站", time: "11:11 高鐵 C4322" },
                 { name: "大理站", time: "13:28 抵達 · 包車接站" },
                 { name: "雙廊牧心堡", time: "14:30 入住" },
-                { name: "理想邦聖托里尼 (可選)", time: "16:00 白牆藍窗" },
-                { name: "洱海日落", time: "18:30 酒店欣賞" }
+                { name: "理想邦聖托里尼 (可選)", time: "16:00" },
+                { name: "洱海日落", time: "18:30" }
             ],
             shops: [],
             others: [],
@@ -781,10 +888,10 @@
             lunch: "沙溪地道農家菜 (推薦沙溪火腿)",
             dinner: "沙溪農家菜",
             attractions: [
-                { name: "牧心堡露台日出", time: "07:15 觀賞" },
+                { name: "牧心堡露台日出", time: "07:15" },
                 { name: "沙溪古鎮", time: "11:30 抵達" },
-                { name: "古戲台 · 寺登街 · 興教寺", time: "14:00 深度遊" },
-                { name: "玉津橋", time: "17:00 黃昏漫步" }
+                { name: "古戲台 · 寺登街 · 興教寺", time: "14:00" },
+                { name: "玉津橋", time: "17:00" }
             ],
             shops: [],
             others: [],
@@ -821,7 +928,7 @@
             lunch: "寧蒗縣城 (途中午餐)",
             dinner: "摩梭火塘",
             attractions: [
-                { name: "麗寧十八彎觀景台", time: "10:30 停留15分鐘" },
+                { name: "麗寧十八彎觀景台", time: "10:30" },
                 { name: "瀘沽湖景區", time: "13:30 門票約¥70" },
                 { name: "大落水村碼頭", time: "17:30 欣賞日落" }
             ],
@@ -841,19 +948,19 @@
             dinner: "瀘沽湖",
             attractions: [
                 { name: "瀘沽湖晨霧日出 (可選)", time: "06:30" },
-                { name: "雲南情人灘", time: "09:50 海鷗成群" },
-                { name: "里格半島觀景台", time: "10:30 最經典打卡位" },
+                { name: "雲南情人灘", time: "09:50" },
+                { name: "里格半島觀景台", time: "10:30" },
                 { name: "尼塞村 · 格姆女神山", time: "11:15" },
-                { name: "小洛水", time: "11:45 摩梭原始村落" },
-                { name: "瀘源崖", time: "12:15 水源頭" },
-                { name: "四川情人灘", time: "12:50 更出色" },
-                { name: "草海 · 走婚橋", time: "13:30 秋季金黃" },
-                { name: "女神灣", time: "14:45 日落最佳點" },
-                { name: "豬槽船遊湖 (可選)", time: "16:00 ¥50-100" }
+                { name: "小洛水", time: "11:45" },
+                { name: "瀘源崖", time: "12:15" },
+                { name: "四川情人灘", time: "12:50" },
+                { name: "草海 · 走婚橋", time: "13:30" },
+                { name: "女神灣", time: "14:45" },
+                { name: "豬槽船遊湖 (可選)", time: "16:00" }
             ],
             shops: [],
             others: [],
-            warnings: ["環湖約70公里 · 逆時針方向 · 摩梭篝火晚會可選 ¥30"]
+            warnings: ["環湖約70公里 · 逆時針方向 · 篝火晚會可選"]
         }, {
             id: 7,
             date: "11月17日",
@@ -868,9 +975,9 @@
             attractions: [
                 { name: "瀘沽湖晨霧 (可選)", time: "06:30" },
                 { name: "束河古鎮 · 青龍橋 · 九鼎龍潭", time: "14:00" },
-                { name: "茶馬古道博物館", time: "14:00 門票約¥30" },
-                { name: "白沙古鎮民宿", time: "17:00 入住" },
-                { name: "玉龍雪山日落", time: "17:30 民宿露台" }
+                { name: "茶馬古道博物館", time: "14:00" },
+                { name: "白沙古鎮民宿", time: "17:00" },
+                { name: "玉龍雪山日落", time: "17:30" }
             ],
             shops: [],
             others: [],
@@ -887,15 +994,15 @@
             lunch: "虎跳峽附近",
             dinner: "香格里拉 (藏式火鍋)",
             attractions: [
-                { name: "日照金山", time: "07:00 民宿露台 · 全程唯一機會！" },
-                { name: "白沙壁畫", time: "08:30 門票約¥30" },
-                { name: "虎跳峽 (上虎跳)", time: "11:00 門票約¥45" },
-                { name: "白水台", time: "15:30 門票約¥30" },
-                { name: "香格里拉", time: "19:30 抵達" }
+                { name: "日照金山", time: "07:00" },
+                { name: "白沙壁畫", time: "08:30" },
+                { name: "虎跳峽 (上虎跳)", time: "11:00" },
+                { name: "白水台", time: "15:30" },
+                { name: "香格里拉", time: "19:30" }
             ],
             shops: [],
             others: [],
-            warnings: ["⭐ 全程最高海拔日 · 3,300m · 今晚嚴禁洗頭洗澡"]
+            warnings: ["⭐ 最高海拔 · 3,300m · 今晚嚴禁洗頭洗澡"]
         }, {
             id: 9,
             date: "11月19日",
@@ -908,13 +1015,13 @@
             lunch: "景區內或自備乾糧",
             dinner: "香格里拉 (藏式火鍋)",
             attractions: [
-                { name: "普達措國家公園", time: "09:30 門票約¥138" },
-                { name: "屬都湖徒步", time: "10:00 木棧道3.3km" },
-                { name: "碧塔海", time: "14:00 徒步約1.5小時" }
+                { name: "普達措國家公園", time: "09:30" },
+                { name: "屬都湖徒步", time: "10:00" },
+                { name: "碧塔海", time: "14:00" }
             ],
             shops: [],
             others: [],
-            warnings: ["⚠️ 海拔3,400m · 週一閉園 · 今晚仍然嚴禁洗頭洗澡"]
+            warnings: ["海拔3,400m · 週一閉園 · 嚴禁洗頭洗澡"]
         }, {
             id: 10,
             date: "11月20日",
@@ -927,9 +1034,9 @@
             lunch: "香格里拉",
             dinner: "麗江古城",
             attractions: [
-                { name: "納帕海 (依拉草原)", time: "09:00 免費環湖" },
-                { name: "松贊林寺", time: "11:30 套票約¥90" },
-                { name: "返回麗江", time: "15:00 車程約3小時" }
+                { name: "納帕海 (依拉草原)", time: "09:00" },
+                { name: "松贊林寺", time: "11:30" },
+                { name: "返回麗江", time: "15:00" }
             ],
             shops: [],
             others: [],
@@ -940,19 +1047,19 @@
             weekday: "六",
             title: "麗江 → 高鐵 → 昆明",
             hotel: "昆明南屏步行街老街亞朵酒店",
-            hotelStatus: "✅ 已確認 (已改期成功)",
+            hotelStatus: "✅ 已確認",
             altitude: 1900,
             breakfast: "自然醒 · 酒店早餐",
             lunch: "麗江",
             dinner: "昆明 (過橋米線)",
             attractions: [
-                { name: "麗江古城／束河自由活動", time: "10:00 買手信 · 慢活" },
-                { name: "麗江站", time: "14:30 高鐵回昆明" },
-                { name: "昆明南屏步行街", time: "21:00 夜市可選" }
+                { name: "麗江古城／束河自由活動", time: "10:00" },
+                { name: "麗江站", time: "14:30" },
+                { name: "昆明南屏步行街", time: "21:00" }
             ],
             shops: [],
             others: [],
-            warnings: ["包車服務結束 · 麗江→昆明 高鐵約3.5-4小時"]
+            warnings: ["包車服務結束 · 高鐵約3.5-4小時"]
         }, {
             id: 12,
             date: "11月22日",
@@ -965,10 +1072,10 @@
             lunch: "昆明 (過橋米線)",
             dinner: "機上",
             attractions: [
-                { name: "翠湖公園", time: "10:00 觀紅嘴鷗 · 免費" },
-                { name: "雲南大學 (可選)", time: "11:30 百年校園" },
-                { name: "昆明長水機場", time: "13:50 MU733 起飛" },
-                { name: "香港國際機場 T1", time: "16:05 抵達" }
+                { name: "翠湖公園", time: "10:00" },
+                { name: "雲南大學 (可選)", time: "11:30" },
+                { name: "昆明長水機場", time: "13:50" },
+                { name: "香港國際機場 T1", time: "16:05" }
             ],
             shops: [],
             others: [],
@@ -979,6 +1086,7 @@
         //  3. 工具函數
         // ================================================================
         function getNoteKey(dayId, category, index) {
+            // category: breakfast, lunch, dinner, attraction, shop, other
             if (category === 'attraction') return `day-${dayId}-attr-${index}`;
             if (category === 'shop') return `day-${dayId}-shop-${index}`;
             if (category === 'other') return `day-${dayId}-other-${index}`;
@@ -992,51 +1100,44 @@
         }
 
         // ================================================================
-        //  4. 行程總覽表格 (放在總覽頁)
+        //  4. 行程總覽（動線表格）
         // ================================================================
-        function renderTripOverviewTable() {
-            const container = document.getElementById('tripOverviewTable');
-            if (!container) return;
-
-            let html = `
-                <table class="trip-table">
-                    <thead>
-                        <tr>
-                            <th>Day</th>
-                            <th>日期</th>
-                            <th>行程</th>
-                            <th>住宿</th>
-                            <th style="min-width:90px;">狀態</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-
+        function renderRouteTable() {
+            const tbody = document.getElementById('routeTableBody');
+            tbody.innerHTML = '';
             DAYS_DATA.forEach(d => {
-                const storageKey = `hotelStatus-${d.id}`;
-                const saved = localStorage.getItem(storageKey) || d.hotelStatus || '';
-                if (saved) d.hotelStatus = saved;
-
-                html += `
-                    <tr>
-                        <td class="day-cell">Day ${d.id}</td>
-                        <td>${d.date}</td>
-                        <td class="route-cell">${d.title}</td>
-                        <td class="hotel-cell">${d.hotel !== '-' ? d.hotel : '—'}</td>
-                        <td>
-                            <input type="text" class="hotel-input" data-day="${d.id}" value="${escapeHtml(saved)}" placeholder="輸入狀態" />
-                        </td>
-                    </tr>
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="day-cell">Day ${d.id}</td>
+                    <td>${d.date}</td>
+                    <td class="route-cell">${d.title}</td>
+                    <td class="hotel-cell">${d.hotel !== '-' ? d.hotel : '—'}</td>
                 `;
+                tbody.appendChild(tr);
             });
+        }
 
-            html += `
-                    </tbody>
-                </table>
-            `;
+        // ================================================================
+        //  5. 狀態列表（重要資訊）
+        // ================================================================
+        function renderStatusList() {
+            const container = document.getElementById('statusList');
+            container.innerHTML = '';
+            DAYS_DATA.forEach(d => {
+                if (d.hotel && d.hotel !== '-') {
+                    const storageKey = `hotelStatus-${d.id}`;
+                    const saved = localStorage.getItem(storageKey) || d.hotelStatus || '';
+                    if (saved) d.hotelStatus = saved;
 
-            container.innerHTML = html;
-
+                    const row = document.createElement('div');
+                    row.className = 'row';
+                    row.innerHTML = `
+                        <span style="font-weight:500;">Day ${d.id} · ${d.hotel}</span>
+                        <input type="text" class="hotel-input" data-day="${d.id}" value="${escapeHtml(saved)}" placeholder="輸入狀態" />
+                    `;
+                    container.appendChild(row);
+                }
+            });
             container.querySelectorAll('.hotel-input').forEach(input => {
                 const dayId = parseInt(input.dataset.day);
                 input.addEventListener('change', function() {
@@ -1049,7 +1150,7 @@
         }
 
         // ================================================================
-        //  5. 每日行程渲染
+        //  6. 每日行程渲染
         // ================================================================
         let currentDayId = 1;
 
@@ -1066,6 +1167,8 @@
                     renderDayTabs();
                     renderDayDetail(d.id);
                     drawAltitude(currentDayId);
+                    // scroll to top of detail
+                    document.getElementById('dayDetailContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
                 };
                 container.appendChild(btn);
             });
@@ -1090,41 +1193,38 @@
                 html += `<div class="warning-banner"><strong>⚠️ 提示</strong>${day.warnings.join(' · ')}</div>`;
             }
 
-            const categories = [
-                { key: 'breakfast', emoji: '🍳', label: '早餐', value: day.breakfast },
-                { key: 'lunch', emoji: '🥢', label: '午餐', value: day.lunch },
-                { key: 'dinner', emoji: '🍽️', label: '晚餐', value: day.dinner }
+            // ---- 餐飲區塊（淺色背景） ----
+            const mealCategories = [
+                { key: 'breakfast', emoji: '🍳', label: '早餐', value: day.breakfast, cls: 'breakfast' },
+                { key: 'lunch', emoji: '🥢', label: '午餐', value: day.lunch, cls: 'lunch' },
+                { key: 'dinner', emoji: '🍽️', label: '晚餐', value: day.dinner, cls: 'dinner' }
             ];
-            categories.forEach(cat => {
-                html += renderItem(day.id, cat.key, `${cat.emoji} ${cat.label}`, cat.value);
+            mealCategories.forEach(cat => {
+                html += renderMealItem(day.id, cat.key, `${cat.emoji} ${cat.label}`, cat.value, cat.cls);
             });
 
+            // ---- 景點區塊（白色背景，加標題分隔） ----
+            html += `<div class="attractions-header">📍 景點</div>`;
             if (day.attractions && day.attractions.length) {
                 day.attractions.forEach((attr, idx) => {
-                    const label = `📍 ${attr.name}`;
+                    const label = attr.name;
                     const timeStr = attr.time ? ` · <span class="time-tag">${attr.time}</span>` : '';
-                    html += renderItem(day.id, 'attraction', label + timeStr, '', idx);
+                    html += renderAttractionItem(day.id, 'attraction', label + timeStr, '', idx);
                 });
             }
 
-            if (day.shops && day.shops.length) {
-                day.shops.forEach((shop, idx) => {
-                    const label = `🛍️ ${shop.name}`;
-                    const timeStr = shop.time ? ` · <span class="time-tag">${shop.time}</span>` : '';
-                    html += renderItem(day.id, 'shop', label + timeStr, '', idx);
-                });
-            }
-
-            html += renderItem(day.id, 'other', '📌 其他', '', -1);
+            // ---- 其他（淺色背景） ----
+            html += renderMealItem(day.id, 'other', '📌 其他', '', 'other');
 
             html += `</div>`;
             container.innerHTML = html;
 
-            // 綁定事件
+            // 綁定所有 add button
             container.querySelectorAll('.add-btn').forEach(btn => {
                 btn.onclick = function(e) {
                     e.stopPropagation();
-                    const form = this.closest('.day-item').querySelector('.add-note-form');
+                    const form = this.closest('.day-item-meal')?.querySelector('.add-note-form') ||
+                        this.closest('.day-item-attraction')?.querySelector('.add-note-form');
                     if (form) {
                         form.classList.toggle('open');
                         if (form.classList.contains('open')) {
@@ -1134,6 +1234,7 @@
                 };
             });
 
+            // 綁定 submit
             container.querySelectorAll('.submit-btn').forEach(btn => {
                 btn.onclick = function() {
                     const form = this.closest('.add-note-form');
@@ -1174,13 +1275,34 @@
             });
         }
 
-        function renderItem(dayId, category, label, defaultValue, index) {
+        function renderMealItem(dayId, category, label, defaultValue, cls) {
+            const key = getNoteKey(dayId, category, undefined);
+            const hasDefault = defaultValue && defaultValue.length > 0;
+            return `
+                <div class="day-item-meal ${cls}">
+                    <div class="item-label">
+                        <span>${label}</span>
+                        ${hasDefault ? `<span class="badge">${defaultValue}</span>` : ''}
+                        <button class="add-btn">＋</button>
+                    </div>
+                    <div class="note-area" id="note-area-${key}">
+                        <div class="empty-msg">⏳ 載入中...</div>
+                    </div>
+                    <div class="add-note-form">
+                        <input type="text" class="msg-input" placeholder="寫低分享... (可貼 Link)" />
+                        <button class="submit-btn" data-day-id="${dayId}" data-category="${category}">新增</button>
+                        <button class="cancel-btn">取消</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderAttractionItem(dayId, category, label, defaultValue, index) {
             const key = getNoteKey(dayId, category, index);
             const hasDefault = defaultValue && defaultValue.length > 0;
-            const idxAttr = index !== undefined ? `data-index="${index}"` : '';
-
+            const idxAttr = `data-index="${index}"`;
             return `
-                <div class="day-item" data-key="${key}">
+                <div class="day-item-attraction">
                     <div class="item-label">
                         <span>${label}</span>
                         ${hasDefault ? `<span class="badge">${defaultValue}</span>` : ''}
@@ -1199,17 +1321,17 @@
         }
 
         // ================================================================
-        //  6. Firebase 監聽
+        //  7. Firebase 監聽
         // ================================================================
         function setupAllListeners() {
             if (!db) {
                 document.querySelectorAll('.note-area').forEach(el => {
-                    el.innerHTML = `<div class="empty-msg" style="color:#C07A5A;">❌ Firebase 未連線，請檢查 Config</div>`;
+                    el.innerHTML = `<div class="empty-msg" style="color:#C07A5A;">❌ Firebase 未連線</div>`;
                 });
                 return;
             }
             DAYS_DATA.forEach(day => {
-                const cats = ['breakfast', 'lunch', 'dinner'];
+                const cats = ['breakfast', 'lunch', 'dinner', 'other'];
                 day.attractions.forEach((_, idx) => {
                     const key = getNoteKey(day.id, 'attraction', idx);
                     listenNote(key);
@@ -1218,10 +1340,6 @@
                     const key = getNoteKey(day.id, 'shop', idx);
                     listenNote(key);
                 });
-                for (let i = 0; i < 10; i++) {
-                    const key = getNoteKey(day.id, 'other', i);
-                    listenNote(key);
-                }
                 cats.forEach(cat => {
                     const key = getNoteKey(day.id, cat, undefined);
                     listenNote(key);
@@ -1267,16 +1385,15 @@
                     };
                 });
             }, (error) => {
-                console.warn('Firebase read error:', error);
                 const area = document.getElementById(`note-area-${key}`);
                 if (area) {
-                    area.innerHTML = `<div class="empty-msg" style="color:#C07A5A;">⚠️ 讀取失敗，請檢查 Firebase 權限設定</div>`;
+                    area.innerHTML = `<div class="empty-msg" style="color:#C07A5A;">⚠️ 讀取失敗</div>`;
                 }
             });
         }
 
         // ================================================================
-        //  7. 海拔線
+        //  8. 海拔線
         // ================================================================
         function drawAltitude(activeDayId) {
             const canvas = document.getElementById('altitudeCanvas');
@@ -1299,28 +1416,24 @@
                 padB = 16;
             const chartW = w - padL - padR;
             const chartH = h - padT - padB;
-
-            const minAlt = 1800;
-            const maxAlt = 3500;
-            const range = maxAlt - minAlt;
-
-            const points = data.map((d, i) => {
-                const x = padL + (i / (n - 1)) * chartW;
-                const y = padT + chartH - ((d.altitude - minAlt) / range) * chartH;
-                return { x, y, alt: d.altitude, id: d.id };
-            });
+            const minAlt = 1800,
+                maxAlt = 3500,
+                range = maxAlt - minAlt;
+            const points = data.map((d, i) => ({
+                x: padL + (i / (n - 1)) * chartW,
+                y: padT + chartH - ((d.altitude - minAlt) / range) * chartH,
+                alt: d.altitude,
+                id: d.id
+            }));
 
             ctx.clearRect(0, 0, w, h);
-
             const grad = ctx.createLinearGradient(0, padT, 0, padT + chartH);
             grad.addColorStop(0, '#E07A5F');
             grad.addColorStop(0.5, '#E9C46A');
             grad.addColorStop(1, '#6B9A6B');
             ctx.beginPath();
-            points.forEach((p, i) => {
-                if (i === 0) ctx.moveTo(p.x, p.y);
-                else ctx.lineTo(p.x, p.y);
-            });
+            points.forEach((p, i) => { if (i === 0) ctx.moveTo(p.x, p.y);
+                else ctx.lineTo(p.x, p.y); });
             ctx.strokeStyle = grad;
             ctx.lineWidth = 3;
             ctx.lineJoin = 'round';
@@ -1368,7 +1481,6 @@
                 ctx.textAlign = 'center';
                 ctx.fillText(p.alt + 'm', p.x, p.y - 10);
             });
-
             canvas._points = points;
         }
 
@@ -1376,15 +1488,10 @@
             const rect = this.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const points = this._points || [];
-            let found = null;
-            let minDist = 30;
-            points.forEach(p => {
-                const dist = Math.abs(x - p.x);
-                if (dist < minDist) {
-                    minDist = dist;
-                    found = p;
-                }
-            });
+            let found = null,
+                minDist = 30;
+            points.forEach(p => { const d = Math.abs(x - p.x); if (d < minDist) { minDist = d;
+                    found = p; } });
             if (found) {
                 currentDayId = found.id;
                 renderDayTabs();
@@ -1398,7 +1505,7 @@
         });
 
         // ================================================================
-        //  8. Tab 切換
+        //  9. Tab 切換
         // ================================================================
         document.getElementById('tabNav').addEventListener('click', (e) => {
             const btn = e.target.closest('button');
@@ -1411,39 +1518,32 @@
             if (page === 'daily') {
                 renderDayDetail(currentDayId);
                 drawAltitude(currentDayId);
-            }
-            if (page === 'overview' || page === 'other') {
+            } else {
                 drawAltitude(currentDayId);
             }
         });
 
         // ================================================================
-        //  9. Resize
+        //  10. Resize
         // ================================================================
         let resizeTimer;
         window.addEventListener('resize', () => {
             clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(() => {
-                drawAltitude(currentDayId);
-            }, 200);
+            resizeTimer = setTimeout(() => drawAltitude(currentDayId), 200);
         });
 
         // ================================================================
-        //  10. 啟動
+        //  11. 啟動
         // ================================================================
-        renderTripOverviewTable();
+        renderRouteTable();
+        renderStatusList();
         renderDayTabs();
         renderDayDetail(1);
         setupAllListeners();
         setTimeout(() => drawAltitude(1), 300);
-
         console.log('🌄 雲南滇西12日行程網頁已啟動！');
-        if (!db) {
-            console.warn('⚠️ Firebase 未連線，請檢查 Config 及網絡');
-        } else {
-            console.log('✅ Firebase 已連線');
-        }
+        if (!db) console.warn('⚠️ Firebase 未連線');
+        else console.log('✅ Firebase 已連線');
     </script>
-
 </body>
 </html>
