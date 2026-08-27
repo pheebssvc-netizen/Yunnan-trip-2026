@@ -26,7 +26,7 @@
             min-height: 100vh;
         }
 
-        /* ===== HEADER（溫暖大地色） ===== */
+        /* ===== HEADER ===== */
         .app-header {
             background: linear-gradient(145deg, #2D241A 0%, #3D2E22 100%);
             position: sticky;
@@ -490,14 +490,20 @@
             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
             margin-top: 2px;
         }
+
+        /* 頭部固定 */
         .day-detail .day-head {
+            position: sticky;
+            top: 130px;
+            z-index: 35;
+            background: #fff;
+            padding: 4px 0 8px 0;
+            margin-bottom: 8px;
+            border-bottom: 2px solid #EDE7E0;
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
             align-items: baseline;
-            margin-bottom: 8px;
-            border-bottom: 2px solid #EDE7E0;
-            padding-bottom: 8px;
         }
         .day-detail .day-head .day-label {
             font-size: 1.15rem;
@@ -517,6 +523,7 @@
             margin-top: 4px;
             width: 100%;
         }
+
         .day-detail .warning-banner {
             background: #FCE4D6;
             border-radius: 12px;
@@ -525,6 +532,7 @@
             font-size: 0.85rem;
             color: #A3512B;
             border-left: 4px solid #E07A5F;
+            margin-top: 6px;
         }
         .day-detail .warning-banner strong {
             display: block;
@@ -534,6 +542,49 @@
             color: #7A3A1A;
         }
 
+        /* 景點區塊（白色背景） */
+        .day-item-attraction {
+            margin-bottom: 12px;
+            border-bottom: 1px dashed #EDE7E0;
+            padding-bottom: 10px;
+        }
+        .day-item-attraction:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        .day-item-attraction .item-label {
+            font-weight: 600;
+            font-size: 0.92rem;
+            color: #2D241A;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .day-item-attraction .item-label .time-tag {
+            font-weight: 400;
+            font-size: 0.75rem;
+            color: #8A7A6A;
+        }
+        .day-item-attraction .item-label .add-btn {
+            margin-left: auto;
+            background: #E9C46A;
+            border: none;
+            border-radius: 30px;
+            padding: 2px 14px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #2D241A;
+            cursor: pointer;
+            transition: 0.15s;
+            flex-shrink: 0;
+        }
+        .day-item-attraction .item-label .add-btn:active {
+            transform: scale(0.92);
+            background: #D4B05A;
+        }
+
+        /* 餐飲區塊 - 淺色背景 */
         .day-item-meal {
             margin-bottom: 12px;
             border-radius: 12px;
@@ -584,47 +635,6 @@
             flex-shrink: 0;
         }
         .day-item-meal .item-label .add-btn:active {
-            transform: scale(0.92);
-            background: #D4B05A;
-        }
-
-        .day-item-attraction {
-            margin-bottom: 12px;
-            border-bottom: 1px dashed #EDE7E0;
-            padding-bottom: 10px;
-        }
-        .day-item-attraction:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-        }
-        .day-item-attraction .item-label {
-            font-weight: 600;
-            font-size: 0.92rem;
-            color: #2D241A;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
-        .day-item-attraction .item-label .time-tag {
-            font-weight: 400;
-            font-size: 0.75rem;
-            color: #8A7A6A;
-        }
-        .day-item-attraction .item-label .add-btn {
-            margin-left: auto;
-            background: #E9C46A;
-            border: none;
-            border-radius: 30px;
-            padding: 2px 14px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #2D241A;
-            cursor: pointer;
-            transition: 0.15s;
-            flex-shrink: 0;
-        }
-        .day-item-attraction .item-label .add-btn:active {
             transform: scale(0.92);
             background: #D4B05A;
         }
@@ -737,7 +747,7 @@
             font-size: 0.85rem;
             font-weight: 600;
             color: #2B3A67;
-            margin: 14px 0 10px 0;
+            margin: 0 0 10px 0;
             padding-bottom: 4px;
             border-bottom: 2px solid #EDE7E0;
             display: flex;
@@ -772,14 +782,9 @@
             touch-action: none;
             border-radius: 8px;
         }
+        /* 刪除 alt-label，避免出現大量重複數字 */
         .altitude-footer .alt-label {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.55rem;
-            color: rgba(80, 70, 60, 0.35);
-            padding: 0 4px;
-            margin-top: -4px;
-            letter-spacing: 0.3px;
+            display: none;
         }
 
         /* ===== Toast 提示 ===== */
@@ -866,6 +871,9 @@
             .day-tabs button {
                 font-size: 0.7rem;
                 padding: 6px 12px;
+            }
+            .day-detail .day-head {
+                top: 110px;
             }
             .day-detail .day-head .day-label {
                 font-size: 1.0rem;
@@ -1081,7 +1089,7 @@
     <!-- ===== 底部海拔線 ===== -->
     <div class="altitude-footer" id="altitudeFooter">
         <canvas id="altitudeCanvas"></canvas>
-        <div class="alt-label" id="altLabel"></div>
+        <!-- 已移除 alt-label 避免大量數字 -->
     </div>
 
     <!-- ===== Toast 容器 ===== -->
@@ -1561,12 +1569,11 @@
                     renderDayTabs();
                     renderDayDetail(d.id);
                     drawAltitude(currentDayId);
-                    // 改為只 scroll 到 Day Head，保留 120px 空間
                     setTimeout(() => {
-                        const head = document.querySelector('.day-detail .day-head');
-                        if (head) {
-                            const topOffset = 120;
-                            const elementPosition = head.getBoundingClientRect().top + window.pageYOffset;
+                        const detail = document.querySelector('.day-detail');
+                        if (detail) {
+                            const topOffset = 130;
+                            const elementPosition = detail.getBoundingClientRect().top + window.pageYOffset;
                             window.scrollTo({ top: elementPosition - topOffset, behavior: 'smooth' });
                         }
                     }, 100);
@@ -1594,15 +1601,7 @@
                 html += `<div class="warning-banner"><strong>⚠️ 提示</strong>${day.warnings.join(' · ')}</div>`;
             }
 
-            const mealCategories = [
-                { key: 'breakfast', emoji: '🍳', label: '早餐', value: day.breakfast, cls: 'breakfast' },
-                { key: 'lunch', emoji: '🥢', label: '午餐', value: day.lunch, cls: 'lunch' },
-                { key: 'dinner', emoji: '🍽️', label: '晚餐', value: day.dinner, cls: 'dinner' }
-            ];
-            mealCategories.forEach(cat => {
-                html += renderMealItem(day.id, cat.key, `${cat.emoji} ${cat.label}`, cat.value, cat.cls);
-            });
-
+            // ===== 先放景點 =====
             html += `<div class="attractions-header">📍 景點</div>`;
             if (day.attractions && day.attractions.length) {
                 day.attractions.forEach((attr, idx) => {
@@ -1612,11 +1611,21 @@
                 });
             }
 
-            html += renderMealItem(day.id, 'other', '📌 其他', '', 'other');
+            // ===== 然後放餐飲 =====
+            const mealCategories = [
+                { key: 'breakfast', emoji: '🍳', label: '早餐', value: day.breakfast, cls: 'breakfast' },
+                { key: 'lunch', emoji: '🥢', label: '午餐', value: day.lunch, cls: 'lunch' },
+                { key: 'dinner', emoji: '🍽️', label: '晚餐', value: day.dinner, cls: 'dinner' },
+                { key: 'other', emoji: '📌', label: '其他', value: '', cls: 'other' }
+            ];
+            mealCategories.forEach(cat => {
+                html += renderMealItem(day.id, cat.key, `${cat.emoji} ${cat.label}`, cat.value, cat.cls);
+            });
 
             html += `</div>`;
             container.innerHTML = html;
 
+            // 綁定事件（同之前）
             container.querySelectorAll('.add-btn').forEach(btn => {
                 btn.onclick = function(e) {
                     e.stopPropagation();
@@ -2034,7 +2043,7 @@
             startPulseAnimation();
         }, 300);
 
-        console.log('🌄 雲南滇西12日行程網頁已啟動！（實用美學版）');
+        console.log('🌄 雲南滇西12日行程網頁已啟動！（順序修正版）');
         if (!db) console.warn('⚠️ Firebase 未連線');
         else console.log('✅ Firebase 已連線');
     </script>
