@@ -26,7 +26,7 @@
             min-height: 100vh;
         }
 
-        /* ===== HEADER（加入倒數計時） ===== */
+        /* ===== HEADER ===== */
         .app-header {
             background: linear-gradient(145deg, #2D241A 0%, #3D2E22 100%);
             position: sticky;
@@ -44,7 +44,6 @@
             letter-spacing: 2px;
             text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
-        /* 倒數計時 */
         .countdown {
             font-size: 0.85rem;
             color: #E9C46A;
@@ -264,11 +263,10 @@
             }
         }
 
-        /* ===== 固定地圖按鈕（圓形 · 陰影 · 海拔線上方） ===== */
+        /* ===== 固定地圖按鈕 ===== */
         .map-fab {
             position: fixed;
             bottom: 120px;
-            /* 海拔線高度 + 空間 */
             right: 16px;
             z-index: 60;
             width: 56px;
@@ -327,7 +325,6 @@
             }
         }
 
-        /* ===== 以下為原有 style（重要資訊、每日行程等） ===== */
         /* ===== 重要資訊 ===== */
         .other-section {
             background: #fff;
@@ -631,8 +628,6 @@
             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
             margin-top: 2px;
         }
-
-        /* 頭部固定 */
         .day-detail .day-head {
             position: sticky;
             top: 130px;
@@ -664,7 +659,6 @@
             margin-top: 4px;
             width: 100%;
         }
-
         .day-detail .warning-banner {
             background: #FCE4D6;
             border-radius: 12px;
@@ -683,7 +677,6 @@
             color: #7A3A1A;
         }
 
-        /* 景點區塊 */
         .day-item-attraction {
             margin-bottom: 12px;
             border-bottom: 1px dashed #EDE7E0;
@@ -725,7 +718,6 @@
             background: #D4B05A;
         }
 
-        /* 餐飲區塊 */
         .day-item-meal {
             margin-bottom: 12px;
             border-radius: 12px;
@@ -927,7 +919,7 @@
             display: none;
         }
 
-        /* ===== Toast 提示 ===== */
+        /* ===== Toast ===== */
         .toast-container {
             position: fixed;
             top: 50%;
@@ -1054,6 +1046,16 @@
             .toast-container .toast-title {
                 font-size: 0.95rem;
             }
+            .map-fab {
+                bottom: 105px;
+                right: 12px;
+                width: 48px;
+                height: 48px;
+                font-size: 1.2rem;
+            }
+            .map-fab .tooltip {
+                display: none;
+            }
         }
         @media (max-width: 380px) {
             .day-tabs button {
@@ -1071,7 +1073,6 @@
     <!-- ===== HEADER ===== -->
     <header class="app-header">
         <h1>🌄 雲南滇西12日 · 4人同行</h1>
-        <!-- 倒數計時 -->
         <div class="countdown" id="countdown">⏳ 載入中...</div>
         <div class="header-divider">
             <span class="dot"></span>
@@ -1106,7 +1107,7 @@
             <div style="font-size:0.7rem;color:#8A7A6A;margin-top:8px;">💡 住宿確認狀態及酒店名稱請到「重要資訊」頁面修改</div>
         </div>
 
-        <!-- ===== 天氣小工具（放喺總覽頁底部） ===== -->
+        <!-- 天氣小工具 -->
         <div class="overview-card" id="weatherCard">
             <h2>☀️ 今日天氣</h2>
             <div id="weatherContainer">
@@ -1128,14 +1129,12 @@
 
     <!-- ===== PAGE 3: 重要資訊 ===== -->
     <div class="page" id="page-other">
-        <!-- 住宿可編輯 -->
         <div class="other-section">
             <h3>🏨 住宿編輯（可修改酒店名及狀態）</h3>
             <div class="status-list" id="statusList"></div>
             <div style="font-size:0.7rem;color:#8A7A6A;margin-top:6px;">💡 修改後會自動儲存，並同步到「每日行程」頭部</div>
         </div>
 
-        <!-- 航班 -->
         <div class="other-section">
             <h3>✈️ 航班</h3>
             <div class="flight-row"><span class="label">去程 (11/11)</span><span class="value">MU9658 21:15 HKG → 23:55 KMG</span></div>
@@ -1143,14 +1142,12 @@
             <div class="flight-row" style="border-bottom:none;"><span class="label">人均機票</span><span class="value">HK$2,373</span></div>
         </div>
 
-        <!-- 包車 -->
         <div class="other-section">
             <h3>🚗 包車</h3>
             <div class="flight-row"><span class="label">天數</span><span class="value">10天 (Day 2 → Day 11)</span></div>
             <div class="flight-row" style="border-bottom:none;"><span class="label">費用</span><span class="value">¥8,600 (已確認)</span></div>
         </div>
 
-        <!-- 預算 -->
         <div class="other-section">
             <h3>💰 預算 (4人)</h3>
             <div class="flight-row"><span class="label">包車</span><span class="value">¥8,600</span></div>
@@ -1162,7 +1159,6 @@
             <div class="flight-row" style="border-bottom:none;font-weight:600;"><span class="label">人均 (港幣 連機票)</span><span class="value">約 HK$10,200–11,800</span></div>
         </div>
 
-        <!-- 包車詳情 -->
         <div class="other-section">
             <h3>🚗 包車詳情</h3>
             <div class="row"><span class="lbl">基礎用車 (10天 × ¥800)</span><span class="val">¥8,000</span></div>
@@ -1176,7 +1172,6 @@
             </div>
         </div>
 
-        <!-- 高鐵 -->
         <div class="other-section">
             <h3>🚄 高鐵</h3>
             <div class="train-input-area" id="trainInputArea">
@@ -1192,7 +1187,6 @@
             <div style="font-size:0.78rem;color:#6B5A4A;margin-top:6px;">⏰ 昆明→大理：10月29日 14:30 起售</div>
         </div>
 
-        <!-- 海拔 & 洗澡提醒 -->
         <div class="other-section">
             <h3>⚠️ 海拔 &amp; 洗澡提醒</h3>
             <div class="altitude-table">
@@ -1204,7 +1198,6 @@
             </div>
         </div>
 
-        <!-- 行李清單 -->
         <div class="other-section">
             <h3>🎒 建議行李</h3>
             <div class="packing-grid">
@@ -1224,7 +1217,6 @@
             </div>
         </div>
 
-        <!-- 團友備註 -->
         <div class="other-section">
             <h3>💬 團友備註</h3>
             <div id="groupNoteContainer">
@@ -1244,7 +1236,7 @@
         <canvas id="altitudeCanvas"></canvas>
     </div>
 
-    <!-- ===== 固定地圖按鈕（圓形 · 每頁都有） ===== -->
+    <!-- ===== 固定地圖按鈕 ===== -->
     <a href="map.html" class="map-fab" id="mapFab" aria-label="查看地圖">
         🗺️
         <span class="tooltip">查看地圖</span>
@@ -1259,7 +1251,7 @@
     </div>
 
     <!-- ============================================================ -->
-    <!-- JAVASCRIPT（下半段） -->
+    <!-- JAVASCRIPT -->
     <!-- ============================================================ -->
     <script>
         // ================================================================
@@ -1542,36 +1534,60 @@
             warnings: ["🎉 旅程完結！"]
         }];
 
+        const TIPS = [
+            "今晚唔好沖涼住啦～",
+            "海拔越高，心跳越快 ❤️",
+            "記住飲多啲水，防高山症！",
+            "慢啲行，享受每一刻 🚶",
+            "影多啲相，留低美好回憶 📸",
+            "天氣乾燥，記得搽潤唇膏！",
+            "夜晚會好凍，著多件衫 🧥",
+            "呢度嘅星空超靚，記得抬頭睇 ✨",
+            "當地酥油茶好暖胃，試吓！",
+            "今日行程好正，慢慢享受～"
+        ];
+
         // ================================================================
-        //  3. 倒數計時
+        //  3. 工具函數
+        // ================================================================
+        function getNoteKey(dayId, category, index) {
+            if (category === 'attraction') return `day-${dayId}-attr-${index}`;
+            if (category === 'shop') return `day-${dayId}-shop-${index}`;
+            if (category === 'other') return `day-${dayId}-other-${index}`;
+            return `day-${dayId}-${category}`;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ================================================================
+        //  4. 倒數計時
         // ================================================================
         function updateCountdown() {
             const target = new Date('2026-11-11T21:15:00+08:00').getTime();
             const now = Date.now();
             const diff = target - now;
-
             const el = document.getElementById('countdown');
             if (diff <= 0) {
                 el.innerHTML = '🎉 旅程已開始！';
                 return;
             }
-
             const days = Math.floor(diff / (1000 * 60 * 60 * 24));
             const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
             el.innerHTML =
                 `⏳ 距離出發仲有 <span class="highlight">${days}</span> 日 <span class="highlight">${hours}</span> 小時 <span class="highlight">${minutes}</span> 分鐘 <span class="highlight">${seconds}</span> 秒`;
         }
 
         // ================================================================
-        //  4. 天氣小工具（OpenWeatherMap）
+        //  5. 天氣小工具
         // ================================================================
-        // ⚠️ 請換上你自己嘅 OpenWeatherMap API Key
         const WEATHER_API_KEY = '你的OpenWeatherMap_API_Key';
 
-        // 每日對應城市（用於天氣查詢）
         const dayCityMap = {
             1: 'Kunming',
             2: 'Dali',
@@ -1587,7 +1603,6 @@
             12: 'Kunming'
         };
 
-        // 城市顯示名稱（中文）
         const cityNameMap = {
             'Kunming': '昆明',
             'Dali': '大理',
@@ -1597,7 +1612,6 @@
             'Shangri-La': '香格里拉'
         };
 
-        // 天氣圖示對應
         const weatherIconMap = {
             'Clear': '☀️',
             'Clouds': '☁️',
@@ -1620,9 +1634,8 @@
             const now = new Date();
             const start = new Date('2026-11-11');
             const diff = Math.floor((now - start) / (1000 * 60 * 60 * 24));
-            // Day 1 = 0, Day 12 = 11
-            if (diff < 0) return 1; // 出發前顯示 Day 1
-            if (diff >= 12) return 12; // 完結後顯示 Day 12
+            if (diff < 0) return 1;
+            if (diff >= 12) return 12;
             return diff + 1;
         }
 
@@ -1632,7 +1645,6 @@
             const cityKey = dayCityMap[dayIndex] || 'Kunming';
             const cityName = cityNameMap[cityKey] || cityKey;
 
-            // 如果冇 API Key，顯示提示
             if (WEATHER_API_KEY === '你的OpenWeatherMap_API_Key') {
                 container.innerHTML = `
                     <div class="weather-loading">⚠️ 請設定 OpenWeatherMap API Key</div>
@@ -1640,7 +1652,6 @@
                 return;
             }
 
-            // 用城市名查天氣（先試英文名）
             const url =
                 `https://api.openweathermap.org/data/2.5/weather?q=${cityKey}&appid=${WEATHER_API_KEY}&units=metric&lang=zh_tw`;
 
@@ -1680,13 +1691,617 @@
         }
 
         // ================================================================
-        //  5. 其他原有功能（總覽、狀態、每日行程、海拔線等）
+        //  6. 行程總覽
         // ================================================================
-        // ...（因為篇幅關係，呢度保留原有所有函數：renderRouteTable, renderStatusList, renderDayTabs, renderDayDetail, setupAllListeners, drawAltitude, showToast, startPulseAnimation 等）
-        // 為確保完整，我將喺下面繼續貼出剩餘嘅 JavaScript
+        function renderRouteTable() {
+            const tbody = document.getElementById('routeTableBody');
+            tbody.innerHTML = '';
+            DAYS_DATA.forEach(d => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="day-cell">Day ${d.id}</td>
+                    <td>${d.date}</td>
+                    <td class="route-cell">${d.title}</td>
+                    <td class="place-cell">${d.place || '—'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
 
         // ================================================================
-        //  6. 啟動
+        //  7. 狀態列表
+        // ================================================================
+        function renderStatusList() {
+            const container = document.getElementById('statusList');
+            container.innerHTML = '';
+            DAYS_DATA.forEach(d => {
+                if (d.hotel && d.hotel !== '-') {
+                    const storedHotel = localStorage.getItem(`hotelName-${d.id}`);
+                    const storedStatus = localStorage.getItem(`hotelStatus-${d.id}`);
+                    if (storedHotel !== null) d.hotel = storedHotel;
+                    if (storedStatus !== null) d.hotelStatus = storedStatus;
+
+                    const row = document.createElement('div');
+                    row.className = 'row';
+                    row.innerHTML = `
+                        <span class="day-label">Day ${d.id}</span>
+                        <input type="text" class="hotel-input" data-day="${d.id}" value="${escapeHtml(d.hotel)}" placeholder="酒店名" />
+                        <input type="text" class="status-input" data-day="${d.id}" value="${escapeHtml(d.hotelStatus)}" placeholder="狀態" />
+                    `;
+                    container.appendChild(row);
+                }
+            });
+
+            container.querySelectorAll('.hotel-input').forEach(input => {
+                input.addEventListener('change', function() {
+                    const dayId = parseInt(this.dataset.day);
+                    const val = this.value.trim();
+                    localStorage.setItem(`hotelName-${dayId}`, val);
+                    const dayData = DAYS_DATA.find(d => d.id === dayId);
+                    if (dayData) dayData.hotel = val;
+                    updateDailyHeaderIfVisible(dayId);
+                });
+            });
+
+            container.querySelectorAll('.status-input').forEach(input => {
+                input.addEventListener('change', function() {
+                    const dayId = parseInt(this.dataset.day);
+                    const val = this.value.trim();
+                    localStorage.setItem(`hotelStatus-${dayId}`, val);
+                    const dayData = DAYS_DATA.find(d => d.id === dayId);
+                    if (dayData) dayData.hotelStatus = val;
+                    updateDailyHeaderIfVisible(dayId);
+                });
+            });
+        }
+
+        function updateDailyHeaderIfVisible(dayId) {
+            const dailyPage = document.getElementById('page-daily');
+            if (dailyPage.classList.contains('active')) {
+                const currentDay = currentDayId;
+                if (currentDay === dayId) {
+                    renderDayDetail(currentDay);
+                }
+            }
+        }
+
+        // ================================================================
+        //  8. 高鐵輸入
+        // ================================================================
+        function initTrainInputs() {
+            const inputs = document.querySelectorAll('.train-input');
+            inputs.forEach(input => {
+                const key = `train-${input.dataset.train}`;
+                const saved = localStorage.getItem(key);
+                if (saved !== null) input.value = saved;
+                input.addEventListener('change', function() {
+                    localStorage.setItem(`train-${this.dataset.train}`, this.value.trim());
+                });
+            });
+        }
+
+        // ================================================================
+        //  9. 團友備註
+        // ================================================================
+        function renderGroupNotes() {
+            const container = document.getElementById('groupNoteContainer');
+            const notes = JSON.parse(localStorage.getItem('groupNotes') || '[]');
+            const emptyMsg = document.getElementById('groupNoteEmpty');
+
+            container.querySelectorAll('.group-note-item').forEach(el => el.remove());
+
+            if (notes.length === 0) {
+                emptyMsg.style.display = 'block';
+                return;
+            }
+            emptyMsg.style.display = 'none';
+
+            notes.forEach((note, idx) => {
+                const div = document.createElement('div');
+                div.className = 'group-note-item';
+                div.innerHTML = `
+                    <span class="note-text">${escapeHtml(note)}</span>
+                    <button class="del-btn" data-idx="${idx}">✕</button>
+                `;
+                container.appendChild(div);
+            });
+
+            container.querySelectorAll('.group-note-item .del-btn').forEach(btn => {
+                btn.onclick = function() {
+                    const idx = parseInt(this.dataset.idx);
+                    const notes = JSON.parse(localStorage.getItem('groupNotes') || '[]');
+                    notes.splice(idx, 1);
+                    localStorage.setItem('groupNotes', JSON.stringify(notes));
+                    renderGroupNotes();
+                };
+            });
+        }
+
+        function addGroupNote() {
+            const input = document.getElementById('groupNoteInput');
+            const text = input.value.trim();
+            if (!text) { alert('請輸入內容'); return; }
+            const notes = JSON.parse(localStorage.getItem('groupNotes') || '[]');
+            notes.push(text);
+            localStorage.setItem('groupNotes', JSON.stringify(notes));
+            input.value = '';
+            renderGroupNotes();
+        }
+
+        // ================================================================
+        //  10. 每日行程
+        // ================================================================
+        let currentDayId = 1;
+
+        function renderDayTabs() {
+            const container = document.getElementById('dayTabs');
+            container.innerHTML = '';
+            DAYS_DATA.forEach(d => {
+                const btn = document.createElement('button');
+                btn.textContent = `Day ${d.id} (${d.date})`;
+                btn.dataset.dayId = d.id;
+                if (d.id === currentDayId) btn.classList.add('active');
+                btn.onclick = () => {
+                    currentDayId = d.id;
+                    renderDayTabs();
+                    renderDayDetail(d.id);
+                    drawAltitude(currentDayId);
+                    setTimeout(() => {
+                        const detail = document.querySelector('.day-detail');
+                        if (detail) {
+                            const topOffset = 130;
+                            const elementPosition = detail.getBoundingClientRect().top + window.pageYOffset;
+                            window.scrollTo({ top: elementPosition - topOffset, behavior: 'smooth' });
+                        }
+                    }, 100);
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        function renderDayDetail(dayId) {
+            const container = document.getElementById('dayDetailContainer');
+            const day = DAYS_DATA.find(d => d.id === dayId);
+            if (!day) return;
+
+            let html = `<div class="day-detail">`;
+
+            html += `
+                <div class="day-head">
+                    <span class="day-label">Day ${day.id} · ${day.date} (${day.weekday})</span>
+                    <span class="day-sub">${day.title}</span>
+                    ${day.hotel && day.hotel !== '-' ? `<span class="hotel">🏨 ${day.hotel} ${day.hotelStatus}</span>` : ''}
+                </div>
+            `;
+
+            if (day.warnings && day.warnings.length) {
+                html += `<div class="warning-banner"><strong>⚠️ 提示</strong>${day.warnings.join(' · ')}</div>`;
+            }
+
+            // 景點（先）
+            html += `<div class="attractions-header">📍 景點</div>`;
+            if (day.attractions && day.attractions.length) {
+                day.attractions.forEach((attr, idx) => {
+                    const label = attr.name;
+                    const timeStr = attr.time ? ` · <span class="time-tag">${attr.time}</span>` : '';
+                    html += renderAttractionItem(day.id, 'attraction', label + timeStr, '', idx);
+                });
+            }
+
+            // 餐飲（後）
+            const mealCategories = [
+                { key: 'breakfast', emoji: '🍳', label: '早餐', value: day.breakfast, cls: 'breakfast' },
+                { key: 'lunch', emoji: '🥢', label: '午餐', value: day.lunch, cls: 'lunch' },
+                { key: 'dinner', emoji: '🍽️', label: '晚餐', value: day.dinner, cls: 'dinner' },
+                { key: 'other', emoji: '📌', label: '其他', value: '', cls: 'other' }
+            ];
+            mealCategories.forEach(cat => {
+                html += renderMealItem(day.id, cat.key, `${cat.emoji} ${cat.label}`, cat.value, cat.cls);
+            });
+
+            html += `</div>`;
+            container.innerHTML = html;
+
+            container.querySelectorAll('.add-btn').forEach(btn => {
+                btn.onclick = function(e) {
+                    e.stopPropagation();
+                    const form = this.closest('.day-item-meal')?.querySelector('.add-note-form') ||
+                        this.closest('.day-item-attraction')?.querySelector('.add-note-form');
+                    if (form) {
+                        form.classList.toggle('open');
+                        if (form.classList.contains('open')) {
+                            form.querySelector('.msg-input')?.focus();
+                        }
+                    }
+                };
+            });
+
+            container.querySelectorAll('.submit-btn').forEach(btn => {
+                btn.onclick = function() {
+                    const form = this.closest('.add-note-form');
+                    const dayId = parseInt(this.dataset.dayId);
+                    const category = this.dataset.category;
+                    const index = this.dataset.index !== undefined ? parseInt(this.dataset.index) : undefined;
+                    const msgInput = form.querySelector('.msg-input');
+                    const text = msgInput.value.trim();
+                    if (!text) { alert('請輸入內容'); return; }
+                    if (!db) {
+                        alert('❌ Firebase 未連線');
+                        return;
+                    }
+                    const key = getNoteKey(dayId, category, index);
+                    db.ref(key).once('value').then(snap => {
+                        const existing = snap.val() || [];
+                        existing.push({ text, time: Date.now() });
+                        return db.ref(key).set(existing);
+                    }).then(() => {
+                        msgInput.value = '';
+                        form.classList.remove('open');
+                    }).catch(e => {
+                        if (e.code === 'PERMISSION_DENIED') {
+                            alert('❌ 權限不足！請去 Firebase 控制台將 Realtime Database 規則設為「測試模式」');
+                        } else {
+                            alert('儲存失敗: ' + e.message);
+                        }
+                    });
+                };
+            });
+
+            container.querySelectorAll('.cancel-btn').forEach(btn => {
+                btn.onclick = function() {
+                    const form = this.closest('.add-note-form');
+                    form.querySelector('.msg-input').value = '';
+                    form.classList.remove('open');
+                };
+            });
+        }
+
+        function renderMealItem(dayId, category, label, defaultValue, cls) {
+            const key = getNoteKey(dayId, category, undefined);
+            const hasDefault = defaultValue && defaultValue.length > 0;
+            return `
+                <div class="day-item-meal ${cls}">
+                    <div class="item-label">
+                        <span>${label}</span>
+                        ${hasDefault ? `<span class="badge">${defaultValue}</span>` : ''}
+                        <button class="add-btn">＋</button>
+                    </div>
+                    <div class="note-area" id="note-area-${key}">
+                        <div class="empty-msg">⏳ 載入中...</div>
+                    </div>
+                    <div class="add-note-form">
+                        <input type="text" class="msg-input" placeholder="寫低分享... (可貼 Link)" />
+                        <button class="submit-btn" data-day-id="${dayId}" data-category="${category}">新增</button>
+                        <button class="cancel-btn">取消</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderAttractionItem(dayId, category, label, defaultValue, index) {
+            const key = getNoteKey(dayId, category, index);
+            const hasDefault = defaultValue && defaultValue.length > 0;
+            const idxAttr = `data-index="${index}"`;
+            return `
+                <div class="day-item-attraction">
+                    <div class="item-label">
+                        <span>${label}</span>
+                        ${hasDefault ? `<span class="badge">${defaultValue}</span>` : ''}
+                        <button class="add-btn">＋</button>
+                    </div>
+                    <div class="note-area" id="note-area-${key}">
+                        <div class="empty-msg">⏳ 載入中...</div>
+                    </div>
+                    <div class="add-note-form">
+                        <input type="text" class="msg-input" placeholder="寫低分享... (可貼 Link)" />
+                        <button class="submit-btn" data-day-id="${dayId}" data-category="${category}" ${idxAttr}>新增</button>
+                        <button class="cancel-btn">取消</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ================================================================
+        //  11. Firebase 監聽
+        // ================================================================
+        function setupAllListeners() {
+            if (!db) {
+                document.querySelectorAll('.note-area').forEach(el => {
+                    el.innerHTML = `<div class="empty-msg" style="color:#C07A5A;">❌ Firebase 未連線</div>`;
+                });
+                return;
+            }
+            DAYS_DATA.forEach(day => {
+                const cats = ['breakfast', 'lunch', 'dinner', 'other'];
+                day.attractions.forEach((_, idx) => {
+                    const key = getNoteKey(day.id, 'attraction', idx);
+                    listenNote(key);
+                });
+                day.shops.forEach((_, idx) => {
+                    const key = getNoteKey(day.id, 'shop', idx);
+                    listenNote(key);
+                });
+                cats.forEach(cat => {
+                    const key = getNoteKey(day.id, cat, undefined);
+                    listenNote(key);
+                });
+            });
+        }
+
+        function listenNote(key) {
+            if (!db) return;
+            db.ref(key).on('value', (snap) => {
+                const notes = snap.val() || [];
+                const area = document.getElementById(`note-area-${key}`);
+                if (!area) return;
+                if (notes.length === 0) {
+                    area.innerHTML = `<div class="empty-msg">💬 未有備註 · 你嚟加第一條！</div>`;
+                    return;
+                }
+                let html = '';
+                notes.forEach((note, idx) => {
+                    const text = note.text || '';
+                    const linkedText = text.replace(
+                        /(https?:\/\/[^\s]+)/g,
+                        '<a href="$1" target="_blank" rel="noopener">$1</a>'
+                    );
+                    html += `
+                        <div class="note-item">
+                            <span class="note-text">${linkedText}</span>
+                            <button class="del-btn" data-key="${key}" data-idx="${idx}">✕</button>
+                        </div>
+                    `;
+                });
+                area.innerHTML = html;
+                area.querySelectorAll('.del-btn').forEach(btn => {
+                    btn.onclick = function() {
+                        const k = this.dataset.key;
+                        const idx = parseInt(this.dataset.idx);
+                        if (!db) return;
+                        db.ref(k).once('value').then(snap => {
+                            const arr = snap.val() || [];
+                            arr.splice(idx, 1);
+                            db.ref(k).set(arr);
+                        }).catch(e => alert('刪除失敗: ' + e.message));
+                    };
+                });
+            }, (error) => {
+                const area = document.getElementById(`note-area-${key}`);
+                if (area) {
+                    area.innerHTML = `<div class="empty-msg" style="color:#C07A5A;">⚠️ 讀取失敗</div>`;
+                }
+            });
+        }
+
+        // ================================================================
+        //  12. 海拔線
+        // ================================================================
+        let toastTimer = null;
+
+        function showToast(dayId) {
+            const day = DAYS_DATA.find(d => d.id === dayId);
+            if (!day) return;
+            const container = document.getElementById('toastContainer');
+            document.getElementById('toastIcon').textContent = '🏔️';
+            document.getElementById('toastTitle').textContent = `Day ${day.id} · ${day.place}`;
+            document.getElementById('toastSub').textContent = `${day.altitude}m`;
+
+            let tip = TIPS[Math.floor(Math.random() * TIPS.length)];
+            if (day.warnings && day.warnings.length) {
+                const raw = day.warnings[0];
+                if (raw.includes('嚴禁洗頭') || raw.includes('唔沖涼')) {
+                    tip = '今晚唔好沖涼住啦～';
+                } else if (raw.includes('車程')) {
+                    tip = '🚗 車程較長，記得準備小食～';
+                } else if (raw.includes('海拔')) {
+                    tip = '⛰️ 留意高山反應，慢慢行！';
+                } else {
+                    tip = '💡 ' + raw.replace(/⚠️/g, '').trim();
+                }
+            }
+            document.getElementById('toastTip').textContent = tip;
+
+            container.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                container.classList.remove('show');
+            }, 2800);
+        }
+
+        function drawAltitude(activeDayId) {
+            const canvas = document.getElementById('altitudeCanvas');
+            const rect = canvas.parentElement.getBoundingClientRect();
+            const dpr = window.devicePixelRatio || 1;
+            const w = rect.width - 12;
+            const h = 80;
+            canvas.width = w * dpr;
+            canvas.height = h * dpr;
+            canvas.style.width = w + 'px';
+            canvas.style.height = h + 'px';
+            const ctx = canvas.getContext('2d');
+            ctx.scale(dpr, dpr);
+
+            const data = DAYS_DATA;
+            const n = data.length;
+            const padL = 8,
+                padR = 8,
+                padT = 14,
+                padB = 16;
+            const chartW = w - padL - padR;
+            const chartH = h - padT - padB;
+            const minAlt = 1800,
+                maxAlt = 3500,
+                range = maxAlt - minAlt;
+
+            const points = data.map((d, i) => {
+                const x = padL + (i / (n - 1)) * chartW;
+                const y = padT + chartH - ((d.altitude - minAlt) / range) * chartH;
+                const wave = Math.sin(i / n * Math.PI * 2) * 1.2;
+                return { x, y: y + wave, alt: d.altitude, id: d.id, place: d.place };
+            });
+
+            ctx.clearRect(0, 0, w, h);
+
+            const bgGrad = ctx.createLinearGradient(0, padT, 0, padT + chartH);
+            bgGrad.addColorStop(0, 'rgba(200, 215, 230, 0.05)');
+            bgGrad.addColorStop(0.5, 'rgba(220, 200, 180, 0.05)');
+            bgGrad.addColorStop(1, 'rgba(210, 180, 170, 0.05)');
+            ctx.fillStyle = bgGrad;
+            ctx.fillRect(padL, padT, chartW, chartH);
+
+            const grad = ctx.createLinearGradient(0, padT, 0, padT + chartH);
+            grad.addColorStop(0, '#1A3A5C');
+            grad.addColorStop(0.3, '#2D6A4F');
+            grad.addColorStop(0.6, '#B88A3A');
+            grad.addColorStop(1, '#D97A4A');
+
+            ctx.beginPath();
+            points.forEach((p, i) => {
+                if (i === 0) ctx.moveTo(p.x, p.y);
+                else {
+                    const cpX = (points[i - 1].x + p.x) / 2;
+                    const cpY = (points[i - 1].y + p.y) / 2 + (i % 2 === 0 ? 1 : -1) * 0.8;
+                    ctx.quadraticCurveTo(cpX, cpY, p.x, p.y);
+                }
+            });
+            ctx.strokeStyle = grad;
+            ctx.lineWidth = 3.5;
+            ctx.lineJoin = 'round';
+            ctx.lineCap = 'round';
+            ctx.stroke();
+
+            const y3000 = padT + chartH - ((3000 - minAlt) / range) * chartH;
+            ctx.beginPath();
+            ctx.moveTo(padL, y3000);
+            ctx.lineTo(w - padR, y3000);
+            ctx.strokeStyle = 'rgba(224, 122, 95, 0.30)';
+            ctx.lineWidth = 1.8;
+            ctx.setLineDash([4, 6]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.fillStyle = 'rgba(224, 122, 95, 0.40)';
+            ctx.font = '8px sans-serif';
+            ctx.fillText('3000m', 2, y3000 - 3);
+
+            points.forEach((p) => {
+                const isActive = p.id === activeDayId;
+                const altRatio = (p.alt - minAlt) / range;
+                const r = Math.round(50 + altRatio * 180);
+                const g = Math.round(180 - altRatio * 140);
+                const b = Math.round(80 - altRatio * 60);
+                const color = `rgb(${r}, ${g}, ${b})`;
+
+                const size = isActive ? 9 : 6.5;
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate(Math.PI / 4);
+                ctx.beginPath();
+                ctx.rect(-size / 2, -size / 2, size, size);
+                ctx.fillStyle = color;
+                ctx.shadowColor = isActive ? 'rgba(224, 122, 95, 0.25)' : 'rgba(0,0,0,0.04)';
+                ctx.shadowBlur = isActive ? 10 : 2;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+                ctx.restore();
+
+                if (isActive) {
+                    const time = Date.now() / 800;
+                    const pulse = 0.7 + 0.3 * Math.sin(time);
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 12 * pulse, 0, Math.PI * 2);
+                    ctx.strokeStyle = `rgba(224, 122, 95, ${0.12 * pulse})`;
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                }
+
+                ctx.fillStyle = isActive ? '#E07A5F' : 'rgba(80, 70, 60, 0.35)';
+                ctx.font = isActive ? 'bold 7px sans-serif' : '6px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(p.alt + 'm', p.x, p.y - 10);
+            });
+
+            canvas._points = points;
+            canvas._activeId = activeDayId;
+        }
+
+        document.getElementById('altitudeCanvas').addEventListener('click', function(e) {
+            const rect = this.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const points = this._points || [];
+            let found = null;
+            let minDist = 30;
+            points.forEach(p => {
+                const dist = Math.abs(x - p.x);
+                if (dist < minDist) {
+                    minDist = dist;
+                    found = p;
+                }
+            });
+            if (found) {
+                currentDayId = found.id;
+                renderDayTabs();
+                renderDayDetail(currentDayId);
+                drawAltitude(currentDayId);
+                showToast(found.id);
+                document.querySelectorAll('.tab-nav button').forEach(b => b.classList.remove('active'));
+                document.querySelector('[data-page="daily"]').classList.add('active');
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                document.getElementById('page-daily').classList.add('active');
+            }
+        });
+
+        let pulseAnimId = null;
+
+        function startPulseAnimation() {
+            function pulseLoop() {
+                const canvas = document.getElementById('altitudeCanvas');
+                if (canvas._activeId !== undefined) {
+                    drawAltitude(canvas._activeId);
+                }
+                pulseAnimId = requestAnimationFrame(pulseLoop);
+            }
+            if (pulseAnimId) cancelAnimationFrame(pulseAnimId);
+            pulseLoop();
+        }
+
+        // ================================================================
+        //  13. Tab 切換
+        // ================================================================
+        document.getElementById('tabNav').addEventListener('click', (e) => {
+            const btn = e.target.closest('button');
+            if (!btn) return;
+            const page = btn.dataset.page;
+            document.querySelectorAll('.tab-nav button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(`page-${page}`).classList.add('active');
+            if (page === 'daily') {
+                renderDayDetail(currentDayId);
+                drawAltitude(currentDayId);
+            } else {
+                drawAltitude(currentDayId);
+            }
+        });
+
+        // ================================================================
+        //  14. 團友備註事件
+        // ================================================================
+        document.getElementById('groupNoteSubmit').addEventListener('click', addGroupNote);
+        document.getElementById('groupNoteInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') addGroupNote();
+        });
+
+        // ================================================================
+        //  15. Resize
+        // ================================================================
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => drawAltitude(currentDayId), 200);
+        });
+
+        // ================================================================
+        //  16. 啟動
         // ================================================================
         renderRouteTable();
         renderStatusList();
@@ -1704,9 +2319,10 @@
             startPulseAnimation();
         }, 300);
 
-        console.log('🌄 雲南滇西12日行程網頁已啟動！（完整功能版）');
+        console.log('🌄 雲南滇西12日行程網頁已啟動！（完整版）');
         if (!db) console.warn('⚠️ Firebase 未連線');
         else console.log('✅ Firebase 已連線');
     </script>
+
 </body>
 </html>
