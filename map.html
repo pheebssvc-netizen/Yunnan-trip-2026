@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <title>🗺️ 雲南滇西12日 · 地圖</title>
+
+    <!-- Leaflet.js CSS + JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+    </script>
+
+    <style>
+        /* ===== RESET ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: #F8F4F0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ===== HEADER ===== */
+        .map-header {
+            background: linear-gradient(145deg, #2D241A 0%, #3D2E22 100%);
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+            border-bottom: 3px solid #E07A5F;
+            z-index: 10;
+        }
+        .map-header h1 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 1px;
+        }
+        .map-header .back-btn {
+            background: rgba(255, 255, 255, 0.12);
+            border: 1.5px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .map-header .back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .map-header .back-btn:active {
+            transform: scale(0.94);
+        }
+
+        /* ===== MAP CONTAINER ===== */
+        #map {
+            flex: 1;
+            width: 100%;
+            background: #e8e0d8;
+            z-index: 1;
+        }
+
+        /* ===== CUSTOM LEGEND ===== */
+        .legend {
+            position: absolute;
+            bottom: 30px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(4px);
+            border-radius: 12px;
+            padding: 12px 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.10);
+            z-index: 1000;
+            font-size: 0.8rem;
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            min-width: 110px;
+        }
+        .legend .row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 3px 0;
+        }
+        .legend .color-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            border: 1.5px solid rgba(0, 0, 0, 0.08);
+        }
+        .legend .color-dot.hotel {
+            background: #2B6A9E;
+        }
+        .legend .color-dot.attraction {
+            background: #D94A4A;
+        }
+        .legend .label {
+            color: #2D241A;
+            font-weight: 500;
+        }
+
+        /* ===== FOOTER ===== */
+        .map-footer {
+            text-align: center;
+            font-size: 0.6rem;
+            color: #B0A090;
+            padding: 6px 0;
+            background: #fff;
+            border-top: 1px solid #EDE7E0;
+            flex-shrink: 0;
+            z-index: 10;
+        }
+
+        @media (max-width: 480px) {
+            .map-header h1 {
+                font-size: 0.9rem;
+            }
+            .map-header .back-btn {
+                font-size: 0.7rem;
+                padding: 4px 12px;
+            }
+            .legend {
+                bottom: 16px;
+                right: 12px;
+                padding: 10px 14px;
+                font-size: 0.7rem;
+                min-width: 90px;
+            }
+            .legend .color-dot {
+                width: 12px;
+                height: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <header class="map-header">
+        <h1>🗺️ 雲南滇西12日 · 行程地圖</h1>
+        <a href="index.html" class="back-btn">← 返回行程</a>
+    </header>
+
+    <!-- ===== MAP ===== -->
+    <div id="map"></div>
+
+    <!-- ===== LEGEND (用 JavaScript 加入) ===== -->
+
+    <div class="map-footer">📍 藍色 = 住宿 ｜ 紅色 = 景點 ｜ 撳 Marker 睇詳情</div>
+
+    <!-- ============================================================ -->
+    <!-- JAVASCRIPT -->
+    <!-- ============================================================ -->
+    <script>
+        // ================================================================
+        //  1. 初始化地圖（中心點約喺雲南中間）
+        // ================================================================
+        const map = L.map('map', {
+            center: [26.5, 100.5],
+            zoom: 7,
+            zoomControl: true,
+            fadeAnimation: true,
+            attributionControl: true
+        });
+
+        // ================================================================
+        //  2. 底圖（OpenStreetMap）
+        // ================================================================
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // ================================================================
+        //  3. 自訂 Marker 圖標（用 DivIcon 造圓點，唔使額外圖片）
+        // ================================================================
+        function createMarkerIcon(color, size) {
+            return L.divIcon({
+                className: 'custom-marker',
+                html: `<div style="
+                    width: ${size || 14}px;
+                    height: ${size || 14}px;
+                    background: ${color};
+                    border-radius: 50%;
+                    border: 2.5px solid #fff;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.20);
+                "></div>`,
+                iconSize: [size || 14, size || 14],
+                iconAnchor: [(size || 14) / 2, (size || 14) / 2],
+                popupAnchor: [0, -(size || 14) / 2 - 4]
+            });
+        }
+
+        const hotelIcon = createMarkerIcon('#2B6A9E', 16);
+        const attractionIcon = createMarkerIcon('#D94A4A', 14);
+
+        // ================================================================
+        //  4. 地點數據（酒店 + 景點）
+        // ================================================================
+        // 座標參考（已盡量精確）
+        const locations = [
+
+            // ===== 酒店（藍色） =====
+            {
+                name: '🏨 昆明長水國際機場美居酒店',
+                lat: 25.101,
+                lng: 102.939,
+                type: 'hotel',
+                day: 'Day 1',
+                desc: '昆明機場附近'
+            },
+            {
+                name: '🏨 大理牧心堡·法式懸崖海景度假莊園',
+                lat: 25.886,
+                lng: 100.277,
+                type: 'hotel',
+                day: 'Day 2',
+                desc: '雙廊·洱海懸崖'
+            },
+            {
+                name: '🏨 沙溪古鎮五柳心宿',
+                lat: 26.315,
+                lng: 99.857,
+                type: 'hotel',
+                day: 'Day 3',
+                desc: '沙溪古鎮內'
+            },
+            {
+                name: '🏨 麗江古城大水車亞朵酒店',
+                lat: 26.871,
+                lng: 100.236,
+                type: 'hotel',
+                day: 'Day 4 & 10',
+                desc: '麗江古城北門'
+            },
+            {
+                name: '🏨 瀘沽湖水天壹舍',
+                lat: 27.716,
+                lng: 100.786,
+                type: 'hotel',
+                day: 'Day 5 & 6',
+                desc: '大落水村·湖景'
+            },
+            {
+                name: '🏨 不晚里予·Wild Aurora',
+                lat: 26.920,
+                lng: 100.218,
+                type: 'hotel',
+                day: 'Day 7',
+                desc: '白沙古鎮·雪山景'
+            },
+            {
+                name: '🏨 香格里拉（待定）',
+                lat: 27.829,
+                lng: 99.704,
+                type: 'hotel',
+                day: 'Day 8 & 9',
+                desc: '香格里拉市區'
+            },
+            {
+                name: '🏨 昆明南屏步行街老街亞朵酒店',
+                lat: 25.041,
+                lng: 102.706,
+                type: 'hotel',
+                day: 'Day 11',
+                desc: '昆明市中心'
+            },
+
+            // ===== 景點（紅色） =====
+            {
+                name: '📍 昆明長水國際機場',
+                lat: 25.106,
+                lng: 102.948,
+                type: 'attraction',
+                day: 'Day 1',
+                desc: '✈️ 抵達／離開'
+            },
+            {
+                name: '📍 昆明站',
+                lat: 25.021,
+                lng: 102.720,
+                type: 'attraction',
+                day: 'Day 2',
+                desc: '🚄 高鐵往大理'
+            },
+            {
+                name: '📍 大理站',
+                lat: 25.588,
+                lng: 100.271,
+                type: 'attraction',
+                day: 'Day 2',
+                desc: '🚄 包車起點'
+            },
+            {
+                name: '📍 雙廊·理想邦聖托里尼',
+                lat: 25.871,
+                lng: 100.275,
+                type: 'attraction',
+                day: 'Day 2',
+                desc: '白牆藍窗·希臘風'
+            },
+            {
+                name: '📍 沙溪古鎮',
+                lat: 26.315,
+                lng: 99.857,
+                type: 'attraction',
+                day: 'Day 3',
+                desc: '古戲台·寺登街·玉津橋'
+            },
+            {
+                name: '📍 麗江古城·大水車',
+                lat: 26.872,
+                lng: 100.234,
+                type: 'attraction',
+                day: 'Day 4',
+                desc: '四方街·木府·萬古樓'
+            },
+            {
+                name: '📍 瀘沽湖觀景台',
+                lat: 27.680,
+                lng: 100.770,
+                type: 'attraction',
+                day: 'Day 5',
+                desc: '瀘沽湖全景'
+            },
+            {
+                name: '📍 瀘沽湖·里格半島',
+                lat: 27.718,
+                lng: 100.752,
+                type: 'attraction',
+                day: 'Day 6',
+                desc: '最經典打卡位'
+            },
+            {
+                name: '📍 瀘沽湖·草海·走婚橋',
+                lat: 27.771,
+                lng: 100.797,
+                type: 'attraction',
+                day: 'Day 6',
+                desc: '秋季金黃草海'
+            },
+            {
+                name: '📍 束河古鎮',
+                lat: 26.922,
+                lng: 100.201,
+                type: 'attraction',
+                day: 'Day 7',
+                desc: '青龍橋·九鼎龍潭'
+            },
+            {
+                name: '📍 白沙古鎮',
+                lat: 26.920,
+                lng: 100.218,
+                type: 'attraction',
+                day: 'Day 7',
+                desc: '玉龍雪山腳·壁畫'
+            },
+            {
+                name: '📍 虎跳峽（上虎跳）',
+                lat: 27.181,
+                lng: 100.042,
+                type: 'attraction',
+                day: 'Day 8',
+                desc: '金沙江峽谷·壯觀'
+            },
+            {
+                name: '📍 白水台',
+                lat: 27.134,
+                lng: 100.032,
+                type: 'attraction',
+                day: 'Day 8',
+                desc: '土耳其棉花堡·雲南版'
+            },
+            {
+                name: '📍 香格里拉·獨克宗古城',
+                lat: 27.834,
+                lng: 99.707,
+                type: 'attraction',
+                day: 'Day 8',
+                desc: '世界最大轉經筒'
+            },
+            {
+                name: '📍 普達措國家公園',
+                lat: 27.813,
+                lng: 99.977,
+                type: 'attraction',
+                day: 'Day 9',
+                desc: '屬都湖·碧塔海'
+            },
+            {
+                name: '📍 納帕海（依拉草原）',
+                lat: 27.857,
+                lng: 99.638,
+                type: 'attraction',
+                day: 'Day 10',
+                desc: '候鳥棲息·環湖'
+            },
+            {
+                name: '📍 松贊林寺',
+                lat: 27.868,
+                lng: 99.706,
+                type: 'attraction',
+                day: 'Day 10',
+                desc: '小布達拉宮'
+            },
+            {
+                name: '📍 翠湖公園',
+                lat: 25.054,
+                lng: 102.703,
+                type: 'attraction',
+                day: 'Day 12',
+                desc: '紅嘴鷗·免費'
+            },
+            {
+                name: '📍 雲南大學（可選）',
+                lat: 25.056,
+                lng: 102.706,
+                type: 'attraction',
+                day: 'Day 12',
+                desc: '百年校園'
+            }
+        ];
+
+        // ================================================================
+        //  5. 將地點加入地圖
+        // ================================================================
+        locations.forEach(loc => {
+            const icon = loc.type === 'hotel' ? hotelIcon : attractionIcon;
+            const marker = L.marker([loc.lat, loc.lng], { icon: icon })
+                .addTo(map)
+                .bindPopup(`
+                    <div style="font-size:0.9rem; font-weight:600; color:#2D241A;">
+                        ${loc.name}
+                    </div>
+                    <div style="font-size:0.75rem; color:#6B5A4A; margin-top:2px;">
+                        ${loc.day} ｜ ${loc.desc}
+                    </div>
+                `);
+        });
+
+        // ================================================================
+        //  6. 加入圖例（用 DOM 加，唔係 overlay）
+        // ================================================================
+        const legend = document.createElement('div');
+        legend.className = 'legend';
+        legend.innerHTML = `
+            <div class="row"><span class="color-dot hotel"></span><span class="label">🏨 住宿</span></div>
+            <div class="row"><span class="color-dot attraction"></span><span class="label">📍 景點</span></div>
+        `;
+        document.body.appendChild(legend);
+
+        // ================================================================
+        //  7. 地圖適應視窗
+        // ================================================================
+        setTimeout(() => {
+            map.invalidateSize();
+        }, 200);
+
+        console.log('🗺️ 雲南地圖已載入！');
+    </script>
+
+</body>
+</html>
