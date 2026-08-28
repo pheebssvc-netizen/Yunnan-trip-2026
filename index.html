@@ -26,34 +26,32 @@
             min-height: 100vh;
         }
 
-        /* ===== HEADER (固定) ===== */
+        /* ===== HEADER ===== */
         .app-header {
             background: linear-gradient(145deg, #2D241A 0%, #3D2E22 100%);
-            position: fixed;
+            position: sticky;
             top: 0;
-            left: 0;
-            right: 0;
             z-index: 50;
-            padding: 14px 20px 10px;
+            padding: 18px 20px 14px;
             text-align: center;
             border-bottom: 3px solid #E07A5F;
             box-shadow: 0 2px 16px rgba(0, 0, 0, 0.15);
         }
         .app-header h1 {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             font-weight: 700;
             color: #fff;
             letter-spacing: 2px;
             text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
         .countdown {
-            font-size: 0.75rem;
+            font-size: 0.85rem;
             color: #E9C46A;
             letter-spacing: 0.5px;
             margin-top: 2px;
             font-weight: 500;
             text-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
-            min-height: 1.2rem;
+            min-height: 1.4rem;
         }
         .countdown .highlight {
             color: #fff;
@@ -64,7 +62,7 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            margin: 2px auto 2px;
+            margin: 4px auto 4px;
             max-width: 200px;
         }
         .header-divider .line {
@@ -82,31 +80,29 @@
             box-shadow: 0 0 8px rgba(233, 196, 106, 0.2);
         }
         .app-header .sub {
-            font-size: 0.7rem;
+            font-size: 0.8rem;
             color: #E9C46A;
             letter-spacing: 1px;
             opacity: 0.85;
-            margin-top: 0px;
+            margin-top: 2px;
         }
 
-        /* ===== TAB NAV (固定) ===== */
+        /* ===== TAB NAV ===== */
         .tab-nav {
             display: flex;
             background: #fff;
             border-bottom: 2px solid #EDE7E0;
-            position: fixed;
-            top: 70px; /* Header 嘅大概高度 */
-            left: 0;
-            right: 0;
+            position: sticky;
+            top: 0;
             z-index: 45;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
         }
         .tab-nav button {
             flex: 1;
-            padding: 12px 6px;
+            padding: 14px 6px;
             border: none;
             background: transparent;
-            font-size: 0.85rem;
+            font-size: 0.88rem;
             font-weight: 500;
             color: #6B5A4A;
             cursor: pointer;
@@ -123,10 +119,10 @@
             background: #FFF5F0;
         }
 
-        /* ===== PAGES (全部向下推，預留 Header + Tab Bar 空間) ===== */
+        /* ===== PAGES ===== */
         .page {
             display: none;
-            padding: 130px 16px 20px; /* 等於 Header + Tab Bar 總高度 (70+60) */
+            padding: 16px 16px 20px;
             max-width: 720px;
             margin: 0 auto;
         }
@@ -580,14 +576,9 @@
         }
 
         /* ===== 每日行程 ===== */
-        /* 為每日行程頁面額外加上 padding-top，因為裡面有 sticky 元素 */
-        #page-daily {
-            padding-top: 130px; /* 與其他頁面一致，sticky 元素會喺呢個空間內固定 */
-        }
-
         .day-tabs-wrapper {
             position: sticky;
-            top: 100px; /* Header + Tab Bar 總高度，令佢固定喺 Tab Bar 下面 */
+            top: 0px;
             z-index: 40;
             background: rgba(255, 251, 245, 0.92);
             backdrop-filter: blur(4px);
@@ -637,11 +628,9 @@
             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
             margin-top: 2px;
         }
-
-        /* 頭部固定，比 Day Tabs 低 */
         .day-detail .day-head {
             position: sticky;
-            top: 160px; /* Header + Tab Bar + Day Tabs 總高度 */
+            top: 130px;
             z-index: 35;
             background: #fff;
             padding: 4px 0 8px 0;
@@ -670,7 +659,6 @@
             margin-top: 4px;
             width: 100%;
         }
-
         .day-detail .warning-banner {
             background: #FCE4D6;
             border-radius: 12px;
@@ -993,41 +981,34 @@
             margin-top: 10px;
         }
 
-        /* ===== 手機微調 ===== */
         @media (max-width: 480px) {
             .app-header h1 {
                 font-size: 1.0rem;
                 letter-spacing: 1px;
             }
             .app-header .sub {
-                font-size: 0.65rem;
+                font-size: 0.7rem;
             }
             .header-divider {
                 max-width: 140px;
             }
             .countdown {
-                font-size: 0.65rem;
-            }
-            .tab-nav {
-                top: 62px; /* 手機上 Header 較矮 */
+                font-size: 0.7rem;
             }
             .tab-nav button {
                 font-size: 0.75rem;
-                padding: 10px 4px;
-            }
-            .page {
-                padding-top: 115px; /* 手機上 Header + Tab Bar 較矮 */
+                padding: 12px 4px;
             }
             .day-tabs-wrapper {
-                top: 115px;
-                padding: 2px 0 10px;
+                top: 0px;
+                padding: 2px 8px 10px;
             }
             .day-tabs button {
                 font-size: 0.7rem;
                 padding: 6px 12px;
             }
             .day-detail .day-head {
-                top: 175px;
+                top: 110px;
             }
             .day-detail .day-head .day-label {
                 font-size: 1.0rem;
@@ -1089,7 +1070,7 @@
 </head>
 <body>
 
-    <!-- ===== HEADER (固定) ===== -->
+    <!-- ===== HEADER ===== -->
     <header class="app-header">
         <h1>🌄 雲南滇西12日 · 4人同行</h1>
         <div class="countdown" id="countdown">⏳ 載入中...</div>
@@ -1101,7 +1082,7 @@
         <div class="sub">2026.11.11 – 11.22 ｜ Chill · Hea · 慢慢行</div>
     </header>
 
-    <!-- ===== TAB NAV (固定) ===== -->
+    <!-- ===== TAB NAV ===== -->
     <nav class="tab-nav" id="tabNav">
         <button class="active" data-page="overview">📋 行程總覽</button>
         <button data-page="daily">📅 每日行程</button>
@@ -1868,7 +1849,7 @@
                     setTimeout(() => {
                         const detail = document.querySelector('.day-detail');
                         if (detail) {
-                            const topOffset = 190; // 配合固定 header + tabs
+                            const topOffset = 130;
                             const elementPosition = detail.getBoundingClientRect().top + window.pageYOffset;
                             window.scrollTo({ top: elementPosition - topOffset, behavior: 'smooth' });
                         }
@@ -1920,52 +1901,50 @@
 
             html += `</div>`;
             container.innerHTML = html;
-
-            // ===== 強制重新整理所有備註 =====
-            setTimeout(() => {
-                const noteAreas = container.querySelectorAll('.note-area');
-                noteAreas.forEach(area => {
-                    const key = area.id.replace('note-area-', '');
-                    if (db) {
-                        db.ref(key).once('value').then(snap => {
-                            const notes = snap.val() || [];
-                            if (notes.length === 0) {
-                                area.innerHTML = `<div class="empty-msg">💬 未有備註 · 你嚟加第一條！</div>`;
-                            } else {
-                                let html = '';
-                                notes.forEach((note, idx) => {
-                                    const text = note.text || '';
-                                    const linkedText = text.replace(
-                                        /(https?:\/\/[^\s]+)/g,
-                                        '<a href="$1" target="_blank" rel="noopener">$1</a>'
-                                    );
-                                    html += `
-                                        <div class="note-item">
-                                            <span class="note-text">${linkedText}</span>
-                                            <button class="del-btn" data-key="${key}" data-idx="${idx}">✕</button>
-                                        </div>
-                                    `;
-                                });
-                                area.innerHTML = html;
-                                area.querySelectorAll('.del-btn').forEach(btn => {
-                                    btn.onclick = function() {
-                                        const k = this.dataset.key;
-                                        const idx = parseInt(this.dataset.idx);
-                                        if (!db) return;
-                                        db.ref(k).once('value').then(snap => {
-                                            const arr = snap.val() || [];
-                                            arr.splice(idx, 1);
-                                            db.ref(k).set(arr);
-                                        }).catch(e => alert('刪除失敗: ' + e.message));
-                                    };
-                                });
-                            }
-                        }).catch(() => {});
-                    }
-                });
-            }, 50);
-
-            // 綁定事件
+// 強制重新整理所有備註（防止 Firebase 延遲）
+setTimeout(() => {
+    const noteAreas = container.querySelectorAll('.note-area');
+    noteAreas.forEach(area => {
+        const key = area.id.replace('note-area-', '');
+        if (db) {
+            db.ref(key).once('value').then(snap => {
+                const notes = snap.val() || [];
+                if (notes.length === 0) {
+                    area.innerHTML = `<div class="empty-msg">💬 未有備註 · 你嚟加第一條！</div>`;
+                } else {
+                    let html = '';
+                    notes.forEach((note, idx) => {
+                        const text = note.text || '';
+                        const linkedText = text.replace(
+                            /(https?:\/\/[^\s]+)/g,
+                            '<a href="$1" target="_blank" rel="noopener">$1</a>'
+                        );
+                        html += `
+                            <div class="note-item">
+                                <span class="note-text">${linkedText}</span>
+                                <button class="del-btn" data-key="${key}" data-idx="${idx}">✕</button>
+                            </div>
+                        `;
+                    });
+                    area.innerHTML = html;
+                    // 重新綁定刪除事件
+                    area.querySelectorAll('.del-btn').forEach(btn => {
+                        btn.onclick = function() {
+                            const k = this.dataset.key;
+                            const idx = parseInt(this.dataset.idx);
+                            if (!db) return;
+                            db.ref(k).once('value').then(snap => {
+                                const arr = snap.val() || [];
+                                arr.splice(idx, 1);
+                                db.ref(k).set(arr);
+                            }).catch(e => alert('刪除失敗: ' + e.message));
+                        };
+                    });
+                }
+            }).catch(() => {});
+        }
+    });
+}, 50);
             container.querySelectorAll('.add-btn').forEach(btn => {
                 btn.onclick = function(e) {
                     e.stopPropagation();
@@ -2383,7 +2362,7 @@
             startPulseAnimation();
         }, 300);
 
-        console.log('🌄 雲南滇西12日行程網頁已啟動！（固定版）');
+        console.log('🌄 雲南滇西12日行程網頁已啟動！（完整版）');
         if (!db) console.warn('⚠️ Firebase 未連線');
         else console.log('✅ Firebase 已連線');
     </script>
