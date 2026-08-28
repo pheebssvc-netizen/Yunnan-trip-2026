@@ -1901,7 +1901,50 @@
 
             html += `</div>`;
             container.innerHTML = html;
-
+// 強制重新整理所有備註（防止 Firebase 延遲）
+setTimeout(() => {
+    const noteAreas = container.querySelectorAll('.note-area');
+    noteAreas.forEach(area => {
+        const key = area.id.replace('note-area-', '');
+        if (db) {
+            db.ref(key).once('value').then(snap => {
+                const notes = snap.val() || [];
+                if (notes.length === 0) {
+                    area.innerHTML = `<div class="empty-msg">💬 未有備註 · 你嚟加第一條！</div>`;
+                } else {
+                    let html = '';
+                    notes.forEach((note, idx) => {
+                        const text = note.text || '';
+                        const linkedText = text.replace(
+                            /(https?:\/\/[^\s]+)/g,
+                            '<a href="$1" target="_blank" rel="noopener">$1</a>'
+                        );
+                        html += `
+                            <div class="note-item">
+                                <span class="note-text">${linkedText}</span>
+                                <button class="del-btn" data-key="${key}" data-idx="${idx}">✕</button>
+                            </div>
+                        `;
+                    });
+                    area.innerHTML = html;
+                    // 重新綁定刪除事件
+                    area.querySelectorAll('.del-btn').forEach(btn => {
+                        btn.onclick = function() {
+                            const k = this.dataset.key;
+                            const idx = parseInt(this.dataset.idx);
+                            if (!db) return;
+                            db.ref(k).once('value').then(snap => {
+                                const arr = snap.val() || [];
+                                arr.splice(idx, 1);
+                                db.ref(k).set(arr);
+                            }).catch(e => alert('刪除失敗: ' + e.message));
+                        };
+                    });
+                }
+            }).catch(() => {});
+        }
+    });
+}, 50);
             container.querySelectorAll('.add-btn').forEach(btn => {
                 btn.onclick = function(e) {
                     e.stopPropagation();
