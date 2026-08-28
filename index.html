@@ -576,18 +576,19 @@
         }
 
         /* ===== 每日行程 ===== */
-        .day-tabs-wrapper {
-            position: sticky;
-            top: 100px;
-            z-index: 40;
-            background: rgba(255, 251, 245, 0.92);
-            backdrop-filter: blur(4px);
-            padding: 4px 0 12px;
-            margin: 0 -16px;
-            padding-left: 16px;
-            padding-right: 16px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-        }
+        /* Day Tabs 只喺每日行程頁固定 */
+#page-daily .day-tabs-wrapper {
+    position: sticky;
+    top: 100px;
+    z-index: 40;
+    background: rgba(255, 251, 245, 0.92);
+    backdrop-filter: blur(4px);
+    padding: 4px 0 12px;
+    margin: 0 -16px;
+    padding-left: 16px;
+    padding-right: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
         .day-tabs {
             display: flex;
             overflow-x: auto;
