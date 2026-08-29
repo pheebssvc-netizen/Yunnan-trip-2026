@@ -6,10 +6,14 @@
     <title>雲南滇西12日 · 4人同行</title>
 
     <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js">
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js">
-    </script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js">
+</script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js">
+</script>
+
+<!-- ★ 新增：Chart.js CDN ★ -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
+</script>
 
     <style>
         /* ===== RESET ===== */
@@ -950,37 +954,45 @@
             gap: 8px;
         }
 
-        /* ===== 底部海拔線 ===== */
-        .altitude-footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(255, 251, 245, 0.92);
-            backdrop-filter: blur(4px);
-            border-top: 2px solid rgba(224, 122, 95, 0.12);
-            padding: 8px 10px 10px;
-            z-index: 50;
-            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.04);
-            height: 110px;
-            background-image: linear-gradient(90deg,
-                    rgba(200, 220, 240, 0.06) 0%,
-                    rgba(230, 210, 190, 0.04) 40%,
-                    rgba(240, 220, 200, 0.06) 70%,
-                    rgba(210, 180, 170, 0.04) 100%);
-        }
-        .altitude-footer canvas {
-            width: 100%;
-            height: 80px;
-            display: block;
-            cursor: pointer;
-            touch-action: none;
-            border-radius: 8px;
-        }
-        .altitude-footer .alt-label {
-            display: none;
-        }
+        /* ===== 底部海拔線（升級版：Chart.js） ===== */
+.altitude-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px); /* 玻璃擬態 */
+    border-top: 2px solid rgba(224, 122, 95, 0.15);
+    padding: 12px 10px 10px;
+    z-index: 50;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
+    height: 130px; /* 高度略微增加以容納圖表 */
+}
 
+.altitude-footer canvas {
+    width: 100% !important;
+    height: 85px !important; /* 調整圖表高度 */
+    display: block;
+    cursor: pointer;
+    touch-action: none;
+}
+
+/* 移除舊嘅 alt-label */
+.altitude-footer .alt-label {
+    display: none;
+}
+
+/* 超過 3000m 嘅脈衝提醒（for 之後嘅 Popup） */
+.high-altitude-warning {
+    border-left: 4px solid #FF5722;
+    animation: pulse-border 2s infinite;
+}
+
+@keyframes pulse-border {
+    0% { box-shadow: 0 0 0 0 rgba(255, 87, 34, 0.4); }
+    70% { box-shadow: 0 0 0 8px rgba(255, 87, 34, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 87, 34, 0); }
+}
         /* ===== Toast ===== */
         .toast-container {
             position: fixed;
@@ -2217,61 +2229,107 @@ setTimeout(() => {
             }, 2800);
         }
 
-        function drawAltitude(activeDayId) {
-            const canvas = document.getElementById('altitudeCanvas');
-            const rect = canvas.parentElement.getBoundingClientRect();
-            const dpr = window.devicePixelRatio || 1;
-            const w = rect.width - 12;
-            const h = 80;
-            canvas.width = w * dpr;
-            canvas.height = h * dpr;
-            canvas.style.width = w + 'px';
-            canvas.style.height = h + 'px';
-            const ctx = canvas.getContext('2d');
-            ctx.scale(dpr, dpr);
+        // ================================================================
+//  12. 海拔線（升級版：使用 Chart.js）
+// ================================================================
+let elevationChart = null; // 用嚟儲存 chart 實例
 
-            const data = DAYS_DATA;
-            const n = data.length;
-            const padL = 8,
-                padR = 8,
-                padT = 14,
-                padB = 16;
-            const chartW = w - padL - padR;
-            const chartH = h - padT - padB;
-            const minAlt = 1800,
-                maxAlt = 3500,
-                range = maxAlt - minAlt;
+function drawAltitude(activeDayId) {
+    const canvas = document.getElementById('altitudeCanvas');
+    const ctx = canvas.getContext('2d');
 
-            const points = data.map((d, i) => {
-                const x = padL + (i / (n - 1)) * chartW;
-                const y = padT + chartH - ((d.altitude - minAlt) / range) * chartH;
-                const wave = Math.sin(i / n * Math.PI * 2) * 1.2;
-                return { x, y: y + wave, alt: d.altitude, id: d.id, place: d.place };
-            });
+    // 1. 建立由上至下的背景漸變 (Top -> Bottom)
+    const fillGradient = ctx.createLinearGradient(0, 0, 0, 300);
+    fillGradient.addColorStop(0, 'rgba(224, 122, 95, 0.45)'); // 珊瑚橘半透明
+    fillGradient.addColorStop(0.5, 'rgba(74, 144, 226, 0.25)'); // 粉藍半透明
+    fillGradient.addColorStop(1, 'rgba(74, 144, 226, 0.0)');   // 底部：完全透明
 
-            ctx.clearRect(0, 0, w, h);
+    // 2. 準備數據
+    const labels = DAYS_DATA.map(d => `D${d.id}`);
+    const altitudeData = DAYS_DATA.map(d => d.altitude);
 
-            const bgGrad = ctx.createLinearGradient(0, padT, 0, padT + chartH);
-            bgGrad.addColorStop(0, 'rgba(200, 215, 230, 0.05)');
-            bgGrad.addColorStop(0.5, 'rgba(220, 200, 180, 0.05)');
-            bgGrad.addColorStop(1, 'rgba(210, 180, 170, 0.05)');
-            ctx.fillStyle = bgGrad;
-            ctx.fillRect(padL, padT, chartW, chartH);
+    // 3. 如果已經有 chart，先摧毀再重建（避免重疊）
+    if (elevationChart) {
+        elevationChart.destroy();
+    }
 
-            const grad = ctx.createLinearGradient(0, padT, 0, padT + chartH);
-            grad.addColorStop(0, '#1A3A5C');
-            grad.addColorStop(0.3, '#2D6A4F');
-            grad.addColorStop(0.6, '#B88A3A');
-            grad.addColorStop(1, '#D97A4A');
-
-            ctx.beginPath();
-            points.forEach((p, i) => {
-                if (i === 0) ctx.moveTo(p.x, p.y);
-                else {
-                    const cpX = (points[i - 1].x + p.x) / 2;
-                    const cpY = (points[i - 1].y + p.y) / 2 + (i % 2 === 0 ? 1 : -1) * 0.8;
-                    ctx.quadraticCurveTo(cpX, cpY, p.x, p.y);
+    // 4. 建立新 chart
+    elevationChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: '海拔 (m)',
+                data: altitudeData,
+                fill: true,
+                backgroundColor: fillGradient,
+                borderColor: '#E07A5F',     // 主線用返你嘅主題色
+                borderWidth: 3,
+                tension: 0.4,
+                pointBackgroundColor: altitudeData.map(val => val >= 3000 ? '#FF5722' : '#E07A5F'),
+                pointBorderColor: '#FFFFFF',
+                pointBorderWidth: 2,
+                pointRadius: altitudeData.map(val => val >= 3000 ? 6 : 4),
+                pointHoverRadius: 8,
+                spanGaps: false,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let val = context.raw;
+                            return val >= 3000 ? ` 🏔️ ${val}m (高反注意！)` : ` 🏔️ ${val}m`;
+                        }
+                    }
                 }
+            },
+            scales: {
+                y: {
+                    min: 1500,
+                    max: 3500,
+                    grid: { color: 'rgba(0, 0, 0, 0.05)' },
+                    ticks: {
+                        stepSize: 500,
+                        font: { size: 9 }
+                    }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: {
+                        font: { size: 9 }
+                    }
+                }
+            },
+            // 加返點擊事件，等撳落去可以跳轉 Day
+            onClick: function(e, item) {
+                if (item && item.length > 0) {
+                    const index = item[0].dataIndex;
+                    const dayId = index + 1;
+                    if (dayId >= 1 && dayId <= 12) {
+                        currentDayId = dayId;
+                        renderDayTabs();
+                        renderDayDetail(currentDayId);
+                        drawAltitude(currentDayId);
+                        showToast(dayId);
+                        // 切換到每日行程 tab
+                        document.querySelectorAll('.tab-nav button').forEach(b => b.classList.remove('active'));
+                        document.querySelector('[data-page="daily"]').classList.add('active');
+                        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                        document.getElementById('page-daily').classList.add('active');
+                    }
+                }
+            }
+        }
+    });
+
+    // 儲存當前 active day 以便之後更新
+    elevationChart._activeId = activeDayId;
+}
             });
             ctx.strokeStyle = grad;
             ctx.lineWidth = 3.5;
@@ -2401,14 +2459,20 @@ setTimeout(() => {
         });
 
         // ================================================================
-        //  15. Resize
-        // ================================================================
-        let resizeTimer;
-        window.addEventListener('resize', () => {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(() => drawAltitude(currentDayId), 200);
-        });
+//  15. Resize（更新海拔圖）
+// ================================================================
+let resizeTimer;
+window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+        if (elevationChart) {
+            drawAltitude(currentDayId); // 直接重繪
+        }
+    }, 200);
+});
 
+// 刪除或註解掉 startPulseAnimation 嘅呼叫
+// startPulseAnimation();
         // ================================================================
         //  16. 啟動
         // ================================================================
