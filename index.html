@@ -26,7 +26,7 @@
             min-height: 100vh;
         }
 
-        /* ===== HEADER（固定） ===== */
+        /* ===== HERO HEADER：封面圖風格 ===== */
         .app-header {
             position: sticky;
             top: 0;
@@ -110,16 +110,30 @@
             text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
 
-        /* ===== TAB NAV（預設唔固定） ===== */
+        @media (max-width: 480px) {
+            .app-header {
+                min-height: 180px;
+            }
+            .app-header h1 {
+                font-size: 1.2rem;
+                letter-spacing: 1px;
+            }
+            .countdown {
+                font-size: 0.75rem;
+            }
+            .app-header .sub {
+                font-size: 0.7rem;
+            }
+            .header-divider {
+                max-width: 140px;
+            }
+        }
+
+        /* ===== TAB NAV ===== */
         .tab-nav {
             display: flex;
             background: #fff;
             border-bottom: 2px solid #EDE7E0;
-            position: relative;
-            z-index: 45;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-        }
-        .tab-nav.fixed-tab {
             position: sticky;
             top: 0;
             z-index: 45;
@@ -916,7 +930,7 @@
             gap: 8px;
         }
 
-        /* ===== 底部海拔線 ===== */
+        /* ===== 底部海拔線（手繪美化版） ===== */
         .altitude-footer {
             position: fixed;
             bottom: 0;
@@ -1098,7 +1112,7 @@
 </head>
 <body>
 
-    <!-- ===== HEADER（全頁固定） ===== -->
+    <!-- ===== HEADER：Hero 封面圖 ===== -->
     <header class="app-header" style="background-image: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80');">
         <div class="header-overlay"></div>
         <div class="header-content">
@@ -1113,7 +1127,7 @@
         </div>
     </header>
 
-    <!-- ===== TAB NAV（由 JavaScript 控制固定） ===== -->
+    <!-- ===== TAB NAV ===== -->
     <nav class="tab-nav" id="tabNav">
         <button class="active" data-page="overview">📋 行程總覽</button>
         <button data-page="daily">📅 每日行程</button>
@@ -2150,7 +2164,7 @@
         }
 
         // ================================================================
-        //  12. 海拔線（手繪美化版）
+        //  12. 海拔線（手繪美化版：漸層填充 + 3000m 變色）
         // ================================================================
         let toastTimer = null;
 
@@ -2209,6 +2223,7 @@
                 maxAlt = 3500,
                 range = maxAlt - minAlt;
 
+            // 計算點座標（保留手繪抖動）
             const points = data.map((d, i) => {
                 const x = padL + (i / (n - 1)) * chartW;
                 const y = padT + chartH - ((d.altitude - minAlt) / range) * chartH;
@@ -2218,7 +2233,7 @@
 
             ctx.clearRect(0, 0, w, h);
 
-            // 底色
+            // ===== 底色 =====
             const bgGrad = ctx.createLinearGradient(0, padT, 0, padT + chartH);
             bgGrad.addColorStop(0, 'rgba(200, 215, 230, 0.05)');
             bgGrad.addColorStop(0.5, 'rgba(220, 200, 180, 0.05)');
@@ -2226,7 +2241,8 @@
             ctx.fillStyle = bgGrad;
             ctx.fillRect(padL, padT, chartW, chartH);
 
-            // ★ 漸層填充（線下面）
+            // ===== ★ 新增：漸層填充（線下面） =====
+            // 先畫一條路徑用嚟填充
             ctx.beginPath();
             points.forEach((p, i) => {
                 if (i === 0) ctx.moveTo(p.x, p.y);
@@ -2236,10 +2252,12 @@
                     ctx.quadraticCurveTo(cpX, cpY, p.x, p.y);
                 }
             });
+            // 連到右下角再連返左下角，形成封閉區域
             ctx.lineTo(points[points.length - 1].x, padT + chartH);
             ctx.lineTo(points[0].x, padT + chartH);
             ctx.closePath();
 
+            // 漸層填充（珊瑚橘 fade out 至透明）
             const fillGrad = ctx.createLinearGradient(0, padT, 0, padT + chartH);
             fillGrad.addColorStop(0, 'rgba(224, 122, 95, 0.30)');
             fillGrad.addColorStop(0.4, 'rgba(224, 122, 95, 0.12)');
@@ -2247,7 +2265,7 @@
             ctx.fillStyle = fillGrad;
             ctx.fill();
 
-            // 主線
+            // ===== 主線 =====
             const grad = ctx.createLinearGradient(0, padT, 0, padT + chartH);
             grad.addColorStop(0, '#1A3A5C');
             grad.addColorStop(0.3, '#2D6A4F');
@@ -2269,7 +2287,7 @@
             ctx.lineCap = 'round';
             ctx.stroke();
 
-            // 3000m 參考線
+            // ===== 3000m 參考線 =====
             const y3000 = padT + chartH - ((3000 - minAlt) / range) * chartH;
             ctx.beginPath();
             ctx.moveTo(padL, y3000);
@@ -2283,14 +2301,15 @@
             ctx.font = '8px sans-serif';
             ctx.fillText('3000m', 2, y3000 - 3);
 
-            // 點
+            // ===== 點（★ 超過 3000m 變橙色） =====
             points.forEach((p) => {
                 const isActive = p.id === activeDayId;
                 const isHigh = p.alt >= 3000;
 
+                // 超過 3000m 用橙色，否則用海拔漸變色
                 let color;
                 if (isHigh) {
-                    color = '#FF5722';
+                    color = '#FF5722'; // 橙紅色（高反警告）
                 } else {
                     const altRatio = (p.alt - minAlt) / range;
                     const r = Math.round(50 + altRatio * 180);
@@ -2312,6 +2331,7 @@
                 ctx.shadowBlur = 0;
                 ctx.restore();
 
+                // 當前點脈衝光環
                 if (isActive) {
                     const time = Date.now() / 800;
                     const pulse = 0.7 + 0.3 * Math.sin(time);
@@ -2322,6 +2342,7 @@
                     ctx.stroke();
                 }
 
+                // 海拔標籤
                 ctx.fillStyle = isActive ? '#E07A5F' : 'rgba(80, 70, 60, 0.35)';
                 ctx.font = isActive ? 'bold 7px sans-serif' : '6px sans-serif';
                 ctx.textAlign = 'center';
@@ -2373,26 +2394,16 @@
         }
 
         // ================================================================
-        //  13. Tab 切換（控制 Tab Bar 固定）
+        //  13. Tab 切換
         // ================================================================
         document.getElementById('tabNav').addEventListener('click', (e) => {
             const btn = e.target.closest('button');
             if (!btn) return;
             const page = btn.dataset.page;
-
             document.querySelectorAll('.tab-nav button').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(`page-${page}`).classList.add('active');
-
-            // ★★★ 控制 Tab Bar 固定 ★★★
-            const tabNav = document.querySelector('.tab-nav');
-            if (page === 'daily') {
-                tabNav.classList.add('fixed-tab'); // 每日行程：Tab Bar 固定
-            } else {
-                tabNav.classList.remove('fixed-tab'); // 其他頁：Tab Bar 唔固定
-            }
-
             if (page === 'daily') {
                 renderDayDetail(currentDayId);
                 drawAltitude(currentDayId);
@@ -2437,10 +2448,10 @@
             startPulseAnimation();
         }, 300);
 
-        console.log('🌄 雲南滇西12日行程網頁已啟動！（最終分離版）');
+        console.log('🌄 雲南滇西12日行程網頁已啟動！（手繪海拔線美化版）');
         if (!db) console.warn('⚠️ Firebase 未連線');
         else console.log('✅ Firebase 已連線');
     </script>
 
 </body>
-</html>
+    </html>
