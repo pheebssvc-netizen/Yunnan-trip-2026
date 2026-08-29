@@ -26,7 +26,7 @@
             min-height: 100vh;
         }
 
-        /* ===== HEADER（全頁固定） ===== */
+        /* ===== HEADER（固定） ===== */
         .app-header {
             position: sticky;
             top: 0;
@@ -110,43 +110,21 @@
             text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
 
-        @media (max-width: 480px) {
-            .app-header {
-                min-height: 180px;
-            }
-            .app-header h1 {
-                font-size: 1.2rem;
-                letter-spacing: 1px;
-            }
-            .countdown {
-                font-size: 0.75rem;
-            }
-            .app-header .sub {
-                font-size: 0.7rem;
-            }
-            .header-divider {
-                max-width: 140px;
-            }
-        }
-
-        /* ===== TAB NAV（由 JavaScript 控制固定） ===== */
+        /* ===== TAB NAV（預設唔固定） ===== */
         .tab-nav {
             display: flex;
             background: #fff;
             border-bottom: 2px solid #EDE7E0;
-            position: relative; /* 預設唔固定 */
+            position: relative;
             z-index: 45;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
         }
-
-        /* 固定模式（只喺每日行程頁啟用） */
         .tab-nav.fixed-tab {
             position: sticky;
-            top: 0; /* Header 下面 */
+            top: 0;
             z-index: 45;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
         }
-
         .tab-nav button {
             flex: 1;
             padding: 14px 6px;
@@ -938,7 +916,7 @@
             gap: 8px;
         }
 
-        /* ===== 底部海拔線（手繪美化版） ===== */
+        /* ===== 底部海拔線 ===== */
         .altitude-footer {
             position: fixed;
             bottom: 0;
