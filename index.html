@@ -26,25 +26,11 @@
             min-height: 100vh;
         }
 
-        /* ===== 固定頭部容器（Header + Tab Bar） ===== */
-        #fixedHeaderContainer {
-            position: relative;
-            /* 預設唔固定 */
-            z-index: 50;
-            background: #2D241A;
-            /* 同 Header 底色一致 */;
-        }
-
-        /* 容器嘅固定模式（由 JavaScript 控制） */
-        #fixedHeaderContainer.fixed {
+        /* ===== HEADER（全頁固定） ===== */
+        .app-header {
             position: sticky;
             top: 0;
-        }
-
-        /* ===== HERO HEADER：封面圖風格 ===== */
-        .app-header {
-            position: relative;
-            /* 移除 sticky，由父容器控制 */
+            z-index: 50;
             background-size: cover;
             background-position: center 30%;
             background-repeat: no-repeat;
@@ -143,16 +129,24 @@
             }
         }
 
-        /* ===== TAB NAV ===== */
+        /* ===== TAB NAV（由 JavaScript 控制固定） ===== */
         .tab-nav {
             display: flex;
             background: #fff;
             border-bottom: 2px solid #EDE7E0;
-            position: relative;
-            /* 移除 sticky，由父容器控制 */
+            position: relative; /* 預設唔固定 */
             z-index: 45;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
         }
+
+        /* 固定模式（只喺每日行程頁啟用） */
+        .tab-nav.fixed-tab {
+            position: sticky;
+            top: 0; /* Header 下面 */
+            z-index: 45;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
         .tab-nav button {
             flex: 1;
             padding: 14px 6px;
@@ -1126,30 +1120,27 @@
 </head>
 <body>
 
-    <!-- ===== 固定頭部容器（Header + Tab Bar） ===== -->
-    <div id="fixedHeaderContainer">
-        <!-- Header -->
-        <header class="app-header" style="background-image: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80');">
-            <div class="header-overlay"></div>
-            <div class="header-content">
-                <h1>🌄 雲南滇西12日 · 4人同行</h1>
-                <div class="countdown" id="countdown">⏳ 載入中...</div>
-                <div class="header-divider">
-                    <span class="dot"></span>
-                    <span class="line"></span>
-                    <span class="dot"></span>
-                </div>
-                <div class="sub">2026.11.11 – 11.22 ｜ Chill · Hea · 慢慢行</div>
+    <!-- ===== HEADER（全頁固定） ===== -->
+    <header class="app-header" style="background-image: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80');">
+        <div class="header-overlay"></div>
+        <div class="header-content">
+            <h1>🌄 雲南滇西12日 · 4人同行</h1>
+            <div class="countdown" id="countdown">⏳ 載入中...</div>
+            <div class="header-divider">
+                <span class="dot"></span>
+                <span class="line"></span>
+                <span class="dot"></span>
             </div>
-        </header>
+            <div class="sub">2026.11.11 – 11.22 ｜ Chill · Hea · 慢慢行</div>
+        </div>
+    </header>
 
-        <!-- Tab Bar -->
-        <nav class="tab-nav" id="tabNav">
-            <button class="active" data-page="overview">📋 行程總覽</button>
-            <button data-page="daily">📅 每日行程</button>
-            <button data-page="other">📌 重要資訊</button>
-        </nav>
-    </div>
+    <!-- ===== TAB NAV（由 JavaScript 控制固定） ===== -->
+    <nav class="tab-nav" id="tabNav">
+        <button class="active" data-page="overview">📋 行程總覽</button>
+        <button data-page="daily">📅 每日行程</button>
+        <button data-page="other">📌 重要資訊</button>
+    </nav>
 
     <!-- ===== PAGE 1: 行程總覽 ===== -->
     <div class="page active" id="page-overview">
@@ -1230,6 +1221,7 @@
             <div class="row highlight-row"><span class="lbl">合計</span><span class="val">¥8,600 ✅ 已確認</span></div>
             <div style="font-size:0.78rem;color:#6B5A4A;margin-top:8px;">
                 ✅ 已包：油費・停車費・師傅住宿・高速費・白水台繞路費<br />
+                ❌ 未包：師傅餐飲 (建議同食或補貼 ¥50–80/日)
             </div>
         </div>
 
@@ -2403,7 +2395,7 @@
         }
 
         // ================================================================
-        //  13. Tab 切換（控制 Header + Tab Bar 容器固定）
+        //  13. Tab 切換（控制 Tab Bar 固定）
         // ================================================================
         document.getElementById('tabNav').addEventListener('click', (e) => {
             const btn = e.target.closest('button');
@@ -2415,12 +2407,12 @@
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(`page-${page}`).classList.add('active');
 
-            // ★★★ 控制固定容器 ★★★
-            const container = document.getElementById('fixedHeaderContainer');
+            // ★★★ 控制 Tab Bar 固定 ★★★
+            const tabNav = document.querySelector('.tab-nav');
             if (page === 'daily') {
-                container.classList.add('fixed'); // 每日行程：固定 Header + Tab Bar
+                tabNav.classList.add('fixed-tab'); // 每日行程：Tab Bar 固定
             } else {
-                container.classList.remove('fixed'); // 其他頁：放生佢哋
+                tabNav.classList.remove('fixed-tab'); // 其他頁：Tab Bar 唔固定
             }
 
             if (page === 'daily') {
@@ -2467,7 +2459,7 @@
             startPulseAnimation();
         }, 300);
 
-        console.log('🌄 雲南滇西12日行程網頁已啟動！（最終固定版）');
+        console.log('🌄 雲南滇西12日行程網頁已啟動！（最終分離版）');
         if (!db) console.warn('⚠️ Firebase 未連線');
         else console.log('✅ Firebase 已連線');
     </script>
