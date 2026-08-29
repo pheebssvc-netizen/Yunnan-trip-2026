@@ -131,14 +131,20 @@
 
         /* ===== TAB NAV ===== */
         .tab-nav {
-            display: flex;
-            background: #fff;
-            border-bottom: 2px solid #EDE7E0;
-            position: sticky;
-            top: 0;
-            z-index: 45;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    display: flex;
+    background: #fff;
+    border-bottom: 2px solid #EDE7E0;
+    /* 移除 position: sticky; top: 0; */
+    position: relative;
+    z-index: 45;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
+        /* Tab Bar 固定模式（只喺每日行程頁啟用） */
+.tab-nav.fixed-tab {
+    position: sticky;
+    top: 0;
+    z-index: 45;
+}
         .tab-nav button {
             flex: 1;
             padding: 14px 6px;
@@ -2397,21 +2403,30 @@
         //  13. Tab 切換
         // ================================================================
         document.getElementById('tabNav').addEventListener('click', (e) => {
-            const btn = e.target.closest('button');
-            if (!btn) return;
-            const page = btn.dataset.page;
-            document.querySelectorAll('.tab-nav button').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(`page-${page}`).classList.add('active');
-            if (page === 'daily') {
-                renderDayDetail(currentDayId);
-                drawAltitude(currentDayId);
-            } else {
-                drawAltitude(currentDayId);
-            }
-        });
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    const page = btn.dataset.page;
+    
+    document.querySelectorAll('.tab-nav button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(`page-${page}`).classList.add('active');
 
+    // ★ 控制 Tab Bar 固定 ★
+    const tabNav = document.querySelector('.tab-nav');
+    if (page === 'daily') {
+        tabNav.classList.add('fixed-tab');
+    } else {
+        tabNav.classList.remove('fixed-tab');
+    }
+
+    if (page === 'daily') {
+        renderDayDetail(currentDayId);
+        drawAltitude(currentDayId);
+    } else {
+        drawAltitude(currentDayId);
+    }
+});
         // ================================================================
         //  14. 團友備註事件
         // ================================================================
