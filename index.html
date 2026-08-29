@@ -6,14 +6,14 @@
     <title>雲南滇西12日 · 4人同行</title>
 
     <!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js">
-</script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js">
-</script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js">
+    </script>
 
-<!-- ★ 新增：Chart.js CDN ★ -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
-</script>
+    <!-- Chart.js CDN（海拔線專用） -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
+    </script>
 
     <style>
         /* ===== RESET ===== */
@@ -26,132 +26,112 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background: #F8F4F0;
             color: #2D241A;
-            padding: 0 0 110px 0;
+            padding: 0 0 130px 0;
             min-height: 100vh;
         }
 
         /* ===== HERO HEADER：封面圖風格 ===== */
-.app-header {
-    position: sticky;
-    top: 0;
-    z-index: 50;
-    /* 背景圖設定 */
-    background-size: cover;
-    background-position: center 30%; /* 焦點放喺風景嘅中上部 */
-    background-repeat: no-repeat;
-    /* 文字置中 */
-    text-align: center;
-    /* 預留高度，等佢有個靚比例 */
-    min-height: 220px;
-    /* 用 flex 將內容置中 */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    /* 邊框保留 */
-    border-bottom: 3px solid #E07A5F;
-    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.15);
-    /* 確保文字喺最上層 */
-    isolation: isolate;
-}
+        .app-header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background-size: cover;
+            background-position: center 30%;
+            background-repeat: no-repeat;
+            text-align: center;
+            min-height: 220px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 3px solid #E07A5F;
+            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.15);
+            isolation: isolate;
+        }
+        .app-header .header-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1;
+        }
+        .app-header .header-content {
+            position: relative;
+            z-index: 2;
+            padding: 30px 20px;
+            width: 100%;
+        }
+        .app-header h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 2px;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            margin-bottom: 4px;
+        }
+        .countdown {
+            font-size: 0.9rem;
+            color: #E9C46A;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+            font-weight: 500;
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+            min-height: 1.4rem;
+        }
+        .countdown .highlight {
+            color: #fff;
+            font-weight: 700;
+        }
+        .header-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 6px auto 4px;
+            max-width: 200px;
+        }
+        .header-divider .line {
+            flex: 1;
+            height: 2px;
+            background: #E07A5F;
+            border-radius: 2px;
+        }
+        .header-divider .dot {
+            width: 6px;
+            height: 6px;
+            background: #E9C46A;
+            border-radius: 50%;
+            flex-shrink: 0;
+            box-shadow: 0 0 12px rgba(233, 196, 106, 0.3);
+        }
+        .app-header .sub {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.8);
+            letter-spacing: 1px;
+            opacity: 0.9;
+            margin-top: 2px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
 
-/* 半透明黑色 overlay */
-.app-header .header-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.4); /* 透明度 40%，你可以微調 */
-    z-index: 1;
-}
-
-/* 內容層，放喺 overlay 上面 */
-.app-header .header-content {
-    position: relative;
-    z-index: 2;
-    padding: 30px 20px;
-    width: 100%;
-}
-
-/* 標題保持白色，加大字重 */
-.app-header h1 {
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: #fff;
-    letter-spacing: 2px;
-    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    margin-bottom: 4px;
-}
-
-/* 倒數計時 */
-.countdown {
-    font-size: 0.9rem;
-    color: #E9C46A;
-    letter-spacing: 0.5px;
-    margin-top: 4px;
-    font-weight: 500;
-    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
-    min-height: 1.4rem;
-}
-.countdown .highlight {
-    color: #fff;
-    font-weight: 700;
-}
-
-/* 裝飾線 */
-.header-divider {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    margin: 6px auto 4px;
-    max-width: 200px;
-}
-.header-divider .line {
-    flex: 1;
-    height: 2px;
-    background: #E07A5F;
-    border-radius: 2px;
-}
-.header-divider .dot {
-    width: 6px;
-    height: 6px;
-    background: #E9C46A;
-    border-radius: 50%;
-    flex-shrink: 0;
-    box-shadow: 0 0 12px rgba(233, 196, 106, 0.3);
-}
-
-/* 日期副標題 */
-.app-header .sub {
-    font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.8);
-    letter-spacing: 1px;
-    opacity: 0.9;
-    margin-top: 2px;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-}
-
-/* ===== 手機微調 ===== */
-@media (max-width: 480px) {
-    .app-header {
-        min-height: 180px;
-    }
-    .app-header h1 {
-        font-size: 1.2rem;
-        letter-spacing: 1px;
-    }
-    .countdown {
-        font-size: 0.75rem;
-    }
-    .app-header .sub {
-        font-size: 0.7rem;
-    }
-    .header-divider {
-        max-width: 140px;
-    }
-}
-        
+        @media (max-width: 480px) {
+            .app-header {
+                min-height: 180px;
+            }
+            .app-header h1 {
+                font-size: 1.2rem;
+                letter-spacing: 1px;
+            }
+            .countdown {
+                font-size: 0.75rem;
+            }
+            .app-header .sub {
+                font-size: 0.7rem;
+            }
+            .header-divider {
+                max-width: 140px;
+            }
+        }
 
         /* ===== TAB NAV ===== */
         .tab-nav {
@@ -332,7 +312,7 @@
         /* ===== 固定地圖按鈕 ===== */
         .map-fab {
             position: fixed;
-            bottom: 120px;
+            bottom: 135px;
             right: 16px;
             z-index: 60;
             width: 56px;
@@ -380,7 +360,7 @@
         }
         @media (max-width: 480px) {
             .map-fab {
-                bottom: 105px;
+                bottom: 115px;
                 right: 12px;
                 width: 48px;
                 height: 48px;
@@ -955,44 +935,31 @@
         }
 
         /* ===== 底部海拔線（升級版：Chart.js） ===== */
-.altitude-footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(12px); /* 玻璃擬態 */
-    border-top: 2px solid rgba(224, 122, 95, 0.15);
-    padding: 12px 10px 10px;
-    z-index: 50;
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
-    height: 130px; /* 高度略微增加以容納圖表 */
-}
+        .altitude-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border-top: 2px solid rgba(224, 122, 95, 0.15);
+            padding: 8px 10px 10px;
+            z-index: 50;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
+            height: 130px;
+        }
+        .altitude-footer canvas {
+            width: 100% !important;
+            height: 85px !important;
+            display: block;
+            cursor: pointer;
+            touch-action: none;
+            border-radius: 8px;
+        }
+        .altitude-footer .alt-label {
+            display: none;
+        }
 
-.altitude-footer canvas {
-    width: 100% !important;
-    height: 85px !important; /* 調整圖表高度 */
-    display: block;
-    cursor: pointer;
-    touch-action: none;
-}
-
-/* 移除舊嘅 alt-label */
-.altitude-footer .alt-label {
-    display: none;
-}
-
-/* 超過 3000m 嘅脈衝提醒（for 之後嘅 Popup） */
-.high-altitude-warning {
-    border-left: 4px solid #FF5722;
-    animation: pulse-border 2s infinite;
-}
-
-@keyframes pulse-border {
-    0% { box-shadow: 0 0 0 0 rgba(255, 87, 34, 0.4); }
-    70% { box-shadow: 0 0 0 8px rgba(255, 87, 34, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(255, 87, 34, 0); }
-}
         /* ===== Toast ===== */
         .toast-container {
             position: fixed;
@@ -1074,7 +1041,7 @@
                 padding: 12px 4px;
             }
             .day-tabs-wrapper {
-                top: 0px;
+                top: 90px;
                 padding: 2px 8px 10px;
             }
             .day-tabs button {
@@ -1082,7 +1049,7 @@
                 padding: 6px 12px;
             }
             .day-detail .day-head {
-                top: 110px;
+                top: 150px;
             }
             .day-detail .day-head .day-label {
                 font-size: 1.0rem;
@@ -1095,14 +1062,14 @@
                 font-size: 0.82rem;
             }
             .altitude-footer {
-                height: 95px;
-                padding: 4px 6px 6px;
+                height: 115px;
+                padding: 6px 6px 6px;
             }
             .altitude-footer canvas {
-                height: 68px;
+                height: 72px !important;
             }
             body {
-                padding-bottom: 100px;
+                padding-bottom: 115px;
             }
             .day-item-meal {
                 padding: 8px 10px;
@@ -1121,7 +1088,7 @@
                 font-size: 0.95rem;
             }
             .map-fab {
-                bottom: 105px;
+                bottom: 120px;
                 right: 12px;
                 width: 48px;
                 height: 48px;
@@ -1144,21 +1111,20 @@
 </head>
 <body>
 
-    <!-- ===== 新 HEADER：Hero 封面圖 ===== -->
-<header class="app-header" style="background-image: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80');">
-    <!-- 背景圖 URL 你可以自己換，上面係一張優質嘅雪山風景 -->
-    <div class="header-overlay"></div> <!-- 半透明黑色層 -->
-    <div class="header-content">
-        <h1>🌄 雲南滇西12日 · 4人同行</h1>
-        <div class="countdown" id="countdown">⏳ 載入中...</div>
-        <div class="header-divider">
-            <span class="dot"></span>
-            <span class="line"></span>
-            <span class="dot"></span>
+    <!-- ===== HEADER：Hero 封面圖 ===== -->
+    <header class="app-header" style="background-image: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80');">
+        <div class="header-overlay"></div>
+        <div class="header-content">
+            <h1>🌄 雲南滇西12日 · 4人同行</h1>
+            <div class="countdown" id="countdown">⏳ 載入中...</div>
+            <div class="header-divider">
+                <span class="dot"></span>
+                <span class="line"></span>
+                <span class="dot"></span>
+            </div>
+            <div class="sub">2026.11.11 – 11.22 ｜ Chill · Hea · 慢慢行</div>
         </div>
-        <div class="sub">2026.11.11 – 11.22 ｜ Chill · Hea · 慢慢行</div>
-    </div>
-</header>
+    </header>
 
     <!-- ===== TAB NAV ===== -->
     <nav class="tab-nav" id="tabNav">
@@ -1927,7 +1893,7 @@
                     setTimeout(() => {
                         const detail = document.querySelector('.day-detail');
                         if (detail) {
-                            const topOffset = 130;
+                            const topOffset = 160;
                             const elementPosition = detail.getBoundingClientRect().top + window.pageYOffset;
                             window.scrollTo({ top: elementPosition - topOffset, behavior: 'smooth' });
                         }
@@ -1979,50 +1945,52 @@
 
             html += `</div>`;
             container.innerHTML = html;
-// 強制重新整理所有備註（防止 Firebase 延遲）
-setTimeout(() => {
-    const noteAreas = container.querySelectorAll('.note-area');
-    noteAreas.forEach(area => {
-        const key = area.id.replace('note-area-', '');
-        if (db) {
-            db.ref(key).once('value').then(snap => {
-                const notes = snap.val() || [];
-                if (notes.length === 0) {
-                    area.innerHTML = `<div class="empty-msg">💬 未有備註 · 你嚟加第一條！</div>`;
-                } else {
-                    let html = '';
-                    notes.forEach((note, idx) => {
-                        const text = note.text || '';
-                        const linkedText = text.replace(
-                            /(https?:\/\/[^\s]+)/g,
-                            '<a href="$1" target="_blank" rel="noopener">$1</a>'
-                        );
-                        html += `
-                            <div class="note-item">
-                                <span class="note-text">${linkedText}</span>
-                                <button class="del-btn" data-key="${key}" data-idx="${idx}">✕</button>
-                            </div>
-                        `;
-                    });
-                    area.innerHTML = html;
-                    // 重新綁定刪除事件
-                    area.querySelectorAll('.del-btn').forEach(btn => {
-                        btn.onclick = function() {
-                            const k = this.dataset.key;
-                            const idx = parseInt(this.dataset.idx);
-                            if (!db) return;
-                            db.ref(k).once('value').then(snap => {
-                                const arr = snap.val() || [];
-                                arr.splice(idx, 1);
-                                db.ref(k).set(arr);
-                            }).catch(e => alert('刪除失敗: ' + e.message));
-                        };
-                    });
-                }
-            }).catch(() => {});
-        }
-    });
-}, 50);
+
+            // 強制重新整理所有備註（防止 Firebase 延遲）
+            setTimeout(() => {
+                const noteAreas = container.querySelectorAll('.note-area');
+                noteAreas.forEach(area => {
+                    const key = area.id.replace('note-area-', '');
+                    if (db) {
+                        db.ref(key).once('value').then(snap => {
+                            const notes = snap.val() || [];
+                            if (notes.length === 0) {
+                                area.innerHTML = `<div class="empty-msg">💬 未有備註 · 你嚟加第一條！</div>`;
+                            } else {
+                                let html = '';
+                                notes.forEach((note, idx) => {
+                                    const text = note.text || '';
+                                    const linkedText = text.replace(
+                                        /(https?:\/\/[^\s]+)/g,
+                                        '<a href="$1" target="_blank" rel="noopener">$1</a>'
+                                    );
+                                    html += `
+                                        <div class="note-item">
+                                            <span class="note-text">${linkedText}</span>
+                                            <button class="del-btn" data-key="${key}" data-idx="${idx}">✕</button>
+                                        </div>
+                                    `;
+                                });
+                                area.innerHTML = html;
+                                // 重新綁定刪除事件
+                                area.querySelectorAll('.del-btn').forEach(btn => {
+                                    btn.onclick = function() {
+                                        const k = this.dataset.key;
+                                        const idx = parseInt(this.dataset.idx);
+                                        if (!db) return;
+                                        db.ref(k).once('value').then(snap => {
+                                            const arr = snap.val() || [];
+                                            arr.splice(idx, 1);
+                                            db.ref(k).set(arr);
+                                        }).catch(e => alert('刪除失敗: ' + e.message));
+                                    };
+                                });
+                            }
+                        }).catch(() => {});
+                    }
+                });
+            }, 50);
+
             container.querySelectorAll('.add-btn').forEach(btn => {
                 btn.onclick = function(e) {
                     e.stopPropagation();
@@ -2195,9 +2163,9 @@ setTimeout(() => {
         }
 
         // ================================================================
-        //  12. 海拔線
+        //  12. 海拔線（升級版：Chart.js）
         // ================================================================
-        let toastTimer = null;
+        let elevationChart = null;
 
         function showToast(dayId) {
             const day = DAYS_DATA.find(d => d.id === dayId);
@@ -2229,206 +2197,100 @@ setTimeout(() => {
             }, 2800);
         }
 
-        // ================================================================
-//  12. 海拔線（升級版：使用 Chart.js）
-// ================================================================
-let elevationChart = null; // 用嚟儲存 chart 實例
+        let toastTimer = null;
 
-function drawAltitude(activeDayId) {
-    const canvas = document.getElementById('altitudeCanvas');
-    const ctx = canvas.getContext('2d');
+        function drawAltitude(activeDayId) {
+            const canvas = document.getElementById('altitudeCanvas');
+            const ctx = canvas.getContext('2d');
 
-    // 1. 建立由上至下的背景漸變 (Top -> Bottom)
-    const fillGradient = ctx.createLinearGradient(0, 0, 0, 300);
-    fillGradient.addColorStop(0, 'rgba(224, 122, 95, 0.45)'); // 珊瑚橘半透明
-    fillGradient.addColorStop(0.5, 'rgba(74, 144, 226, 0.25)'); // 粉藍半透明
-    fillGradient.addColorStop(1, 'rgba(74, 144, 226, 0.0)');   // 底部：完全透明
+            // 建立由上至下的背景漸變
+            const fillGradient = ctx.createLinearGradient(0, 0, 0, 300);
+            fillGradient.addColorStop(0, 'rgba(224, 122, 95, 0.45)');
+            fillGradient.addColorStop(0.5, 'rgba(74, 144, 226, 0.25)');
+            fillGradient.addColorStop(1, 'rgba(74, 144, 226, 0.0)');
 
-    // 2. 準備數據
-    const labels = DAYS_DATA.map(d => `D${d.id}`);
-    const altitudeData = DAYS_DATA.map(d => d.altitude);
+            const labels = DAYS_DATA.map(d => `D${d.id}`);
+            const altitudeData = DAYS_DATA.map(d => d.altitude);
 
-    // 3. 如果已經有 chart，先摧毀再重建（避免重疊）
-    if (elevationChart) {
-        elevationChart.destroy();
-    }
+            if (elevationChart) {
+                elevationChart.destroy();
+            }
 
-    // 4. 建立新 chart
-    elevationChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: '海拔 (m)',
-                data: altitudeData,
-                fill: true,
-                backgroundColor: fillGradient,
-                borderColor: '#E07A5F',     // 主線用返你嘅主題色
-                borderWidth: 3,
-                tension: 0.4,
-                pointBackgroundColor: altitudeData.map(val => val >= 3000 ? '#FF5722' : '#E07A5F'),
-                pointBorderColor: '#FFFFFF',
-                pointBorderWidth: 2,
-                pointRadius: altitudeData.map(val => val >= 3000 ? 6 : 4),
-                pointHoverRadius: 8,
-                spanGaps: false,
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            let val = context.raw;
-                            return val >= 3000 ? ` 🏔️ ${val}m (高反注意！)` : ` 🏔️ ${val}m`;
+            elevationChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '海拔 (m)',
+                        data: altitudeData,
+                        fill: true,
+                        backgroundColor: fillGradient,
+                        borderColor: '#E07A5F',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        pointBackgroundColor: altitudeData.map(val => val >= 3000 ? '#FF5722' :
+                            '#E07A5F'),
+                        pointBorderColor: '#FFFFFF',
+                        pointBorderWidth: 2,
+                        pointRadius: altitudeData.map(val => val >= 3000 ? 6 : 4),
+                        pointHoverRadius: 8,
+                        spanGaps: false,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let val = context.raw;
+                                    return val >= 3000 ? ` 🏔️ ${val}m (高反注意！)` : ` 🏔️ ${val}m`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            min: 1500,
+                            max: 3500,
+                            grid: { color: 'rgba(0, 0, 0, 0.05)' },
+                            ticks: {
+                                stepSize: 500,
+                                font: { size: 9 }
+                            }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: {
+                                font: { size: 9 }
+                            }
+                        }
+                    },
+                    onClick: function(e, item) {
+                        if (item && item.length > 0) {
+                            const index = item[0].dataIndex;
+                            const dayId = index + 1;
+                            if (dayId >= 1 && dayId <= 12) {
+                                currentDayId = dayId;
+                                renderDayTabs();
+                                renderDayDetail(currentDayId);
+                                drawAltitude(currentDayId);
+                                showToast(dayId);
+                                document.querySelectorAll('.tab-nav button').forEach(b => b.classList
+                                    .remove('active'));
+                                document.querySelector('[data-page="daily"]').classList.add('active');
+                                document.querySelectorAll('.page').forEach(p => p.classList.remove(
+                                'active'));
+                                document.getElementById('page-daily').classList.add('active');
+                            }
                         }
                     }
                 }
-            },
-            scales: {
-                y: {
-                    min: 1500,
-                    max: 3500,
-                    grid: { color: 'rgba(0, 0, 0, 0.05)' },
-                    ticks: {
-                        stepSize: 500,
-                        font: { size: 9 }
-                    }
-                },
-                x: {
-                    grid: { display: false },
-                    ticks: {
-                        font: { size: 9 }
-                    }
-                }
-            },
-            // 加返點擊事件，等撳落去可以跳轉 Day
-            onClick: function(e, item) {
-                if (item && item.length > 0) {
-                    const index = item[0].dataIndex;
-                    const dayId = index + 1;
-                    if (dayId >= 1 && dayId <= 12) {
-                        currentDayId = dayId;
-                        renderDayTabs();
-                        renderDayDetail(currentDayId);
-                        drawAltitude(currentDayId);
-                        showToast(dayId);
-                        // 切換到每日行程 tab
-                        document.querySelectorAll('.tab-nav button').forEach(b => b.classList.remove('active'));
-                        document.querySelector('[data-page="daily"]').classList.add('active');
-                        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-                        document.getElementById('page-daily').classList.add('active');
-                    }
-                }
-            }
-        }
-    });
-
-    // 儲存當前 active day 以便之後更新
-    elevationChart._activeId = activeDayId;
-}
-            });
-            ctx.strokeStyle = grad;
-            ctx.lineWidth = 3.5;
-            ctx.lineJoin = 'round';
-            ctx.lineCap = 'round';
-            ctx.stroke();
-
-            const y3000 = padT + chartH - ((3000 - minAlt) / range) * chartH;
-            ctx.beginPath();
-            ctx.moveTo(padL, y3000);
-            ctx.lineTo(w - padR, y3000);
-            ctx.strokeStyle = 'rgba(224, 122, 95, 0.30)';
-            ctx.lineWidth = 1.8;
-            ctx.setLineDash([4, 6]);
-            ctx.stroke();
-            ctx.setLineDash([]);
-            ctx.fillStyle = 'rgba(224, 122, 95, 0.40)';
-            ctx.font = '8px sans-serif';
-            ctx.fillText('3000m', 2, y3000 - 3);
-
-            points.forEach((p) => {
-                const isActive = p.id === activeDayId;
-                const altRatio = (p.alt - minAlt) / range;
-                const r = Math.round(50 + altRatio * 180);
-                const g = Math.round(180 - altRatio * 140);
-                const b = Math.round(80 - altRatio * 60);
-                const color = `rgb(${r}, ${g}, ${b})`;
-
-                const size = isActive ? 9 : 6.5;
-                ctx.save();
-                ctx.translate(p.x, p.y);
-                ctx.rotate(Math.PI / 4);
-                ctx.beginPath();
-                ctx.rect(-size / 2, -size / 2, size, size);
-                ctx.fillStyle = color;
-                ctx.shadowColor = isActive ? 'rgba(224, 122, 95, 0.25)' : 'rgba(0,0,0,0.04)';
-                ctx.shadowBlur = isActive ? 10 : 2;
-                ctx.fill();
-                ctx.shadowBlur = 0;
-                ctx.restore();
-
-                if (isActive) {
-                    const time = Date.now() / 800;
-                    const pulse = 0.7 + 0.3 * Math.sin(time);
-                    ctx.beginPath();
-                    ctx.arc(p.x, p.y, 12 * pulse, 0, Math.PI * 2);
-                    ctx.strokeStyle = `rgba(224, 122, 95, ${0.12 * pulse})`;
-                    ctx.lineWidth = 2;
-                    ctx.stroke();
-                }
-
-                ctx.fillStyle = isActive ? '#E07A5F' : 'rgba(80, 70, 60, 0.35)';
-                ctx.font = isActive ? 'bold 7px sans-serif' : '6px sans-serif';
-                ctx.textAlign = 'center';
-                ctx.fillText(p.alt + 'm', p.x, p.y - 10);
             });
 
-            canvas._points = points;
-            canvas._activeId = activeDayId;
-        }
-
-        document.getElementById('altitudeCanvas').addEventListener('click', function(e) {
-            const rect = this.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const points = this._points || [];
-            let found = null;
-            let minDist = 30;
-            points.forEach(p => {
-                const dist = Math.abs(x - p.x);
-                if (dist < minDist) {
-                    minDist = dist;
-                    found = p;
-                }
-            });
-            if (found) {
-                currentDayId = found.id;
-                renderDayTabs();
-                renderDayDetail(currentDayId);
-                drawAltitude(currentDayId);
-                showToast(found.id);
-                document.querySelectorAll('.tab-nav button').forEach(b => b.classList.remove('active'));
-                document.querySelector('[data-page="daily"]').classList.add('active');
-                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-                document.getElementById('page-daily').classList.add('active');
-            }
-        });
-
-        let pulseAnimId = null;
-
-        function startPulseAnimation() {
-            function pulseLoop() {
-                const canvas = document.getElementById('altitudeCanvas');
-                if (canvas._activeId !== undefined) {
-                    drawAltitude(canvas._activeId);
-                }
-                pulseAnimId = requestAnimationFrame(pulseLoop);
-            }
-            if (pulseAnimId) cancelAnimationFrame(pulseAnimId);
-            pulseLoop();
+            elevationChart._activeId = activeDayId;
         }
 
         // ================================================================
@@ -2459,20 +2321,18 @@ function drawAltitude(activeDayId) {
         });
 
         // ================================================================
-//  15. Resize（更新海拔圖）
-// ================================================================
-let resizeTimer;
-window.addEventListener('resize', () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => {
-        if (elevationChart) {
-            drawAltitude(currentDayId); // 直接重繪
-        }
-    }, 200);
-});
+        //  15. Resize（更新海拔圖）
+        // ================================================================
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                if (elevationChart) {
+                    drawAltitude(currentDayId);
+                }
+            }, 200);
+        });
 
-// 刪除或註解掉 startPulseAnimation 嘅呼叫
-// startPulseAnimation();
         // ================================================================
         //  16. 啟動
         // ================================================================
@@ -2489,10 +2349,9 @@ window.addEventListener('resize', () => {
 
         setTimeout(() => {
             drawAltitude(1);
-            startPulseAnimation();
         }, 300);
 
-        console.log('🌄 雲南滇西12日行程網頁已啟動！（完整版）');
+        console.log('🌄 雲南滇西12日行程網頁已啟動！（海拔線升級版）');
         if (!db) console.warn('⚠️ Firebase 未連線');
         else console.log('✅ Firebase 已連線');
     </script>
