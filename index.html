@@ -1,2360 +1,2365 @@
 <!DOCTYPE html>
 <html lang="zh-HK">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
-    <title>雲南滇西12日 · 4人同行</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+<title>雲南滇西12日 · 4人同行</title>
 
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js">
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js">
-    </script>
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js">
+</script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js">
+</script>
 
-    <!-- Chart.js CDN（海拔線專用） -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
-    </script>
+<style>
+/* ===== RESET ===== */
+* {
+box-sizing: border-box;
+margin: 0;
+padding: 0;
+}
+body {
+font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+background: #F8F4F0;
+color: #2D241A;
+padding: 0 0 110px 0;
+min-height: 100vh;
+}
 
-    <style>
-        /* ===== RESET ===== */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background: #F8F4F0;
-            color: #2D241A;
-            padding: 0 0 130px 0;
-            min-height: 100vh;
-        }
+/* ===== HERO HEADER：封面圖風格 ===== /
+.app-header {
+position: sticky;
+top: 0;
+z-index: 50;
+/ 背景圖設定 /
+background-size: cover;
+background-position: center 30%; / 焦點放喺風景嘅中上部 /
+background-repeat: no-repeat;
+/ 文字置中 /
+text-align: center;
+/ 預留高度，等佢有個靚比例 /
+min-height: 220px;
+/ 用 flex 將內容置中 /
+display: flex;
+align-items: center;
+justify-content: center;
+/ 邊框保留 /
+border-bottom: 3px solid #E07A5F;
+box-shadow: 0 2px 16px rgba(0, 0, 0, 0.15);
+/ 確保文字喺最上層 */
+isolation: isolate;
+}
 
-        /* ===== HERO HEADER：封面圖風格 ===== */
-        .app-header {
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            background-size: cover;
-            background-position: center 30%;
-            background-repeat: no-repeat;
-            text-align: center;
-            min-height: 220px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-bottom: 3px solid #E07A5F;
-            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.15);
-            isolation: isolate;
-        }
-        .app-header .header-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.4);
-            z-index: 1;
-        }
-        .app-header .header-content {
-            position: relative;
-            z-index: 2;
-            padding: 30px 20px;
-            width: 100%;
-        }
-        .app-header h1 {
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: #fff;
-            letter-spacing: 2px;
-            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            margin-bottom: 4px;
-        }
-        .countdown {
-            font-size: 0.9rem;
-            color: #E9C46A;
-            letter-spacing: 0.5px;
-            margin-top: 4px;
-            font-weight: 500;
-            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
-            min-height: 1.4rem;
-        }
-        .countdown .highlight {
-            color: #fff;
-            font-weight: 700;
-        }
-        .header-divider {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin: 6px auto 4px;
-            max-width: 200px;
-        }
-        .header-divider .line {
-            flex: 1;
-            height: 2px;
-            background: #E07A5F;
-            border-radius: 2px;
-        }
-        .header-divider .dot {
-            width: 6px;
-            height: 6px;
-            background: #E9C46A;
-            border-radius: 50%;
-            flex-shrink: 0;
-            box-shadow: 0 0 12px rgba(233, 196, 106, 0.3);
-        }
-        .app-header .sub {
-            font-size: 0.85rem;
-            color: rgba(255, 255, 255, 0.8);
-            letter-spacing: 1px;
-            opacity: 0.9;
-            margin-top: 2px;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-        }
+/* 半透明黑色 overlay /
+.app-header .header-overlay {
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: rgba(0, 0, 0, 0.4); / 透明度 40%，你可以微調 */
+z-index: 1;
+}
 
-        @media (max-width: 480px) {
-            .app-header {
-                min-height: 180px;
-            }
-            .app-header h1 {
-                font-size: 1.2rem;
-                letter-spacing: 1px;
-            }
-            .countdown {
-                font-size: 0.75rem;
-            }
-            .app-header .sub {
-                font-size: 0.7rem;
-            }
-            .header-divider {
-                max-width: 140px;
-            }
-        }
+/* 內容層，放喺 overlay 上面 */
+.app-header .header-content {
+position: relative;
+z-index: 2;
+padding: 30px 20px;
+width: 100%;
+}
 
-        /* ===== TAB NAV ===== */
-        .tab-nav {
-            display: flex;
-            background: #fff;
-            border-bottom: 2px solid #EDE7E0;
-            position: sticky;
-            top: 0;
-            z-index: 45;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-        }
-        .tab-nav button {
-            flex: 1;
-            padding: 14px 6px;
-            border: none;
-            background: transparent;
-            font-size: 0.88rem;
-            font-weight: 500;
-            color: #6B5A4A;
-            cursor: pointer;
-            transition: 0.2s;
-            border-bottom: 3px solid transparent;
-            letter-spacing: 0.3px;
-        }
-        .tab-nav button.active {
-            color: #E07A5F;
-            border-bottom-color: #E07A5F;
-            font-weight: 600;
-        }
-        .tab-nav button:active {
-            background: #FFF5F0;
-        }
+/* 標題保持白色，加大字重 */
+.app-header h1 {
+font-size: 1.6rem;
+font-weight: 700;
+color: #fff;
+letter-spacing: 2px;
+text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+margin-bottom: 4px;
+}
 
-        /* ===== PAGES ===== */
-        .page {
-            display: none;
-            padding: 16px 16px 20px;
-            max-width: 720px;
-            margin: 0 auto;
-        }
-        .page.active {
-            display: block;
-        }
+/* 倒數計時 */
+.countdown {
+font-size: 0.9rem;
+color: #E9C46A;
+letter-spacing: 0.5px;
+margin-top: 4px;
+font-weight: 500;
+text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+min-height: 1.4rem;
+}
+.countdown .highlight {
+color: #fff;
+font-weight: 700;
+}
 
-        /* ===== 總覽 ===== */
-        .overview-card {
-            background: #fff;
-            border-radius: 16px;
-            padding: 16px 18px;
-            margin-bottom: 14px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-        }
-        .overview-card h2 {
-            font-size: 1.05rem;
-            color: #E07A5F;
-            border-left: 5px solid #E9C46A;
-            padding-left: 12px;
-            margin-bottom: 10px;
-        }
+/* 裝飾線 */
+.header-divider {
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 10px;
+margin: 6px auto 4px;
+max-width: 200px;
+}
+.header-divider .line {
+flex: 1;
+height: 2px;
+background: #E07A5F;
+border-radius: 2px;
+}
+.header-divider .dot {
+width: 6px;
+height: 6px;
+background: #E9C46A;
+border-radius: 50%;
+flex-shrink: 0;
+box-shadow: 0 0 12px rgba(233, 196, 106, 0.3);
+}
 
-        .route-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.82rem;
-        }
-        .route-table th {
-            text-align: left;
-            background: #F5F0EB;
-            padding: 6px 8px;
-            border-bottom: 2px solid #EDE7E0;
-            color: #2D241A;
-            font-weight: 600;
-            font-size: 0.8rem;
-        }
-        .route-table td {
-            padding: 6px 8px;
-            border-bottom: 1px solid #F5F0EB;
-            vertical-align: middle;
-            font-size: 0.8rem;
-        }
-        .route-table .day-cell {
-            font-weight: 600;
-            color: #E07A5F;
-            white-space: nowrap;
-            font-size: 0.8rem;
-        }
-        .route-table .route-cell {
-            color: #2D241A;
-            font-weight: 500;
-            font-size: 0.8rem;
-        }
-        .route-table .place-cell {
-            color: #6B5A4A;
-            font-size: 0.8rem;
-        }
-        @media (max-width: 600px) {
-            .route-table th,
-            .route-table td {
-                padding: 4px 4px;
-                font-size: 0.7rem;
-            }
-            .route-table .day-cell,
-            .route-table .route-cell,
-            .route-table .place-cell {
-                font-size: 0.7rem;
-            }
-        }
+/* 日期副標題 */
+.app-header .sub {
+font-size: 0.85rem;
+color: rgba(255, 255, 255, 0.8);
+letter-spacing: 1px;
+opacity: 0.9;
+margin-top: 2px;
+text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
 
-        /* ===== 天氣小工具 ===== */
-        .weather-card {
-            background: linear-gradient(145deg, #2D4A6A, #1E3A5A);
-            border-radius: 16px;
-            padding: 16px 20px;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-            margin-top: 4px;
-        }
-        .weather-card .weather-left {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-        .weather-card .weather-icon {
-            font-size: 2.4rem;
-            line-height: 1;
-        }
-        .weather-card .weather-city {
-            font-size: 1.0rem;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-        .weather-card .weather-desc {
-            font-size: 0.8rem;
-            opacity: 0.8;
-            margin-top: 2px;
-        }
-        .weather-card .weather-temp {
-            font-size: 2.0rem;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-        .weather-card .weather-temp small {
-            font-size: 1.0rem;
-            font-weight: 400;
-            opacity: 0.7;
-        }
-        .weather-card .weather-extra {
-            text-align: right;
-            font-size: 0.7rem;
-            opacity: 0.7;
-            margin-top: 2px;
-        }
-        .weather-loading {
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 0.9rem;
-        }
+/* ===== 手機微調 ===== */
+@media (max-width: 480px) {
+.app-header {
+min-height: 180px;
+}
+.app-header h1 {
+font-size: 1.2rem;
+letter-spacing: 1px;
+}
+.countdown {
+font-size: 0.75rem;
+}
+.app-header .sub {
+font-size: 0.7rem;
+}
+.header-divider {
+max-width: 140px;
+}
+}
 
-        @media (max-width: 480px) {
-            .weather-card {
-                flex-wrap: wrap;
-                gap: 6px;
-                padding: 14px 16px;
-            }
-            .weather-card .weather-temp {
-                font-size: 1.6rem;
-            }
-            .weather-card .weather-icon {
-                font-size: 2.0rem;
-            }
-            .weather-card .weather-city {
-                font-size: 0.9rem;
-            }
-        }
 
-        /* ===== 固定地圖按鈕 ===== */
-        .map-fab {
-            position: fixed;
-            bottom: 135px;
-            right: 16px;
-            z-index: 60;
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            background: #2B3A67;
-            color: #fff;
-            border: none;
-            box-shadow: 0 4px 20px rgba(43, 58, 103, 0.35), 0 2px 8px rgba(0, 0, 0, 0.10);
-            font-size: 1.4rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            cursor: pointer;
-            transition: 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-            backdrop-filter: blur(2px);
-            border: 2px solid rgba(255, 255, 255, 0.12);
-        }
-        .map-fab:hover {
-            transform: scale(1.08);
-            box-shadow: 0 6px 30px rgba(43, 58, 103, 0.45);
-        }
-        .map-fab:active {
-            transform: scale(0.90);
-            box-shadow: 0 2px 12px rgba(43, 58, 103, 0.25);
-        }
-        .map-fab .tooltip {
-            position: absolute;
-            right: 68px;
-            background: rgba(45, 36, 26, 0.9);
-            backdrop-filter: blur(4px);
-            color: #fff;
-            padding: 4px 14px;
-            border-radius: 30px;
-            font-size: 0.7rem;
-            font-weight: 500;
-            white-space: nowrap;
-            opacity: 0;
-            pointer-events: none;
-            transition: 0.2s;
-        }
-        .map-fab:hover .tooltip {
-            opacity: 1;
-        }
-        @media (max-width: 480px) {
-            .map-fab {
-                bottom: 115px;
-                right: 12px;
-                width: 48px;
-                height: 48px;
-                font-size: 1.2rem;
-            }
-            .map-fab .tooltip {
-                display: none;
-            }
-        }
+/* ===== TAB NAV ===== */
+.tab-nav {
+display: flex;
+background: #fff;
+border-bottom: 2px solid #EDE7E0;
+position: sticky;
+top: 0;
+z-index: 45;
+box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+.tab-nav button {
+flex: 1;
+padding: 14px 6px;
+border: none;
+background: transparent;
+font-size: 0.88rem;
+font-weight: 500;
+color: #6B5A4A;
+cursor: pointer;
+transition: 0.2s;
+border-bottom: 3px solid transparent;
+letter-spacing: 0.3px;
+}
+.tab-nav button.active {
+color: #E07A5F;
+border-bottom-color: #E07A5F;
+font-weight: 600;
+}
+.tab-nav button:active {
+background: #FFF5F0;
+}
 
-        /* ===== 重要資訊 ===== */
-        .other-section {
-            background: #fff;
-            border-radius: 16px;
-            padding: 16px 18px;
-            margin-bottom: 14px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-        }
-        .other-section h3 {
-            font-size: 1.0rem;
-            color: #E07A5F;
-            border-left: 5px solid #E9C46A;
-            padding-left: 12px;
-            margin-bottom: 10px;
-        }
-        .other-section .row {
-            display: flex;
-            justify-content: space-between;
-            padding: 4px 0;
-            font-size: 0.88rem;
-            border-bottom: 1px solid #F5F0EB;
-        }
-        .other-section .row .lbl {
-            color: #6B5A4A;
-        }
-        .other-section .row .val {
-            font-weight: 500;
-            text-align: right;
-        }
-        .other-section .row.highlight-row {
-            border-top: 2px solid #EDE7E0;
-            padding-top: 8px;
-            margin-top: 4px;
-            font-weight: 600;
-        }
-        .flight-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.9rem;
-            padding: 5px 0;
-            border-bottom: 1px solid #F5F0EB;
-        }
-        .flight-row .label {
-            color: #6B5A4A;
-        }
-        .flight-row .value {
-            font-weight: 500;
-            color: #2D241A;
-        }
-        .flight-row.highlight {
-            border-top: 2px solid #EDE7E0;
-            padding-top: 8px;
-            margin-top: 4px;
-            font-weight: 600;
-        }
-        .packing-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2px 12px;
-            font-size: 0.85rem;
-        }
-        .packing-grid .cat {
-            font-weight: 600;
-            color: #2B3A67;
-            grid-column: 1 / -1;
-            margin-top: 6px;
-            border-bottom: 1px solid #EDE7E0;
-            padding-bottom: 2px;
-        }
-        .packing-grid .item {
-            padding: 2px 0 2px 8px;
-            color: #2D241A;
-        }
-        .altitude-table {
-            font-size: 0.85rem;
-        }
-        .altitude-table .row {
-            display: flex;
-            justify-content: space-between;
-            padding: 3px 0;
-            border-bottom: 1px solid #F5F0EB;
-        }
-        .altitude-table .row .val {
-            font-weight: 400;
-        }
-        .train-input-area {
-            margin-top: 8px;
-        }
-        .train-input-area .train-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            align-items: center;
-            padding: 4px 0;
-            border-bottom: 1px solid #F5F0EB;
-        }
-        .train-input-area .train-row .label {
-            font-weight: 500;
-            font-size: 0.85rem;
-            color: #2D241A;
-            min-width: 60px;
-        }
-        .train-input-area .train-row input {
-            flex: 1 1 120px;
-            padding: 4px 12px;
-            border-radius: 30px;
-            border: 1.5px solid #EDE7E0;
-            font-size: 0.78rem;
-            background: #FFFBF5;
-            transition: 0.15s;
-            min-width: 80px;
-        }
-        .train-input-area .train-row input:focus {
-            border-color: #E07A5F;
-            outline: none;
-            background: #fff;
-        }
-        .group-note-item {
-            background: #FEF9E7;
-            border-radius: 10px;
-            padding: 8px 12px;
-            margin: 6px 0;
-            font-size: 0.88rem;
-            border-left: 3px solid #E9C46A;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 8px;
-        }
-        .group-note-item .note-text {
-            flex: 1;
-            color: #2D241A;
-        }
-        .group-note-item .del-btn {
-            background: none;
-            border: none;
-            color: #C07A5A;
-            font-size: 0.9rem;
-            cursor: pointer;
-            padding: 0 4px;
-            opacity: 0.6;
-            flex-shrink: 0;
-        }
-        .group-note-item .del-btn:active {
-            opacity: 1;
-            transform: scale(1.2);
-        }
-        .group-note-empty {
-            color: #B0A090;
-            font-size: 0.8rem;
-            font-style: italic;
-            padding: 4px 0 2px 6px;
-        }
-        .group-note-form {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-top: 8px;
-            align-items: center;
-        }
-        .group-note-form input[type="text"] {
-            flex: 2 1 180px;
-            padding: 8px 14px;
-            border-radius: 30px;
-            border: 1.5px solid #EDE7E0;
-            font-size: 0.88rem;
-            background: #fff;
-            outline: none;
-            transition: 0.15s;
-            min-width: 100px;
-        }
-        .group-note-form input[type="text"]:focus {
-            border-color: #E07A5F;
-        }
-        .group-note-form .submit-btn {
-            padding: 8px 20px;
-            border-radius: 30px;
-            border: none;
-            background: #E07A5F;
-            color: #fff;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.15s;
-            white-space: nowrap;
-        }
-        .group-note-form .submit-btn:active {
-            transform: scale(0.94);
-            background: #C96A50;
-        }
-        .status-list .row {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 0;
-            border-bottom: 1px solid #F5F0EB;
-        }
-        .status-list .day-label {
-            font-weight: 600;
-            color: #E07A5F;
-            min-width: 55px;
-            font-size: 0.85rem;
-            flex-shrink: 0;
-        }
-        .status-list .hotel-input {
-            flex: 3 1 200px;
-            border: 1.5px solid #EDE7E0;
-            border-radius: 30px;
-            padding: 4px 14px;
-            font-size: 0.78rem;
-            background: #FFFBF5;
-            transition: 0.15s;
-            min-width: 120px;
-        }
-        .status-list .status-input {
-            flex: 1 1 90px;
-            border: 1.5px solid #EDE7E0;
-            border-radius: 30px;
-            padding: 4px 12px;
-            font-size: 0.78rem;
-            background: #FFFBF5;
-            transition: 0.15s;
-            min-width: 70px;
-        }
-        .status-list .hotel-input:focus,
-        .status-list .status-input:focus {
-            border-color: #E07A5F;
-            outline: none;
-            background: #fff;
-        }
-        @media (max-width: 480px) {
-            .status-list .hotel-input {
-                flex: 2 1 140px;
-                min-width: 100px;
-                font-size: 0.7rem;
-                padding: 3px 10px;
-            }
-            .status-list .status-input {
-                flex: 1 1 70px;
-                min-width: 60px;
-                font-size: 0.7rem;
-                padding: 3px 8px;
-            }
-            .status-list .day-label {
-                font-size: 0.75rem;
-                min-width: 45px;
-            }
-        }
+/* ===== PAGES ===== */
+.page {
+display: none;
+padding: 16px 16px 20px;
+max-width: 720px;
+margin: 0 auto;
+}
+.page.active {
+display: block;
+}
 
-        /* ===== 每日行程 ===== */
-        .day-tabs-wrapper {
-            position: sticky;
-            top: 100px;
-            z-index: 40;
-            background: rgba(255, 251, 245, 0.92);
-            backdrop-filter: blur(4px);
-            padding: 4px 0 12px;
-            margin: 0 -16px;
-            padding-left: 16px;
-            padding-right: 16px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-        }
-        .day-tabs {
-            display: flex;
-            overflow-x: auto;
-            gap: 6px;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
-            flex-wrap: nowrap;
-        }
-        .day-tabs::-webkit-scrollbar {
-            display: none;
-        }
-        .day-tabs button {
-            flex: 0 0 auto;
-            padding: 8px 16px;
-            border-radius: 30px;
-            border: 2px solid #EDE7E0;
-            background: #fff;
-            font-size: 0.8rem;
-            font-weight: 500;
-            color: #6B5A4A;
-            cursor: pointer;
-            transition: 0.15s;
-            white-space: nowrap;
-        }
-        .day-tabs button.active {
-            background: #E07A5F;
-            color: #fff;
-            border-color: #E07A5F;
-        }
-        .day-tabs button:active {
-            transform: scale(0.94);
-        }
+/* ===== 總覽 ===== */
+.overview-card {
+background: #fff;
+border-radius: 16px;
+padding: 16px 18px;
+margin-bottom: 14px;
+box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+.overview-card h2 {
+font-size: 1.05rem;
+color: #E07A5F;
+border-left: 5px solid #E9C46A;
+padding-left: 12px;
+margin-bottom: 10px;
+}
 
-        .day-detail {
-            background: #fff;
-            border-radius: 16px;
-            padding: 16px 16px 8px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-            margin-top: 2px;
-        }
-        .day-detail .day-head {
-            position: sticky;
-            top: 160px;
-            z-index: 35;
-            background: #fff;
-            padding: 4px 0 8px 0;
-            margin-bottom: 8px;
-            border-bottom: 2px solid #EDE7E0;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: baseline;
-        }
-        .day-detail .day-head .day-label {
-            font-size: 1.15rem;
-            font-weight: 700;
-            color: #E07A5F;
-        }
-        .day-detail .day-head .day-sub {
-            font-size: 0.85rem;
-            color: #6B5A4A;
-        }
-        .day-detail .day-head .hotel {
-            font-size: 0.8rem;
-            color: #6B5A4A;
-            background: #F5F0EB;
-            padding: 2px 12px;
-            border-radius: 30px;
-            margin-top: 4px;
-            width: 100%;
-        }
-        .day-detail .warning-banner {
-            background: #FCE4D6;
-            border-radius: 12px;
-            padding: 8px 14px;
-            margin-bottom: 12px;
-            font-size: 0.85rem;
-            color: #A3512B;
-            border-left: 4px solid #E07A5F;
-            margin-top: 6px;
-        }
-        .day-detail .warning-banner strong {
-            display: block;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #7A3A1A;
-        }
+.route-table {
+width: 100%;
+border-collapse: collapse;
+font-size: 0.82rem;
+}
+.route-table th {
+text-align: left;
+background: #F5F0EB;
+padding: 6px 8px;
+border-bottom: 2px solid #EDE7E0;
+color: #2D241A;
+font-weight: 600;
+font-size: 0.8rem;
+}
+.route-table td {
+padding: 6px 8px;
+border-bottom: 1px solid #F5F0EB;
+vertical-align: middle;
+font-size: 0.8rem;
+}
+.route-table .day-cell {
+font-weight: 600;
+color: #E07A5F;
+white-space: nowrap;
+font-size: 0.8rem;
+}
+.route-table .route-cell {
+color: #2D241A;
+font-weight: 500;
+font-size: 0.8rem;
+}
+.route-table .place-cell {
+color: #6B5A4A;
+font-size: 0.8rem;
+}
+@media (max-width: 600px) {
+.route-table th,
+.route-table td {
+padding: 4px 4px;
+font-size: 0.7rem;
+}
+.route-table .day-cell,
+.route-table .route-cell,
+.route-table .place-cell {
+font-size: 0.7rem;
+}
+}
 
-        .day-item-attraction {
-            margin-bottom: 12px;
-            border-bottom: 1px dashed #EDE7E0;
-            padding-bottom: 10px;
-        }
-        .day-item-attraction:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-        }
-        .day-item-attraction .item-label {
-            font-weight: 600;
-            font-size: 0.92rem;
-            color: #2D241A;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
-        .day-item-attraction .item-label .time-tag {
-            font-weight: 400;
-            font-size: 0.75rem;
-            color: #8A7A6A;
-        }
-        .day-item-attraction .item-label .add-btn {
-            margin-left: auto;
-            background: #E9C46A;
-            border: none;
-            border-radius: 30px;
-            padding: 2px 14px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #2D241A;
-            cursor: pointer;
-            transition: 0.15s;
-            flex-shrink: 0;
-        }
-        .day-item-attraction .item-label .add-btn:active {
-            transform: scale(0.92);
-            background: #D4B05A;
-        }
+/* ===== 天氣小工具 ===== */
+.weather-card {
+background: linear-gradient(145deg, #2D4A6A, #1E3A5A);
+border-radius: 16px;
+padding: 16px 20px;
+color: #fff;
+display: flex;
+align-items: center;
+justify-content: space-between;
+box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+margin-top: 4px;
+}
+.weather-card .weather-left {
+display: flex;
+align-items: center;
+gap: 14px;
+}
+.weather-card .weather-icon {
+font-size: 2.4rem;
+line-height: 1;
+}
+.weather-card .weather-city {
+font-size: 1.0rem;
+font-weight: 600;
+letter-spacing: 0.5px;
+}
+.weather-card .weather-desc {
+font-size: 0.8rem;
+opacity: 0.8;
+margin-top: 2px;
+}
+.weather-card .weather-temp {
+font-size: 2.0rem;
+font-weight: 700;
+letter-spacing: 0.5px;
+}
+.weather-card .weather-temp small {
+font-size: 1.0rem;
+font-weight: 400;
+opacity: 0.7;
+}
+.weather-card .weather-extra {
+text-align: right;
+font-size: 0.7rem;
+opacity: 0.7;
+margin-top: 2px;
+}
+.weather-loading {
+color: rgba(255, 255, 255, 0.5);
+font-size: 0.9rem;
+}
 
-        .day-item-meal {
-            margin-bottom: 12px;
-            border-radius: 12px;
-            padding: 10px 14px;
-            border: none;
-        }
-        .day-item-meal.breakfast {
-            background: #FFF0EE;
-        }
-        .day-item-meal.lunch {
-            background: #FFF8E7;
-        }
-        .day-item-meal.dinner {
-            background: #EEF4FF;
-        }
-        .day-item-meal.other {
-            background: #F5EEFF;
-        }
+@media (max-width: 480px) {
+.weather-card {
+flex-wrap: wrap;
+gap: 6px;
+padding: 14px 16px;
+}
+.weather-card .weather-temp {
+font-size: 1.6rem;
+}
+.weather-card .weather-icon {
+font-size: 2.0rem;
+}
+.weather-card .weather-city {
+font-size: 0.9rem;
+}
+}
 
-        .day-item-meal .item-label {
-            font-weight: 600;
-            font-size: 0.92rem;
-            color: #2D241A;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
-        .day-item-meal .item-label .badge {
-            font-weight: 400;
-            font-size: 0.78rem;
-            color: #6B5A4A;
-            background: rgba(255, 255, 255, 0.6);
-            padding: 0 12px;
-            border-radius: 30px;
-        }
-        .day-item-meal .item-label .add-btn {
-            margin-left: auto;
-            background: #E9C46A;
-            border: none;
-            border-radius: 30px;
-            padding: 2px 14px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #2D241A;
-            cursor: pointer;
-            transition: 0.15s;
-            flex-shrink: 0;
-        }
-        .day-item-meal .item-label .add-btn:active {
-            transform: scale(0.92);
-            background: #D4B05A;
-        }
+/* ===== 固定地圖按鈕 ===== */
+.map-fab {
+position: fixed;
+bottom: 120px;
+right: 16px;
+z-index: 60;
+width: 56px;
+height: 56px;
+border-radius: 50%;
+background: #2B3A67;
+color: #fff;
+border: none;
+box-shadow: 0 4px 20px rgba(43, 58, 103, 0.35), 0 2px 8px rgba(0, 0, 0, 0.10);
+font-size: 1.4rem;
+display: flex;
+align-items: center;
+justify-content: center;
+text-decoration: none;
+cursor: pointer;
+transition: 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+backdrop-filter: blur(2px);
+border: 2px solid rgba(255, 255, 255, 0.12);
+}
+.map-fab:hover {
+transform: scale(1.08);
+box-shadow: 0 6px 30px rgba(43, 58, 103, 0.45);
+}
+.map-fab:active {
+transform: scale(0.90);
+box-shadow: 0 2px 12px rgba(43, 58, 103, 0.25);
+}
+.map-fab .tooltip {
+position: absolute;
+right: 68px;
+background: rgba(45, 36, 26, 0.9);
+backdrop-filter: blur(4px);
+color: #fff;
+padding: 4px 14px;
+border-radius: 30px;
+font-size: 0.7rem;
+font-weight: 500;
+white-space: nowrap;
+opacity: 0;
+pointer-events: none;
+transition: 0.2s;
+}
+.map-fab:hover .tooltip {
+opacity: 1;
+}
+@media (max-width: 480px) {
+.map-fab {
+bottom: 105px;
+right: 12px;
+width: 48px;
+height: 48px;
+font-size: 1.2rem;
+}
+.map-fab .tooltip {
+display: none;
+}
+}
 
-        .note-area {
-            margin-top: 6px;
-            padding-left: 4px;
-        }
-        .note-item {
-            background: #FEF9E7;
-            border-radius: 10px;
-            padding: 6px 12px;
-            margin: 4px 0;
-            font-size: 0.88rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 8px;
-            word-break: break-word;
-            border-left: 3px solid #E9C46A;
-        }
-        .note-item .note-text {
-            flex: 1;
-            color: #2D241A;
-        }
-        .note-item .note-text a {
-            color: #E07A5F;
-            word-break: break-all;
-            text-decoration: underline;
-        }
-        .note-item .del-btn {
-            background: none;
-            border: none;
-            color: #C07A5A;
-            font-size: 0.9rem;
-            cursor: pointer;
-            padding: 0 4px;
-            flex-shrink: 0;
-            opacity: 0.6;
-        }
-        .note-item .del-btn:active {
-            opacity: 1;
-            transform: scale(1.2);
-        }
-        .empty-msg {
-            color: #B0A090;
-            font-size: 0.8rem;
-            font-style: italic;
-            padding: 2px 0 2px 6px;
-        }
+/* ===== 重要資訊 ===== */
+.other-section {
+background: #fff;
+border-radius: 16px;
+padding: 16px 18px;
+margin-bottom: 14px;
+box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+.other-section h3 {
+font-size: 1.0rem;
+color: #E07A5F;
+border-left: 5px solid #E9C46A;
+padding-left: 12px;
+margin-bottom: 10px;
+}
+.other-section .row {
+display: flex;
+justify-content: space-between;
+padding: 4px 0;
+font-size: 0.88rem;
+border-bottom: 1px solid #F5F0EB;
+}
+.other-section .row .lbl {
+color: #6B5A4A;
+}
+.other-section .row .val {
+font-weight: 500;
+text-align: right;
+}
+.other-section .row.highlight-row {
+border-top: 2px solid #EDE7E0;
+padding-top: 8px;
+margin-top: 4px;
+font-weight: 600;
+}
+.flight-row {
+display: flex;
+justify-content: space-between;
+font-size: 0.9rem;
+padding: 5px 0;
+border-bottom: 1px solid #F5F0EB;
+}
+.flight-row .label {
+color: #6B5A4A;
+}
+.flight-row .value {
+font-weight: 500;
+color: #2D241A;
+}
+.flight-row.highlight {
+border-top: 2px solid #EDE7E0;
+padding-top: 8px;
+margin-top: 4px;
+font-weight: 600;
+}
+.packing-grid {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 2px 12px;
+font-size: 0.85rem;
+}
+.packing-grid .cat {
+font-weight: 600;
+color: #2B3A67;
+grid-column: 1 / -1;
+margin-top: 6px;
+border-bottom: 1px solid #EDE7E0;
+padding-bottom: 2px;
+}
+.packing-grid .item {
+padding: 2px 0 2px 8px;
+color: #2D241A;
+}
+.altitude-table {
+font-size: 0.85rem;
+}
+.altitude-table .row {
+display: flex;
+justify-content: space-between;
+padding: 3px 0;
+border-bottom: 1px solid #F5F0EB;
+}
+.altitude-table .row .val {
+font-weight: 400;
+}
+.train-input-area {
+margin-top: 8px;
+}
+.train-input-area .train-row {
+display: flex;
+flex-wrap: wrap;
+gap: 6px;
+align-items: center;
+padding: 4px 0;
+border-bottom: 1px solid #F5F0EB;
+}
+.train-input-area .train-row .label {
+font-weight: 500;
+font-size: 0.85rem;
+color: #2D241A;
+min-width: 60px;
+}
+.train-input-area .train-row input {
+flex: 1 1 120px;
+padding: 4px 12px;
+border-radius: 30px;
+border: 1.5px solid #EDE7E0;
+font-size: 0.78rem;
+background: #FFFBF5;
+transition: 0.15s;
+min-width: 80px;
+}
+.train-input-area .train-row input:focus {
+border-color: #E07A5F;
+outline: none;
+background: #fff;
+}
+.group-note-item {
+background: #FEF9E7;
+border-radius: 10px;
+padding: 8px 12px;
+margin: 6px 0;
+font-size: 0.88rem;
+border-left: 3px solid #E9C46A;
+display: flex;
+justify-content: space-between;
+align-items: center;
+gap: 8px;
+}
+.group-note-item .note-text {
+flex: 1;
+color: #2D241A;
+}
+.group-note-item .del-btn {
+background: none;
+border: none;
+color: #C07A5A;
+font-size: 0.9rem;
+cursor: pointer;
+padding: 0 4px;
+opacity: 0.6;
+flex-shrink: 0;
+}
+.group-note-item .del-btn:active {
+opacity: 1;
+transform: scale(1.2);
+}
+.group-note-empty {
+color: #B0A090;
+font-size: 0.8rem;
+font-style: italic;
+padding: 4px 0 2px 6px;
+}
+.group-note-form {
+display: flex;
+flex-wrap: wrap;
+gap: 6px;
+margin-top: 8px;
+align-items: center;
+}
+.group-note-form input[type="text"] {
+flex: 2 1 180px;
+padding: 8px 14px;
+border-radius: 30px;
+border: 1.5px solid #EDE7E0;
+font-size: 0.88rem;
+background: #fff;
+outline: none;
+transition: 0.15s;
+min-width: 100px;
+}
+.group-note-form input[type="text"]:focus {
+border-color: #E07A5F;
+}
+.group-note-form .submit-btn {
+padding: 8px 20px;
+border-radius: 30px;
+border: none;
+background: #E07A5F;
+color: #fff;
+font-size: 0.85rem;
+font-weight: 600;
+cursor: pointer;
+transition: 0.15s;
+white-space: nowrap;
+}
+.group-note-form .submit-btn:active {
+transform: scale(0.94);
+background: #C96A50;
+}
+.status-list .row {
+display: flex;
+flex-wrap: wrap;
+align-items: center;
+gap: 8px;
+padding: 6px 0;
+border-bottom: 1px solid #F5F0EB;
+}
+.status-list .day-label {
+font-weight: 600;
+color: #E07A5F;
+min-width: 55px;
+font-size: 0.85rem;
+flex-shrink: 0;
+}
+.status-list .hotel-input {
+flex: 3 1 200px;
+border: 1.5px solid #EDE7E0;
+border-radius: 30px;
+padding: 4px 14px;
+font-size: 0.78rem;
+background: #FFFBF5;
+transition: 0.15s;
+min-width: 120px;
+}
+.status-list .status-input {
+flex: 1 1 90px;
+border: 1.5px solid #EDE7E0;
+border-radius: 30px;
+padding: 4px 12px;
+font-size: 0.78rem;
+background: #FFFBF5;
+transition: 0.15s;
+min-width: 70px;
+}
+.status-list .hotel-input:focus,
+.status-list .status-input:focus {
+border-color: #E07A5F;
+outline: none;
+background: #fff;
+}
+@media (max-width: 480px) {
+.status-list .hotel-input {
+flex: 2 1 140px;
+min-width: 100px;
+font-size: 0.7rem;
+padding: 3px 10px;
+}
+.status-list .status-input {
+flex: 1 1 70px;
+min-width: 60px;
+font-size: 0.7rem;
+padding: 3px 8px;
+}
+.status-list .day-label {
+font-size: 0.75rem;
+min-width: 45px;
+}
+}
 
-        .add-note-form {
-            display: none;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-top: 6px;
-            align-items: center;
-            padding: 8px 10px;
-            background: #FFFBF5;
-            border-radius: 12px;
-            border: 1.5px solid #EDE7E0;
-        }
-        .add-note-form.open {
-            display: flex;
-        }
-        .add-note-form input[type="text"] {
-            flex: 2 1 150px;
-            padding: 8px 14px;
-            border-radius: 30px;
-            border: 1.5px solid #EDE7E0;
-            font-size: 0.88rem;
-            background: #fff;
-            outline: none;
-            transition: 0.15s;
-            min-width: 80px;
-        }
-        .add-note-form input[type="text"]:focus {
-            border-color: #E07A5F;
-        }
-        .add-note-form .submit-btn {
-            padding: 8px 20px;
-            border-radius: 30px;
-            border: none;
-            background: #E07A5F;
-            color: #fff;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.15s;
-            white-space: nowrap;
-        }
-        .add-note-form .submit-btn:active {
-            transform: scale(0.94);
-            background: #C96A50;
-        }
-        .add-note-form .cancel-btn {
-            padding: 8px 14px;
-            border-radius: 30px;
-            border: 1.5px solid #EDE7E0;
-            background: transparent;
-            color: #6B5A4A;
-            font-size: 0.85rem;
-            cursor: pointer;
-        }
-        .add-note-form .cancel-btn:active {
-            background: #F5F0EB;
-        }
+/* ===== 每日行程 ===== */
+.day-tabs-wrapper {
+position: sticky;
+top: 100px;
+z-index: 40;
+background: rgba(255, 251, 245, 0.92);
+backdrop-filter: blur(4px);
+padding: 4px 0 12px;
+margin: 0 -16px;
+padding-left: 16px;
+padding-right: 16px;
+box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+.day-tabs {
+display: flex;
+overflow-x: auto;
+gap: 6px;
+-webkit-overflow-scrolling: touch;
+scrollbar-width: none;
+flex-wrap: nowrap;
+}
+.day-tabs::-webkit-scrollbar {
+display: none;
+}
+.day-tabs button {
+flex: 0 0 auto;
+padding: 8px 16px;
+border-radius: 30px;
+border: 2px solid #EDE7E0;
+background: #fff;
+font-size: 0.8rem;
+font-weight: 500;
+color: #6B5A4A;
+cursor: pointer;
+transition: 0.15s;
+white-space: nowrap;
+}
+.day-tabs button.active {
+background: #E07A5F;
+color: #fff;
+border-color: #E07A5F;
+}
+.day-tabs button:active {
+transform: scale(0.94);
+}
 
-        .attractions-header {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #2B3A67;
-            margin: 0 0 10px 0;
-            padding-bottom: 4px;
-            border-bottom: 2px solid #EDE7E0;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+.day-detail {
+background: #fff;
+border-radius: 16px;
+padding: 16px 16px 8px;
+box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+margin-top: 2px;
+}
+.day-detail .day-head {
+position: sticky;
+top: 160px;
+z-index: 35;
+background: #fff;
+padding: 4px 0 8px 0;
+margin-bottom: 8px;
+border-bottom: 2px solid #EDE7E0;
+display: flex;
+flex-wrap: wrap;
+justify-content: space-between;
+align-items: baseline;
+}
+.day-detail .day-head .day-label {
+font-size: 1.15rem;
+font-weight: 700;
+color: #E07A5F;
+}
+.day-detail .day-head .day-sub {
+font-size: 0.85rem;
+color: #6B5A4A;
+}
+.day-detail .day-head .hotel {
+font-size: 0.8rem;
+color: #6B5A4A;
+background: #F5F0EB;
+padding: 2px 12px;
+border-radius: 30px;
+margin-top: 4px;
+width: 100%;
+}
+.day-detail .warning-banner {
+background: #FCE4D6;
+border-radius: 12px;
+padding: 8px 14px;
+margin-bottom: 12px;
+font-size: 0.85rem;
+color: #A3512B;
+border-left: 4px solid #E07A5F;
+margin-top: 6px;
+}
+.day-detail .warning-banner strong {
+display: block;
+font-size: 0.7rem;
+text-transform: uppercase;
+letter-spacing: 0.5px;
+color: #7A3A1A;
+}
 
-        /* ===== 底部海拔線（升級版：Chart.js） ===== */
-        .altitude-footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            border-top: 2px solid rgba(224, 122, 95, 0.15);
-            padding: 8px 10px 10px;
-            z-index: 50;
-            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
-            height: 130px;
-        }
-        .altitude-footer canvas {
-            width: 100% !important;
-            height: 85px !important;
-            display: block;
-            cursor: pointer;
-            touch-action: none;
-            border-radius: 8px;
-        }
-        .altitude-footer .alt-label {
-            display: none;
-        }
+.day-item-attraction {
+margin-bottom: 12px;
+border-bottom: 1px dashed #EDE7E0;
+padding-bottom: 10px;
+}
+.day-item-attraction:last-child {
+border-bottom: none;
+margin-bottom: 0;
+}
+.day-item-attraction .item-label {
+font-weight: 600;
+font-size: 0.92rem;
+color: #2D241A;
+display: flex;
+align-items: center;
+gap: 6px;
+flex-wrap: wrap;
+}
+.day-item-attraction .item-label .time-tag {
+font-weight: 400;
+font-size: 0.75rem;
+color: #8A7A6A;
+}
+.day-item-attraction .item-label .add-btn {
+margin-left: auto;
+background: #E9C46A;
+border: none;
+border-radius: 30px;
+padding: 2px 14px;
+font-size: 0.85rem;
+font-weight: 600;
+color: #2D241A;
+cursor: pointer;
+transition: 0.15s;
+flex-shrink: 0;
+}
+.day-item-attraction .item-label .add-btn:active {
+transform: scale(0.92);
+background: #D4B05A;
+}
 
-        /* ===== Toast ===== */
-        .toast-container {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0.8);
-            background: rgba(45, 36, 26, 0.92);
-            backdrop-filter: blur(8px);
-            color: #fff;
-            padding: 18px 28px;
-            border-radius: 20px;
-            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.25);
-            z-index: 100;
-            text-align: center;
-            max-width: 320px;
-            width: 90%;
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-        .toast-container.show {
-            opacity: 1;
-            transform: translate(-50%, -50%) scale(1);
-            pointer-events: none;
-        }
-        .toast-container .toast-icon {
-            font-size: 2.2rem;
-            display: block;
-            margin-bottom: 4px;
-        }
-        .toast-container .toast-title {
-            font-size: 1.1rem;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            color: #E9C46A;
-        }
-        .toast-container .toast-sub {
-            font-size: 0.85rem;
-            opacity: 0.8;
-            margin-top: 4px;
-            font-weight: 400;
-        }
-        .toast-container .toast-tip {
-            font-size: 0.75rem;
-            opacity: 0.7;
-            margin-top: 8px;
-            font-style: italic;
-            border-top: 1px solid rgba(255, 255, 255, 0.10);
-            padding-top: 8px;
-            color: #E9C46A;
-        }
+.day-item-meal {
+margin-bottom: 12px;
+border-radius: 12px;
+padding: 10px 14px;
+border: none;
+}
+.day-item-meal.breakfast {
+background: #FFF0EE;
+}
+.day-item-meal.lunch {
+background: #FFF8E7;
+}
+.day-item-meal.dinner {
+background: #EEF4FF;
+}
+.day-item-meal.other {
+background: #F5EEFF;
+}
 
-        .footer-bar {
-            text-align: center;
-            font-size: 0.7rem;
-            color: #B0A090;
-            padding: 12px 0 4px;
-            border-top: 1px solid #EDE7E0;
-            margin-top: 10px;
-        }
+.day-item-meal .item-label {
+font-weight: 600;
+font-size: 0.92rem;
+color: #2D241A;
+display: flex;
+align-items: center;
+gap: 6px;
+flex-wrap: wrap;
+}
+.day-item-meal .item-label .badge {
+font-weight: 400;
+font-size: 0.78rem;
+color: #6B5A4A;
+background: rgba(255, 255, 255, 0.6);
+padding: 0 12px;
+border-radius: 30px;
+}
+.day-item-meal .item-label .add-btn {
+margin-left: auto;
+background: #E9C46A;
+border: none;
+border-radius: 30px;
+padding: 2px 14px;
+font-size: 0.85rem;
+font-weight: 600;
+color: #2D241A;
+cursor: pointer;
+transition: 0.15s;
+flex-shrink: 0;
+}
+.day-item-meal .item-label .add-btn:active {
+transform: scale(0.92);
+background: #D4B05A;
+}
 
-        @media (max-width: 480px) {
-            .app-header h1 {
-                font-size: 1.0rem;
-                letter-spacing: 1px;
-            }
-            .app-header .sub {
-                font-size: 0.7rem;
-            }
-            .header-divider {
-                max-width: 140px;
-            }
-            .countdown {
-                font-size: 0.7rem;
-            }
-            .tab-nav button {
-                font-size: 0.75rem;
-                padding: 12px 4px;
-            }
-            .day-tabs-wrapper {
-                top: 90px;
-                padding: 2px 8px 10px;
-            }
-            .day-tabs button {
-                font-size: 0.7rem;
-                padding: 6px 12px;
-            }
-            .day-detail .day-head {
-                top: 150px;
-            }
-            .day-detail .day-head .day-label {
-                font-size: 1.0rem;
-            }
-            .packing-grid {
-                grid-template-columns: 1fr;
-            }
-            .add-note-form input[type="text"] {
-                flex: 1 1 100px;
-                font-size: 0.82rem;
-            }
-            .altitude-footer {
-                height: 115px;
-                padding: 6px 6px 6px;
-            }
-            .altitude-footer canvas {
-                height: 72px !important;
-            }
-            body {
-                padding-bottom: 115px;
-            }
-            .day-item-meal {
-                padding: 8px 10px;
-            }
-            .train-input-area .train-row input {
-                font-size: 0.7rem;
-                padding: 3px 8px;
-                min-width: 60px;
-                flex: 1 1 80px;
-            }
-            .toast-container {
-                padding: 14px 20px;
-                max-width: 280px;
-            }
-            .toast-container .toast-title {
-                font-size: 0.95rem;
-            }
-            .map-fab {
-                bottom: 120px;
-                right: 12px;
-                width: 48px;
-                height: 48px;
-                font-size: 1.2rem;
-            }
-            .map-fab .tooltip {
-                display: none;
-            }
-        }
-        @media (max-width: 380px) {
-            .day-tabs button {
-                font-size: 0.65rem;
-                padding: 5px 10px;
-            }
-            .day-detail {
-                padding: 12px 12px 6px;
-            }
-        }
-    </style>
+.note-area {
+margin-top: 6px;
+padding-left: 4px;
+}
+.note-item {
+background: #FEF9E7;
+border-radius: 10px;
+padding: 6px 12px;
+margin: 4px 0;
+font-size: 0.88rem;
+display: flex;
+justify-content: space-between;
+align-items: center;
+gap: 8px;
+word-break: break-word;
+border-left: 3px solid #E9C46A;
+}
+.note-item .note-text {
+flex: 1;
+color: #2D241A;
+}
+.note-item .note-text a {
+color: #E07A5F;
+word-break: break-all;
+text-decoration: underline;
+}
+.note-item .del-btn {
+background: none;
+border: none;
+color: #C07A5A;
+font-size: 0.9rem;
+cursor: pointer;
+padding: 0 4px;
+flex-shrink: 0;
+opacity: 0.6;
+}
+.note-item .del-btn:active {
+opacity: 1;
+transform: scale(1.2);
+}
+.empty-msg {
+color: #B0A090;
+font-size: 0.8rem;
+font-style: italic;
+padding: 2px 0 2px 6px;
+}
+
+.add-note-form {
+display: none;
+flex-wrap: wrap;
+gap: 6px;
+margin-top: 6px;
+align-items: center;
+padding: 8px 10px;
+background: #FFFBF5;
+border-radius: 12px;
+border: 1.5px solid #EDE7E0;
+}
+.add-note-form.open {
+display: flex;
+}
+.add-note-form input[type="text"] {
+flex: 2 1 150px;
+padding: 8px 14px;
+border-radius: 30px;
+border: 1.5px solid #EDE7E0;
+font-size: 0.88rem;
+background: #fff;
+outline: none;
+transition: 0.15s;
+min-width: 80px;
+}
+.add-note-form input[type="text"]:focus {
+border-color: #E07A5F;
+}
+.add-note-form .submit-btn {
+padding: 8px 20px;
+border-radius: 30px;
+border: none;
+background: #E07A5F;
+color: #fff;
+font-size: 0.85rem;
+font-weight: 600;
+cursor: pointer;
+transition: 0.15s;
+white-space: nowrap;
+}
+.add-note-form .submit-btn:active {
+transform: scale(0.94);
+background: #C96A50;
+}
+.add-note-form .cancel-btn {
+padding: 8px 14px;
+border-radius: 30px;
+border: 1.5px solid #EDE7E0;
+background: transparent;
+color: #6B5A4A;
+font-size: 0.85rem;
+cursor: pointer;
+}
+.add-note-form .cancel-btn:active {
+background: #F5F0EB;
+}
+
+.attractions-header {
+font-size: 0.85rem;
+font-weight: 600;
+color: #2B3A67;
+margin: 0 0 10px 0;
+padding-bottom: 4px;
+border-bottom: 2px solid #EDE7E0;
+display: flex;
+align-items: center;
+gap: 8px;
+}
+
+/* ===== 底部海拔線 ===== */
+.altitude-footer {
+position: fixed;
+bottom: 0;
+left: 0;
+width: 100%;
+background: rgba(255, 251, 245, 0.92);
+backdrop-filter: blur(4px);
+border-top: 2px solid rgba(224, 122, 95, 0.12);
+padding: 8px 10px 10px;
+z-index: 50;
+box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.04);
+height: 110px;
+background-image: linear-gradient(90deg,
+rgba(200, 220, 240, 0.06) 0%,
+rgba(230, 210, 190, 0.04) 40%,
+rgba(240, 220, 200, 0.06) 70%,
+rgba(210, 180, 170, 0.04) 100%);
+}
+.altitude-footer canvas {
+width: 100%;
+height: 80px;
+display: block;
+cursor: pointer;
+touch-action: none;
+border-radius: 8px;
+}
+.altitude-footer .alt-label {
+display: none;
+}
+
+/* ===== Toast ===== */
+.toast-container {
+position: fixed;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%) scale(0.8);
+background: rgba(45, 36, 26, 0.92);
+backdrop-filter: blur(8px);
+color: #fff;
+padding: 18px 28px;
+border-radius: 20px;
+box-shadow: 0 8px 40px rgba(0, 0, 0, 0.25);
+z-index: 100;
+text-align: center;
+max-width: 320px;
+width: 90%;
+opacity: 0;
+pointer-events: none;
+transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.toast-container.show {
+opacity: 1;
+transform: translate(-50%, -50%) scale(1);
+pointer-events: none;
+}
+.toast-container .toast-icon {
+font-size: 2.2rem;
+display: block;
+margin-bottom: 4px;
+}
+.toast-container .toast-title {
+font-size: 1.1rem;
+font-weight: 700;
+letter-spacing: 0.5px;
+color: #E9C46A;
+}
+.toast-container .toast-sub {
+font-size: 0.85rem;
+opacity: 0.8;
+margin-top: 4px;
+font-weight: 400;
+}
+.toast-container .toast-tip {
+font-size: 0.75rem;
+opacity: 0.7;
+margin-top: 8px;
+font-style: italic;
+border-top: 1px solid rgba(255, 255, 255, 0.10);
+padding-top: 8px;
+color: #E9C46A;
+}
+
+.footer-bar {
+text-align: center;
+font-size: 0.7rem;
+color: #B0A090;
+padding: 12px 0 4px;
+border-top: 1px solid #EDE7E0;
+margin-top: 10px;
+}
+
+@media (max-width: 480px) {
+.app-header h1 {
+font-size: 1.0rem;
+letter-spacing: 1px;
+}
+.app-header .sub {
+font-size: 0.7rem;
+}
+.header-divider {
+max-width: 140px;
+}
+.countdown {
+font-size: 0.7rem;
+}
+.tab-nav button {
+font-size: 0.75rem;
+padding: 12px 4px;
+}
+.day-tabs-wrapper {
+top: 0px;
+padding: 2px 8px 10px;
+}
+.day-tabs button {
+font-size: 0.7rem;
+padding: 6px 12px;
+}
+.day-detail .day-head {
+top: 110px;
+}
+.day-detail .day-head .day-label {
+font-size: 1.0rem;
+}
+.packing-grid {
+grid-template-columns: 1fr;
+}
+.add-note-form input[type="text"] {
+flex: 1 1 100px;
+font-size: 0.82rem;
+}
+.altitude-footer {
+height: 95px;
+padding: 4px 6px 6px;
+}
+.altitude-footer canvas {
+height: 68px;
+}
+body {
+padding-bottom: 100px;
+}
+.day-item-meal {
+padding: 8px 10px;
+}
+.train-input-area .train-row input {
+font-size: 0.7rem;
+padding: 3px 8px;
+min-width: 60px;
+flex: 1 1 80px;
+}
+.toast-container {
+padding: 14px 20px;
+max-width: 280px;
+}
+.toast-container .toast-title {
+font-size: 0.95rem;
+}
+.map-fab {
+bottom: 105px;
+right: 12px;
+width: 48px;
+height: 48px;
+font-size: 1.2rem;
+}
+.map-fab .tooltip {
+display: none;
+}
+}
+@media (max-width: 380px) {
+.day-tabs button {
+font-size: 0.65rem;
+padding: 5px 10px;
+}
+.day-detail {
+padding: 12px 12px 6px;
+}
+}
+</style>
 </head>
 <body>
 
-    <!-- ===== HEADER：Hero 封面圖 ===== -->
-    <header class="app-header" style="background-image: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80');">
-        <div class="header-overlay"></div>
-        <div class="header-content">
-            <h1>🌄 雲南滇西12日 · 4人同行</h1>
-            <div class="countdown" id="countdown">⏳ 載入中...</div>
-            <div class="header-divider">
-                <span class="dot"></span>
-                <span class="line"></span>
-                <span class="dot"></span>
-            </div>
-            <div class="sub">2026.11.11 – 11.22 ｜ Chill · Hea · 慢慢行</div>
-        </div>
-    </header>
-
-    <!-- ===== TAB NAV ===== -->
-    <nav class="tab-nav" id="tabNav">
-        <button class="active" data-page="overview">📋 行程總覽</button>
-        <button data-page="daily">📅 每日行程</button>
-        <button data-page="other">📌 重要資訊</button>
-    </nav>
-
-    <!-- ===== PAGE 1: 行程總覽 ===== -->
-    <div class="page active" id="page-overview">
-        <div class="overview-card">
-            <h2>🗺️ 12日行程動線</h2>
-            <table class="route-table">
-                <thead>
-                    <tr>
-                        <th>Day</th>
-                        <th>日期</th>
-                        <th>行程</th>
-                        <th>住宿地點</th>
-                    </tr>
-                </thead>
-                <tbody id="routeTableBody"></tbody>
-            </table>
-            <div style="font-size:0.7rem;color:#8A7A6A;margin-top:8px;">💡 住宿確認狀態及酒店名稱請到「重要資訊」頁面修改</div>
-        </div>
-
-        <!-- 天氣小工具 -->
-        <div class="overview-card" id="weatherCard">
-            <h2>☀️ 今日天氣</h2>
-            <div id="weatherContainer">
-                <div class="weather-loading">⏳ 載入天氣中...</div>
-            </div>
-        </div>
-
-        <div class="footer-bar">📌 詳細行程及備註請到「每日行程」頁</div>
-    </div>
-
-    <!-- ===== PAGE 2: 每日行程 ===== -->
-    <div class="page" id="page-daily">
-        <div class="day-tabs-wrapper">
-            <div class="day-tabs" id="dayTabs"></div>
-        </div>
-        <div id="dayDetailContainer"></div>
-        <div class="footer-bar">✏️ 撳 [＋] 加備註 · 全部人即時睇到</div>
-    </div>
-
-    <!-- ===== PAGE 3: 重要資訊 ===== -->
-    <div class="page" id="page-other">
-        <div class="other-section">
-            <h3>🏨 住宿編輯（可修改酒店名及狀態）</h3>
-            <div class="status-list" id="statusList"></div>
-            <div style="font-size:0.7rem;color:#8A7A6A;margin-top:6px;">💡 修改後會自動儲存，並同步到「每日行程」頭部</div>
-        </div>
-
-        <div class="other-section">
-            <h3>✈️ 航班</h3>
-            <div class="flight-row"><span class="label">去程 (11/11)</span><span class="value">MU9658 21:15 HKG → 23:55 KMG</span></div>
-            <div class="flight-row"><span class="label">回程 (11/22)</span><span class="value">MU733 13:50 KMG → 16:05 HKG</span></div>
-            <div class="flight-row" style="border-bottom:none;"><span class="label">人均機票</span><span class="value">HK$2,373</span></div>
-        </div>
-
-        <div class="other-section">
-            <h3>🚗 包車</h3>
-            <div class="flight-row"><span class="label">天數</span><span class="value">10天 (Day 2 → Day 11)</span></div>
-            <div class="flight-row" style="border-bottom:none;"><span class="label">費用</span><span class="value">¥8,600 (已確認)</span></div>
-        </div>
-
-        <div class="other-section">
-            <h3>💰 預算 (4人)</h3>
-            <div class="flight-row"><span class="label">包車</span><span class="value">¥8,600</span></div>
-            <div class="flight-row"><span class="label">住宿</span><span class="value">約 ¥10,000–13,000</span></div>
-            <div class="flight-row"><span class="label">高鐵</span><span class="value">約 ¥1,216</span></div>
-            <div class="flight-row"><span class="label">門票</span><span class="value">約 ¥2,200–2,600</span></div>
-            <div class="flight-row"><span class="label">餐飲</span><span class="value">約 ¥7,200–9,600</span></div>
-            <div class="flight-row highlight"><span class="label">人均 (人民幣)</span><span class="value">約 ¥7,250–8,750</span></div>
-            <div class="flight-row" style="border-bottom:none;font-weight:600;"><span class="label">人均 (港幣 連機票)</span><span class="value">約 HK$10,200–11,800</span></div>
-        </div>
-
-        <div class="other-section">
-            <h3>🚗 包車詳情</h3>
-            <div class="row"><span class="lbl">基礎用車 (10天 × ¥800)</span><span class="val">¥8,000</span></div>
-            <div class="row"><span class="lbl">白水台附加費</span><span class="val">+¥300</span></div>
-            <div class="row"><span class="lbl">瀘沽湖單邊高速費</span><span class="val">+¥150</span></div>
-            <div class="row"><span class="lbl">香格里拉單邊高速費</span><span class="val">+¥150</span></div>
-            <div class="row highlight-row"><span class="lbl">合計</span><span class="val">¥8,600 ✅ 已確認</span></div>
-            <div style="font-size:0.78rem;color:#6B5A4A;margin-top:8px;">
-                ✅ 已包：油費・停車費・師傅住宿・高速費・白水台繞路費<br />
-                ❌ 未包：師傅餐飲 (建議同食或補貼 ¥50–80/日)
-            </div>
-        </div>
-
-        <div class="other-section">
-            <h3>🚄 高鐵</h3>
-            <div class="train-input-area" id="trainInputArea">
-                <div class="train-row">
-                    <span class="label">昆明→大理</span>
-                    <input type="text" class="train-input" data-train="kunming-dali" placeholder="班次／時間／票價" />
-                </div>
-                <div class="train-row">
-                    <span class="label">麗江→昆明</span>
-                    <input type="text" class="train-input" data-train="lijiang-kunming" placeholder="班次／時間／票價" />
-                </div>
-            </div>
-            <div style="font-size:0.78rem;color:#6B5A4A;margin-top:6px;">⏰ 昆明→大理：10月29日 14:30 起售</div>
-        </div>
-
-        <div class="other-section">
-            <h3>⚠️ 海拔 &amp; 洗澡提醒</h3>
-            <div class="altitude-table">
-                <div class="row"><span class="lbl">Day 4 (麗江)</span><span class="val">2,400m ❌ 唔沖涼</span></div>
-                <div class="row"><span class="lbl">Day 5 (瀘沽湖)</span><span class="val">2,690m ❌ 唔沖涼</span></div>
-                <div class="row"><span class="lbl">Day 8 (香格里拉)</span><span class="val">3,300m ❌ 強烈唔建議</span></div>
-                <div class="row"><span class="lbl">Day 9 (香格里拉)</span><span class="val">3,300m ❌ 強烈唔建議</span></div>
-                <div class="row" style="border-bottom:none;"><span class="lbl">Day 10 (返麗江)</span><span class="val">2,400m ✅ 可以舒服沖涼</span></div>
-            </div>
-        </div>
-
-        <div class="other-section">
-            <h3>🎒 建議行李</h3>
-            <div class="packing-grid">
-                <div class="cat">📄 證件</div>
-                <div class="item">身份證、回鄉證、護照、高鐵票</div>
-                <div class="cat">👕 衣物</div>
-                <div class="item">羽絨外套、保暖內衣、防風外套</div>
-                <div class="item">手套、冷帽、頸巾</div>
-                <div class="cat">💄 護膚</div>
-                <div class="item">防曬霜、潤唇膏、保濕面霜、面膜</div>
-                <div class="cat">💊 藥物</div>
-                <div class="item">紅景天 (出發前7-10天服)、必理痛</div>
-                <div class="item">葡萄糖粉、止瀉藥</div>
-                <div class="cat">🔋 其他</div>
-                <div class="item">保溫瓶、充電器、相機</div>
-                <div class="item">氧氣樽 (麗江/香格里拉買 ¥20-30)</div>
-            </div>
-        </div>
-
-        <div class="other-section">
-            <h3>💬 團友備註</h3>
-            <div id="groupNoteContainer">
-                <div class="group-note-empty" id="groupNoteEmpty">📝 未有備註，你嚟加第一條！</div>
-            </div>
-            <div class="group-note-form">
-                <input type="text" id="groupNoteInput" placeholder="寫低任何想分享嘅資訊..." />
-                <button class="submit-btn" id="groupNoteSubmit">➕ 新增</button>
-            </div>
-        </div>
-
-        <div class="footer-bar">📌 按行程 v.7.1 整理</div>
-    </div>
-
-    <!-- ===== 底部海拔線 ===== -->
-    <div class="altitude-footer" id="altitudeFooter">
-        <canvas id="altitudeCanvas"></canvas>
-    </div>
-
-    <!-- ===== 固定地圖按鈕 ===== -->
-    <a href="map.html" class="map-fab" id="mapFab" aria-label="查看地圖">
-        🗺️
-        <span class="tooltip">查看地圖</span>
-    </a>
-
-    <!-- ===== Toast 容器 ===== -->
-    <div class="toast-container" id="toastContainer">
-        <span class="toast-icon" id="toastIcon">🏔️</span>
-        <div class="toast-title" id="toastTitle">Day 8 · 香格里拉</div>
-        <div class="toast-sub" id="toastSub">3,300m</div>
-        <div class="toast-tip" id="toastTip">💡 今晚唔好沖涼住啦～</div>
-    </div>
-
-    <!-- ============================================================ -->
-    <!-- JAVASCRIPT -->
-    <!-- ============================================================ -->
-    <script>
-        // ================================================================
-        //  1. FIREBASE CONFIG
-        // ================================================================
-        const firebaseConfig = {
-            apiKey: "AIzaSyAtthBBNoHJkN6B_e8DVjzDpK_eB0wfExo",
-            authDomain: "yunnan-trip-d5626.firebaseapp.com",
-            databaseURL: "https://yunnan-trip-d5626-default-rtdb.asia-southeast1.firebasedatabase.app/",
-            projectId: "yunnan-trip-d5626",
-            storageBucket: "yunnan-trip-d5626.firebasestorage.app",
-            messagingSenderId: "956753515518",
-            appId: "1:956753515518:web:ef19ac8a7b45bdf83426af"
-        };
-
-        let firebaseInitialized = false;
-        try {
-            firebase.initializeApp(firebaseConfig);
-            firebaseInitialized = true;
-        } catch (e) { console.warn('Firebase init error:', e); }
-        const db = firebaseInitialized ? firebase.database() : null;
-
-        // ================================================================
-        //  2. 行程數據
-        // ================================================================
-        const DAYS_DATA = [{
-            id: 1,
-            date: "11 Nov",
-            weekday: "三",
-            title: "香港 ✈️ 昆明（夜機）",
-            hotel: "昆明長水國際機場美居酒店",
-            hotelStatus: "✅ 已確認",
-            place: "昆明",
-            altitude: 1900,
-            breakfast: "酒店早餐（可選）",
-            lunch: "機上／機場",
-            dinner: "昆明市區（可選）",
-            attractions: [
-                { name: "香港國際機場 T1", time: "19:00 抵達 · 21:15 起飛" },
-                { name: "昆明長水國際機場", time: "23:55 抵達" }
-            ],
-            shops: [],
-            others: [],
-            warnings: ["建議提前2-3小時到機場"]
-        }, {
-            id: 2,
-            date: "12 Nov",
-            weekday: "四",
-            title: "昆明 → 高鐵 → 大理 → 雙廊",
-            hotel: "大理牧心堡·法式懸崖海景度假莊園",
-            hotelStatus: "✅ 訂單可保留",
-            place: "大理",
-            altitude: 1970,
-            breakfast: "酒店早餐 (約¥58/人)",
-            lunch: "高鐵上／大理市區",
-            dinner: "雙廊海邊餐廳 (推薦大理酸辣魚)",
-            attractions: [
-                { name: "昆明站", time: "11:11 高鐵 C4322" },
-                { name: "大理站", time: "13:28 抵達 · 包車接站" },
-                { name: "雙廊牧心堡", time: "14:30 入住" },
-                { name: "理想邦聖托里尼 (可選)", time: "16:00" },
-                { name: "洱海日落", time: "18:30" }
-            ],
-            shops: [],
-            others: [],
-            warnings: ["包車正式開始 · 大理站→雙廊 約50公里"]
-        }, {
-            id: 3,
-            date: "13 Nov",
-            weekday: "五",
-            title: "雙廊 → 沙溪古鎮（深度遊）",
-            hotel: "沙溪古鎮五柳心宿",
-            hotelStatus: "✅ 已確認",
-            place: "沙溪",
-            altitude: 2100,
-            breakfast: "酒店早餐",
-            lunch: "沙溪地道農家菜 (推薦沙溪火腿)",
-            dinner: "沙溪農家菜",
-            attractions: [
-                { name: "牧心堡露台日出", time: "07:15" },
-                { name: "沙溪古鎮", time: "11:30 抵達" },
-                { name: "古戲台 · 寺登街 · 興教寺", time: "14:00" },
-                { name: "玉津橋", time: "17:00" }
-            ],
-            shops: [],
-            others: [],
-            warnings: ["雙廊→沙溪 約110公里 · 車程2小時"]
-        }, {
-            id: 4,
-            date: "14 Nov",
-            weekday: "六",
-            title: "沙溪 → 麗江古城",
-            hotel: "麗江古城大水車亞朵酒店",
-            hotelStatus: "✅ 已確認",
-            place: "麗江",
-            altitude: 2400,
-            breakfast: "早餐後退房",
-            lunch: "麗江古城",
-            dinner: "麗江古城",
-            attractions: [
-                { name: "沙溪晨光漫步 (可選)", time: "08:00" },
-                { name: "麗江古城大水車 · 四方街", time: "14:00" },
-                { name: "木府", time: "15:30 門票約¥40" },
-                { name: "獅子山萬古樓", time: "17:00 門票約¥35" }
-            ],
-            shops: [],
-            others: [],
-            warnings: ["⚠️ 海拔2,400m · 今晚嚴禁洗頭洗澡 · 嚴禁飲酒跑跳"]
-        }, {
-            id: 5,
-            date: "15 Nov",
-            weekday: "日",
-            title: "麗江 → 瀘沽湖",
-            hotel: "瀘沽湖水天壹舍",
-            hotelStatus: "✅ 已確認 (連住2晚)",
-            place: "瀘沽湖",
-            altitude: 2690,
-            breakfast: "酒店早餐",
-            lunch: "寧蒗縣城 (途中午餐)",
-            dinner: "摩梭火塘",
-            attractions: [
-                { name: "麗寧十八彎觀景台", time: "10:30" },
-                { name: "瀘沽湖景區", time: "13:30 門票約¥70" },
-                { name: "大落水村碼頭", time: "17:30 欣賞日落" }
-            ],
-            shops: [],
-            others: [],
-            warnings: ["⚠️ 海拔2,690m · 今晚嚴禁洗頭洗澡 · 車程約4小時"]
-        }, {
-            id: 6,
-            date: "16 Nov",
-            weekday: "一",
-            title: "瀘沽湖環湖全日",
-            hotel: "瀘沽湖水天壹舍",
-            hotelStatus: "✅ 已確認",
-            place: "瀘沽湖",
-            altitude: 2690,
-            breakfast: "酒店早餐",
-            lunch: "里格半島或四川側",
-            dinner: "瀘沽湖",
-            attractions: [
-                { name: "瀘沽湖晨霧日出 (可選)", time: "06:30" },
-                { name: "雲南情人灘", time: "09:50" },
-                { name: "里格半島觀景台", time: "10:30" },
-                { name: "尼塞村 · 格姆女神山", time: "11:15" },
-                { name: "小洛水", time: "11:45" },
-                { name: "瀘源崖", time: "12:15" },
-                { name: "四川情人灘", time: "12:50" },
-                { name: "草海 · 走婚橋", time: "13:30" },
-                { name: "女神灣", time: "14:45" },
-                { name: "豬槽船遊湖 (可選)", time: "16:00" }
-            ],
-            shops: [],
-            others: [],
-            warnings: ["環湖約70公里 · 逆時針方向 · 篝火晚會可選"]
-        }, {
-            id: 7,
-            date: "17 Nov",
-            weekday: "二",
-            title: "瀘沽湖 → 束河古鎮 → 白沙古鎮",
-            hotel: "不晚里予·Wild Aurora",
-            hotelStatus: "✅ 已確認",
-            place: "白沙",
-            altitude: 2500,
-            breakfast: "早餐後退房",
-            lunch: "束河古鎮",
-            dinner: "白沙古鎮",
-            attractions: [
-                { name: "瀘沽湖晨霧 (可選)", time: "06:30" },
-                { name: "束河古鎮 · 青龍橋 · 九鼎龍潭", time: "14:00" },
-                { name: "茶馬古道博物館", time: "14:00" },
-                { name: "白沙古鎮民宿", time: "17:00" },
-                { name: "玉龍雪山日落", time: "17:30" }
-            ],
-            shops: [],
-            others: [],
-            warnings: ["瀘沽湖→束河 約200公里 · 車程4小時"]
-        }, {
-            id: 8,
-            date: "18 Nov",
-            weekday: "三",
-            title: "白沙 → 虎跳峽 → 白水台 → 香格里拉",
-            hotel: "香格里拉（待定）",
-            hotelStatus: "⏳ 未確認",
-            place: "香格里拉",
-            altitude: 3300,
-            breakfast: "早餐後退房",
-            lunch: "虎跳峽附近",
-            dinner: "香格里拉 (藏式火鍋)",
-            attractions: [
-                { name: "日照金山", time: "07:00" },
-                { name: "白沙壁畫", time: "08:30" },
-                { name: "虎跳峽 (上虎跳)", time: "11:00" },
-                { name: "白水台", time: "15:30" },
-                { name: "香格里拉", time: "19:30" }
-            ],
-            shops: [],
-            others: [],
-            warnings: ["⭐ 最高海拔 · 3,300m · 今晚嚴禁洗頭洗澡"]
-        }, {
-            id: 9,
-            date: "19 Nov",
-            weekday: "四",
-            title: "普達措國家公園全日",
-            hotel: "香格里拉（待定）",
-            hotelStatus: "⏳ 未確認",
-            place: "香格里拉",
-            altitude: 3300,
-            breakfast: "酒店早餐",
-            lunch: "景區內或自備乾糧",
-            dinner: "香格里拉 (藏式火鍋)",
-            attractions: [
-                { name: "普達措國家公園", time: "09:30" },
-                { name: "屬都湖徒步", time: "10:00" },
-                { name: "碧塔海", time: "14:00" }
-            ],
-            shops: [],
-            others: [],
-            warnings: ["海拔3,400m · 週一閉園 · 嚴禁洗頭洗澡"]
-        }, {
-            id: 10,
-            date: "20 Nov",
-            weekday: "五",
-            title: "香格里拉 → 納帕海 → 松贊林寺 → 麗江",
-            hotel: "麗江古城大水車亞朵酒店（加訂）",
-            hotelStatus: "⏳ 需加訂1晚",
-            place: "麗江",
-            altitude: 2400,
-            breakfast: "酒店早餐",
-            lunch: "香格里拉",
-            dinner: "麗江古城",
-            attractions: [
-                { name: "納帕海 (依拉草原)", time: "09:00" },
-                { name: "松贊林寺", time: "11:30" },
-                { name: "返回麗江", time: "15:00" }
-            ],
-            shops: [],
-            others: [],
-            warnings: ["海拔回落至2,400m · 今晚可以舒服沖涼 🎉"]
-        }, {
-            id: 11,
-            date: "21 Nov",
-            weekday: "六",
-            title: "麗江 → 高鐵 → 昆明",
-            hotel: "昆明南屏步行街老街亞朵酒店",
-            hotelStatus: "✅ 已確認",
-            place: "昆明",
-            altitude: 1900,
-            breakfast: "自然醒 · 酒店早餐",
-            lunch: "麗江",
-            dinner: "昆明 (過橋米線)",
-            attractions: [
-                { name: "麗江古城／束河自由活動", time: "10:00" },
-                { name: "麗江站", time: "14:30" },
-                { name: "昆明南屏步行街", time: "21:00" }
-            ],
-            shops: [],
-            others: [],
-            warnings: ["包車服務結束 · 高鐵約3.5-4小時"]
-        }, {
-            id: 12,
-            date: "22 Nov",
-            weekday: "日",
-            title: "昆明半日遊 → ✈️ 香港",
-            hotel: "-",
-            hotelStatus: "-",
-            place: "昆明",
-            altitude: 1900,
-            breakfast: "自然醒 · 酒店早餐",
-            lunch: "昆明 (過橋米線)",
-            dinner: "機上",
-            attractions: [
-                { name: "翠湖公園", time: "10:00" },
-                { name: "雲南大學 (可選)", time: "11:30" },
-                { name: "昆明長水機場", time: "13:50" },
-                { name: "香港國際機場 T1", time: "16:05" }
-            ],
-            shops: [],
-            others: [],
-            warnings: ["🎉 旅程完結！"]
-        }];
-
-        const TIPS = [
-            "今晚唔好沖涼住啦～",
-            "海拔越高，心跳越快 ❤️",
-            "記住飲多啲水，防高山症！",
-            "慢啲行，享受每一刻 🚶",
-            "影多啲相，留低美好回憶 📸",
-            "天氣乾燥，記得搽潤唇膏！",
-            "夜晚會好凍，著多件衫 🧥",
-            "呢度嘅星空超靚，記得抬頭睇 ✨",
-            "當地酥油茶好暖胃，試吓！",
-            "今日行程好正，慢慢享受～"
-        ];
-
-        // ================================================================
-        //  3. 工具函數
-        // ================================================================
-        function getNoteKey(dayId, category, index) {
-            if (category === 'attraction') return `day-${dayId}-attr-${index}`;
-            if (category === 'shop') return `day-${dayId}-shop-${index}`;
-            if (category === 'other') return `day-${dayId}-other-${index}`;
-            return `day-${dayId}-${category}`;
-        }
-
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        // ================================================================
-        //  4. 倒數計時
-        // ================================================================
-        function updateCountdown() {
-            const target = new Date('2026-11-11T21:15:00+08:00').getTime();
-            const now = Date.now();
-            const diff = target - now;
-            const el = document.getElementById('countdown');
-            if (diff <= 0) {
-                el.innerHTML = '🎉 旅程已開始！';
-                return;
-            }
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-            el.innerHTML =
-                `⏳ 距離出發仲有 <span class="highlight">${days}</span> 日 <span class="highlight">${hours}</span> 小時 <span class="highlight">${minutes}</span> 分鐘 <span class="highlight">${seconds}</span> 秒`;
-        }
-
-        // ================================================================
-        //  5. 天氣小工具
-        // ================================================================
-        const WEATHER_API_KEY = '236796fae33215243c53c1a42b345773';
-
-        const dayCityMap = {
-            1: 'Kunming',
-            2: 'Dali',
-            3: 'Shaxi',
-            4: 'Lijiang',
-            5: 'Lugu Lake',
-            6: 'Lugu Lake',
-            7: 'Lijiang',
-            8: 'Shangri-La',
-            9: 'Shangri-La',
-            10: 'Lijiang',
-            11: 'Kunming',
-            12: 'Kunming'
-        };
-
-        const cityNameMap = {
-            'Kunming': '昆明',
-            'Dali': '大理',
-            'Shaxi': '沙溪',
-            'Lijiang': '麗江',
-            'Lugu Lake': '瀘沽湖',
-            'Shangri-La': '香格里拉'
-        };
-
-        const weatherIconMap = {
-            'Clear': '☀️',
-            'Clouds': '☁️',
-            'Rain': '🌧️',
-            'Drizzle': '🌦️',
-            'Thunderstorm': '⛈️',
-            'Snow': '❄️',
-            'Mist': '🌫️',
-            'Smoke': '🌫️',
-            'Haze': '🌫️',
-            'Dust': '🌫️',
-            'Fog': '🌫️',
-            'Sand': '🌫️',
-            'Ash': '🌫️',
-            'Squall': '💨',
-            'Tornado': '🌪️'
-        };
-
-        function getTodayDayIndex() {
-            const now = new Date();
-            const start = new Date('2026-11-11');
-            const diff = Math.floor((now - start) / (1000 * 60 * 60 * 24));
-            if (diff < 0) return 1;
-            if (diff >= 12) return 12;
-            return diff + 1;
-        }
-
-        function fetchWeather() {
-            const container = document.getElementById('weatherContainer');
-            const dayIndex = getTodayDayIndex();
-            const cityKey = dayCityMap[dayIndex] || 'Kunming';
-            const cityName = cityNameMap[cityKey] || cityKey;
-
-            if (WEATHER_API_KEY === '你的OpenWeatherMap_API_Key') {
-                container.innerHTML = `
-                    <div class="weather-loading">⚠️ 請設定 OpenWeatherMap API Key</div>
-                `;
-                return;
-            }
-
-            const url =
-                `https://api.openweathermap.org/data/2.5/weather?q=${cityKey}&appid=${WEATHER_API_KEY}&units=metric&lang=zh_tw`;
-
-            fetch(url)
-                .then(res => {
-                    if (!res.ok) throw new Error('API 請求失敗');
-                    return res.json();
-                })
-                .then(data => {
-                    const icon = weatherIconMap[data.weather[0].main] || '🌤️';
-                    const temp = Math.round(data.main.temp);
-                    const desc = data.weather[0].description || '';
-                    const humidity = data.main.humidity || 0;
-
-                    container.innerHTML = `
-                        <div class="weather-card">
-                            <div class="weather-left">
-                                <div class="weather-icon">${icon}</div>
-                                <div>
-                                    <div class="weather-city">📍 ${cityName}</div>
-                                    <div class="weather-desc">${desc}</div>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="weather-temp">${temp}<small>°C</small></div>
-                                <div class="weather-extra">💧 ${humidity}%</div>
-                            </div>
-                        </div>
-                    `;
-                })
-                .catch(err => {
-                    console.warn('天氣載入失敗:', err);
-                    container.innerHTML = `
-                        <div class="weather-loading">⚠️ 無法載入天氣，請稍後再試</div>
-                    `;
-                });
-        }
-
-        // ================================================================
-        //  6. 行程總覽
-        // ================================================================
-        function renderRouteTable() {
-            const tbody = document.getElementById('routeTableBody');
-            tbody.innerHTML = '';
-            DAYS_DATA.forEach(d => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="day-cell">Day ${d.id}</td>
-                    <td>${d.date}</td>
-                    <td class="route-cell">${d.title}</td>
-                    <td class="place-cell">${d.place || '—'}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        // ================================================================
-        //  7. 狀態列表
-        // ================================================================
-        function renderStatusList() {
-            const container = document.getElementById('statusList');
-            container.innerHTML = '';
-            DAYS_DATA.forEach(d => {
-                if (d.hotel && d.hotel !== '-') {
-                    const storedHotel = localStorage.getItem(`hotelName-${d.id}`);
-                    const storedStatus = localStorage.getItem(`hotelStatus-${d.id}`);
-                    if (storedHotel !== null) d.hotel = storedHotel;
-                    if (storedStatus !== null) d.hotelStatus = storedStatus;
-
-                    const row = document.createElement('div');
-                    row.className = 'row';
-                    row.innerHTML = `
-                        <span class="day-label">Day ${d.id}</span>
-                        <input type="text" class="hotel-input" data-day="${d.id}" value="${escapeHtml(d.hotel)}" placeholder="酒店名" />
-                        <input type="text" class="status-input" data-day="${d.id}" value="${escapeHtml(d.hotelStatus)}" placeholder="狀態" />
-                    `;
-                    container.appendChild(row);
-                }
-            });
-
-            container.querySelectorAll('.hotel-input').forEach(input => {
-                input.addEventListener('change', function() {
-                    const dayId = parseInt(this.dataset.day);
-                    const val = this.value.trim();
-                    localStorage.setItem(`hotelName-${dayId}`, val);
-                    const dayData = DAYS_DATA.find(d => d.id === dayId);
-                    if (dayData) dayData.hotel = val;
-                    updateDailyHeaderIfVisible(dayId);
-                });
-            });
-
-            container.querySelectorAll('.status-input').forEach(input => {
-                input.addEventListener('change', function() {
-                    const dayId = parseInt(this.dataset.day);
-                    const val = this.value.trim();
-                    localStorage.setItem(`hotelStatus-${dayId}`, val);
-                    const dayData = DAYS_DATA.find(d => d.id === dayId);
-                    if (dayData) dayData.hotelStatus = val;
-                    updateDailyHeaderIfVisible(dayId);
-                });
-            });
-        }
-
-        function updateDailyHeaderIfVisible(dayId) {
-            const dailyPage = document.getElementById('page-daily');
-            if (dailyPage.classList.contains('active')) {
-                const currentDay = currentDayId;
-                if (currentDay === dayId) {
-                    renderDayDetail(currentDay);
-                }
-            }
-        }
-
-        // ================================================================
-        //  8. 高鐵輸入
-        // ================================================================
-        function initTrainInputs() {
-            const inputs = document.querySelectorAll('.train-input');
-            inputs.forEach(input => {
-                const key = `train-${input.dataset.train}`;
-                const saved = localStorage.getItem(key);
-                if (saved !== null) input.value = saved;
-                input.addEventListener('change', function() {
-                    localStorage.setItem(`train-${this.dataset.train}`, this.value.trim());
-                });
-            });
-        }
-
-        // ================================================================
-        //  9. 團友備註
-        // ================================================================
-        function renderGroupNotes() {
-            const container = document.getElementById('groupNoteContainer');
-            const notes = JSON.parse(localStorage.getItem('groupNotes') || '[]');
-            const emptyMsg = document.getElementById('groupNoteEmpty');
-
-            container.querySelectorAll('.group-note-item').forEach(el => el.remove());
-
-            if (notes.length === 0) {
-                emptyMsg.style.display = 'block';
-                return;
-            }
-            emptyMsg.style.display = 'none';
-
-            notes.forEach((note, idx) => {
-                const div = document.createElement('div');
-                div.className = 'group-note-item';
-                div.innerHTML = `
-                    <span class="note-text">${escapeHtml(note)}</span>
-                    <button class="del-btn" data-idx="${idx}">✕</button>
-                `;
-                container.appendChild(div);
-            });
-
-            container.querySelectorAll('.group-note-item .del-btn').forEach(btn => {
-                btn.onclick = function() {
-                    const idx = parseInt(this.dataset.idx);
-                    const notes = JSON.parse(localStorage.getItem('groupNotes') || '[]');
-                    notes.splice(idx, 1);
-                    localStorage.setItem('groupNotes', JSON.stringify(notes));
-                    renderGroupNotes();
-                };
-            });
-        }
-
-        function addGroupNote() {
-            const input = document.getElementById('groupNoteInput');
-            const text = input.value.trim();
-            if (!text) { alert('請輸入內容'); return; }
-            const notes = JSON.parse(localStorage.getItem('groupNotes') || '[]');
-            notes.push(text);
-            localStorage.setItem('groupNotes', JSON.stringify(notes));
-            input.value = '';
-            renderGroupNotes();
-        }
-
-        // ================================================================
-        //  10. 每日行程
-        // ================================================================
-        let currentDayId = 1;
-
-        function renderDayTabs() {
-            const container = document.getElementById('dayTabs');
-            container.innerHTML = '';
-            DAYS_DATA.forEach(d => {
-                const btn = document.createElement('button');
-                btn.textContent = `Day ${d.id} (${d.date})`;
-                btn.dataset.dayId = d.id;
-                if (d.id === currentDayId) btn.classList.add('active');
-                btn.onclick = () => {
-                    currentDayId = d.id;
-                    renderDayTabs();
-                    renderDayDetail(d.id);
-                    drawAltitude(currentDayId);
-                    setTimeout(() => {
-                        const detail = document.querySelector('.day-detail');
-                        if (detail) {
-                            const topOffset = 160;
-                            const elementPosition = detail.getBoundingClientRect().top + window.pageYOffset;
-                            window.scrollTo({ top: elementPosition - topOffset, behavior: 'smooth' });
-                        }
-                    }, 100);
-                };
-                container.appendChild(btn);
-            });
-        }
-
-        function renderDayDetail(dayId) {
-            const container = document.getElementById('dayDetailContainer');
-            const day = DAYS_DATA.find(d => d.id === dayId);
-            if (!day) return;
-
-            let html = `<div class="day-detail">`;
-
-            html += `
-                <div class="day-head">
-                    <span class="day-label">Day ${day.id} · ${day.date} (${day.weekday})</span>
-                    <span class="day-sub">${day.title}</span>
-                    ${day.hotel && day.hotel !== '-' ? `<span class="hotel">🏨 ${day.hotel} ${day.hotelStatus}</span>` : ''}
-                </div>
-            `;
-
-            if (day.warnings && day.warnings.length) {
-                html += `<div class="warning-banner"><strong>⚠️ 提示</strong>${day.warnings.join(' · ')}</div>`;
-            }
-
-            // 景點（先）
-            html += `<div class="attractions-header">📍 景點</div>`;
-            if (day.attractions && day.attractions.length) {
-                day.attractions.forEach((attr, idx) => {
-                    const label = attr.name;
-                    const timeStr = attr.time ? ` · <span class="time-tag">${attr.time}</span>` : '';
-                    html += renderAttractionItem(day.id, 'attraction', label + timeStr, '', idx);
-                });
-            }
-
-            // 餐飲（後）
-            const mealCategories = [
-                { key: 'breakfast', emoji: '🍳', label: '早餐', value: day.breakfast, cls: 'breakfast' },
-                { key: 'lunch', emoji: '🥢', label: '午餐', value: day.lunch, cls: 'lunch' },
-                { key: 'dinner', emoji: '🍽️', label: '晚餐', value: day.dinner, cls: 'dinner' },
-                { key: 'other', emoji: '📌', label: '其他', value: '', cls: 'other' }
-            ];
-            mealCategories.forEach(cat => {
-                html += renderMealItem(day.id, cat.key, `${cat.emoji} ${cat.label}`, cat.value, cat.cls);
-            });
-
-            html += `</div>`;
-            container.innerHTML = html;
-
-            // 強制重新整理所有備註（防止 Firebase 延遲）
-            setTimeout(() => {
-                const noteAreas = container.querySelectorAll('.note-area');
-                noteAreas.forEach(area => {
-                    const key = area.id.replace('note-area-', '');
-                    if (db) {
-                        db.ref(key).once('value').then(snap => {
-                            const notes = snap.val() || [];
-                            if (notes.length === 0) {
-                                area.innerHTML = `<div class="empty-msg">💬 未有備註 · 你嚟加第一條！</div>`;
-                            } else {
-                                let html = '';
-                                notes.forEach((note, idx) => {
-                                    const text = note.text || '';
-                                    const linkedText = text.replace(
-                                        /(https?:\/\/[^\s]+)/g,
-                                        '<a href="$1" target="_blank" rel="noopener">$1</a>'
-                                    );
-                                    html += `
-                                        <div class="note-item">
-                                            <span class="note-text">${linkedText}</span>
-                                            <button class="del-btn" data-key="${key}" data-idx="${idx}">✕</button>
-                                        </div>
-                                    `;
-                                });
-                                area.innerHTML = html;
-                                // 重新綁定刪除事件
-                                area.querySelectorAll('.del-btn').forEach(btn => {
-                                    btn.onclick = function() {
-                                        const k = this.dataset.key;
-                                        const idx = parseInt(this.dataset.idx);
-                                        if (!db) return;
-                                        db.ref(k).once('value').then(snap => {
-                                            const arr = snap.val() || [];
-                                            arr.splice(idx, 1);
-                                            db.ref(k).set(arr);
-                                        }).catch(e => alert('刪除失敗: ' + e.message));
-                                    };
-                                });
-                            }
-                        }).catch(() => {});
-                    }
-                });
-            }, 50);
-
-            container.querySelectorAll('.add-btn').forEach(btn => {
-                btn.onclick = function(e) {
-                    e.stopPropagation();
-                    const form = this.closest('.day-item-meal')?.querySelector('.add-note-form') ||
-                        this.closest('.day-item-attraction')?.querySelector('.add-note-form');
-                    if (form) {
-                        form.classList.toggle('open');
-                        if (form.classList.contains('open')) {
-                            form.querySelector('.msg-input')?.focus();
-                        }
-                    }
-                };
-            });
-
-            container.querySelectorAll('.submit-btn').forEach(btn => {
-                btn.onclick = function() {
-                    const form = this.closest('.add-note-form');
-                    const dayId = parseInt(this.dataset.dayId);
-                    const category = this.dataset.category;
-                    const index = this.dataset.index !== undefined ? parseInt(this.dataset.index) : undefined;
-                    const msgInput = form.querySelector('.msg-input');
-                    const text = msgInput.value.trim();
-                    if (!text) { alert('請輸入內容'); return; }
-                    if (!db) {
-                        alert('❌ Firebase 未連線');
-                        return;
-                    }
-                    const key = getNoteKey(dayId, category, index);
-                    db.ref(key).once('value').then(snap => {
-                        const existing = snap.val() || [];
-                        existing.push({ text, time: Date.now() });
-                        return db.ref(key).set(existing);
-                    }).then(() => {
-                        msgInput.value = '';
-                        form.classList.remove('open');
-                    }).catch(e => {
-                        if (e.code === 'PERMISSION_DENIED') {
-                            alert('❌ 權限不足！請去 Firebase 控制台將 Realtime Database 規則設為「測試模式」');
-                        } else {
-                            alert('儲存失敗: ' + e.message);
-                        }
-                    });
-                };
-            });
-
-            container.querySelectorAll('.cancel-btn').forEach(btn => {
-                btn.onclick = function() {
-                    const form = this.closest('.add-note-form');
-                    form.querySelector('.msg-input').value = '';
-                    form.classList.remove('open');
-                };
-            });
-        }
-
-        function renderMealItem(dayId, category, label, defaultValue, cls) {
-            const key = getNoteKey(dayId, category, undefined);
-            const hasDefault = defaultValue && defaultValue.length > 0;
-            return `
-                <div class="day-item-meal ${cls}">
-                    <div class="item-label">
-                        <span>${label}</span>
-                        ${hasDefault ? `<span class="badge">${defaultValue}</span>` : ''}
-                        <button class="add-btn">＋</button>
-                    </div>
-                    <div class="note-area" id="note-area-${key}">
-                        <div class="empty-msg">⏳ 載入中...</div>
-                    </div>
-                    <div class="add-note-form">
-                        <input type="text" class="msg-input" placeholder="寫低分享... (可貼 Link)" />
-                        <button class="submit-btn" data-day-id="${dayId}" data-category="${category}">新增</button>
-                        <button class="cancel-btn">取消</button>
-                    </div>
-                </div>
-            `;
-        }
-
-        function renderAttractionItem(dayId, category, label, defaultValue, index) {
-            const key = getNoteKey(dayId, category, index);
-            const hasDefault = defaultValue && defaultValue.length > 0;
-            const idxAttr = `data-index="${index}"`;
-            return `
-                <div class="day-item-attraction">
-                    <div class="item-label">
-                        <span>${label}</span>
-                        ${hasDefault ? `<span class="badge">${defaultValue}</span>` : ''}
-                        <button class="add-btn">＋</button>
-                    </div>
-                    <div class="note-area" id="note-area-${key}">
-                        <div class="empty-msg">⏳ 載入中...</div>
-                    </div>
-                    <div class="add-note-form">
-                        <input type="text" class="msg-input" placeholder="寫低分享... (可貼 Link)" />
-                        <button class="submit-btn" data-day-id="${dayId}" data-category="${category}" ${idxAttr}>新增</button>
-                        <button class="cancel-btn">取消</button>
-                    </div>
-                </div>
-            `;
-        }
-
-        // ================================================================
-        //  11. Firebase 監聽
-        // ================================================================
-        function setupAllListeners() {
-            if (!db) {
-                document.querySelectorAll('.note-area').forEach(el => {
-                    el.innerHTML = `<div class="empty-msg" style="color:#C07A5A;">❌ Firebase 未連線</div>`;
-                });
-                return;
-            }
-            DAYS_DATA.forEach(day => {
-                const cats = ['breakfast', 'lunch', 'dinner', 'other'];
-                day.attractions.forEach((_, idx) => {
-                    const key = getNoteKey(day.id, 'attraction', idx);
-                    listenNote(key);
-                });
-                day.shops.forEach((_, idx) => {
-                    const key = getNoteKey(day.id, 'shop', idx);
-                    listenNote(key);
-                });
-                cats.forEach(cat => {
-                    const key = getNoteKey(day.id, cat, undefined);
-                    listenNote(key);
-                });
-            });
-        }
-
-        function listenNote(key) {
-            if (!db) return;
-            db.ref(key).on('value', (snap) => {
-                const notes = snap.val() || [];
-                const area = document.getElementById(`note-area-${key}`);
-                if (!area) return;
-                if (notes.length === 0) {
-                    area.innerHTML = `<div class="empty-msg">💬 未有備註 · 你嚟加第一條！</div>`;
-                    return;
-                }
-                let html = '';
-                notes.forEach((note, idx) => {
-                    const text = note.text || '';
-                    const linkedText = text.replace(
-                        /(https?:\/\/[^\s]+)/g,
-                        '<a href="$1" target="_blank" rel="noopener">$1</a>'
-                    );
-                    html += `
-                        <div class="note-item">
-                            <span class="note-text">${linkedText}</span>
-                            <button class="del-btn" data-key="${key}" data-idx="${idx}">✕</button>
-                        </div>
-                    `;
-                });
-                area.innerHTML = html;
-                area.querySelectorAll('.del-btn').forEach(btn => {
-                    btn.onclick = function() {
-                        const k = this.dataset.key;
-                        const idx = parseInt(this.dataset.idx);
-                        if (!db) return;
-                        db.ref(k).once('value').then(snap => {
-                            const arr = snap.val() || [];
-                            arr.splice(idx, 1);
-                            db.ref(k).set(arr);
-                        }).catch(e => alert('刪除失敗: ' + e.message));
-                    };
-                });
-            }, (error) => {
-                const area = document.getElementById(`note-area-${key}`);
-                if (area) {
-                    area.innerHTML = `<div class="empty-msg" style="color:#C07A5A;">⚠️ 讀取失敗</div>`;
-                }
-            });
-        }
-
-        // ================================================================
-        //  12. 海拔線（升級版：Chart.js）
-        // ================================================================
-        let elevationChart = null;
-
-        function showToast(dayId) {
-            const day = DAYS_DATA.find(d => d.id === dayId);
-            if (!day) return;
-            const container = document.getElementById('toastContainer');
-            document.getElementById('toastIcon').textContent = '🏔️';
-            document.getElementById('toastTitle').textContent = `Day ${day.id} · ${day.place}`;
-            document.getElementById('toastSub').textContent = `${day.altitude}m`;
-
-            let tip = TIPS[Math.floor(Math.random() * TIPS.length)];
-            if (day.warnings && day.warnings.length) {
-                const raw = day.warnings[0];
-                if (raw.includes('嚴禁洗頭') || raw.includes('唔沖涼')) {
-                    tip = '今晚唔好沖涼住啦～';
-                } else if (raw.includes('車程')) {
-                    tip = '🚗 車程較長，記得準備小食～';
-                } else if (raw.includes('海拔')) {
-                    tip = '⛰️ 留意高山反應，慢慢行！';
-                } else {
-                    tip = '💡 ' + raw.replace(/⚠️/g, '').trim();
-                }
-            }
-            document.getElementById('toastTip').textContent = tip;
-
-            container.classList.add('show');
-            clearTimeout(toastTimer);
-            toastTimer = setTimeout(() => {
-                container.classList.remove('show');
-            }, 2800);
-        }
-
-        let toastTimer = null;
-
-        function drawAltitude(activeDayId) {
-            const canvas = document.getElementById('altitudeCanvas');
-            const ctx = canvas.getContext('2d');
-
-            // 建立由上至下的背景漸變
-            const fillGradient = ctx.createLinearGradient(0, 0, 0, 300);
-            fillGradient.addColorStop(0, 'rgba(224, 122, 95, 0.45)');
-            fillGradient.addColorStop(0.5, 'rgba(74, 144, 226, 0.25)');
-            fillGradient.addColorStop(1, 'rgba(74, 144, 226, 0.0)');
-
-            const labels = DAYS_DATA.map(d => `D${d.id}`);
-            const altitudeData = DAYS_DATA.map(d => d.altitude);
-
-            if (elevationChart) {
-                elevationChart.destroy();
-            }
-
-            elevationChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: '海拔 (m)',
-                        data: altitudeData,
-                        fill: true,
-                        backgroundColor: fillGradient,
-                        borderColor: '#E07A5F',
-                        borderWidth: 3,
-                        tension: 0.4,
-                        pointBackgroundColor: altitudeData.map(val => val >= 3000 ? '#FF5722' :
-                            '#E07A5F'),
-                        pointBorderColor: '#FFFFFF',
-                        pointBorderWidth: 2,
-                        pointRadius: altitudeData.map(val => val >= 3000 ? 6 : 4),
-                        pointHoverRadius: 8,
-                        spanGaps: false,
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    let val = context.raw;
-                                    return val >= 3000 ? ` 🏔️ ${val}m (高反注意！)` : ` 🏔️ ${val}m`;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            min: 1500,
-                            max: 3500,
-                            grid: { color: 'rgba(0, 0, 0, 0.05)' },
-                            ticks: {
-                                stepSize: 500,
-                                font: { size: 9 }
-                            }
-                        },
-                        x: {
-                            grid: { display: false },
-                            ticks: {
-                                font: { size: 9 }
-                            }
-                        }
-                    },
-                    onClick: function(e, item) {
-                        if (item && item.length > 0) {
-                            const index = item[0].dataIndex;
-                            const dayId = index + 1;
-                            if (dayId >= 1 && dayId <= 12) {
-                                currentDayId = dayId;
-                                renderDayTabs();
-                                renderDayDetail(currentDayId);
-                                drawAltitude(currentDayId);
-                                showToast(dayId);
-                                document.querySelectorAll('.tab-nav button').forEach(b => b.classList
-                                    .remove('active'));
-                                document.querySelector('[data-page="daily"]').classList.add('active');
-                                document.querySelectorAll('.page').forEach(p => p.classList.remove(
-                                'active'));
-                                document.getElementById('page-daily').classList.add('active');
-                            }
-                        }
-                    }
-                }
-            });
-
-            elevationChart._activeId = activeDayId;
-        }
-
-        // ================================================================
-        //  13. Tab 切換
-        // ================================================================
-        document.getElementById('tabNav').addEventListener('click', (e) => {
-            const btn = e.target.closest('button');
-            if (!btn) return;
-            const page = btn.dataset.page;
-            document.querySelectorAll('.tab-nav button').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(`page-${page}`).classList.add('active');
-            if (page === 'daily') {
-                renderDayDetail(currentDayId);
-                drawAltitude(currentDayId);
-            } else {
-                drawAltitude(currentDayId);
-            }
-        });
-
-        // ================================================================
-        //  14. 團友備註事件
-        // ================================================================
-        document.getElementById('groupNoteSubmit').addEventListener('click', addGroupNote);
-        document.getElementById('groupNoteInput').addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') addGroupNote();
-        });
-
-        // ================================================================
-        //  15. Resize（更新海拔圖）
-        // ================================================================
-        let resizeTimer;
-        window.addEventListener('resize', () => {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(() => {
-                if (elevationChart) {
-                    drawAltitude(currentDayId);
-                }
-            }, 200);
-        });
-
-        // ================================================================
-        //  16. 啟動
-        // ================================================================
-        renderRouteTable();
-        renderStatusList();
-        renderDayTabs();
-        renderDayDetail(1);
-        setupAllListeners();
-        initTrainInputs();
-        renderGroupNotes();
-        updateCountdown();
-        setInterval(updateCountdown, 1000);
-        fetchWeather();
-
-        setTimeout(() => {
-            drawAltitude(1);
-        }, 300);
-
-        console.log('🌄 雲南滇西12日行程網頁已啟動！（海拔線升級版）');
-        if (!db) console.warn('⚠️ Firebase 未連線');
-        else console.log('✅ Firebase 已連線');
-    </script>
+<!-- ===== 新 HEADER：Hero 封面圖 ===== -->
+<header class="app-header" style="background-image: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80');">
+<!-- 背景圖 URL 你可以自己換，上面係一張優質嘅雪山風景 -->
+<div class="header-overlay"></div> <!-- 半透明黑色層 -->
+<div class="header-content">
+<h1> 雲南滇西12日 · 4人同行</h1>
+<div class="countdown" id="countdown">⏳ 載入中...</div>
+<div class="header-divider">
+<span class="dot"></span>
+<span class="line"></span>
+<span class="dot"></span>
+</div>
+<div class="sub">2026.11.11 – 11.22 ｜ Chill · Hea · 慢慢行</div>
+</div>
+</header>
+
+<!-- ===== TAB NAV ===== -->
+<nav class="tab-nav" id="tabNav">
+<button class="active" data-page="overview">📋 行程總覽</button>
+<button data-page="daily">📅 每日行程</button>
+<button data-page="other">📌 重要資訊</button>
+</nav>
+
+<!-- ===== PAGE 1: 行程總覽 ===== -->
+<div class="page active" id="page-overview">
+<div class="overview-card">
+<h2>🗺️ 12日行程動線</h2>
+<table class="route-table">
+<thead>
+<tr>
+<th>Day</th>
+<th>日期</th>
+<th>行程</th>
+<th>住宿地點</th>
+</tr>
+</thead>
+<tbody id="routeTableBody"></tbody>
+</table>
+<div style="font-size:0.7rem;color:#8A7A6A;margin-top:8px;">💡 住宿確認狀態及酒店名稱請到「重要資訊」頁面修改</div>
+</div>
+
+<!-- 天氣小工具 -->
+<div class="overview-card" id="weatherCard">
+<h2>☀️ 今日天氣</h2>
+<div id="weatherContainer">
+<div class="weather-loading">⏳ 載入天氣中...</div>
+</div>
+</div>
+
+<div class="footer-bar">📌 詳細行程及備註請到「每日行程」頁</div>
+</div>
+
+<!-- ===== PAGE 2: 每日行程 ===== -->
+<div class="page" id="page-daily">
+<div class="day-tabs-wrapper">
+<div class="day-tabs" id="dayTabs"></div>
+</div>
+<div id="dayDetailContainer"></div>
+<div class="footer-bar">✏️ 撳 [＋] 加備註 · 全部人即時睇到</div>
+</div>
+
+<!-- ===== PAGE 3: 重要資訊 ===== -->
+<div class="page" id="page-other">
+<div class="other-section">
+<h3>🏨 住宿編輯（可修改酒店名及狀態）</h3>
+<div class="status-list" id="statusList"></div>
+<div style="font-size:0.7rem;color:#8A7A6A;margin-top:6px;">💡 修改後會自動儲存，並同步到「每日行程」頭部</div>
+</div>
+
+<div class="other-section">
+<h3>✈️ 航班</h3>
+<div class="flight-row"><span class="label">去程 (11/11)</span><span class="value">MU9658 21:15 HKG → 23:55 KMG</span></div>
+<div class="flight-row"><span class="label">回程 (11/22)</span><span class="value">MU733 13:50 KMG → 16:05 HKG</span></div>
+<div class="flight-row" style="border-bottom:none;"><span class="label">人均機票</span><span class="value">HK$`2,373</span></div>
+</div>
+
+<div class="other-section">
+<h3>🚗 包車</h3>
+<div class="flight-row"><span class="label">天數</span><span class="value">10天 (Day 2 → Day 11)</span></div>
+<div class="flight-row" style="border-bottom:none;"><span class="label">費用</span><span class="value">¥8,600 (已確認)</span></div>
+</div>
+
+<div class="other-section">
+<h3>💰 預算 (4人)</h3>
+<div class="flight-row"><span class="label">包車</span><span class="value">¥8,600</span></div>
+<div class="flight-row"><span class="label">住宿</span><span class="value">約 ¥10,000–13,000</span></div>
+<div class="flight-row"><span class="label">高鐵</span><span class="value">約 ¥1,216</span></div>
+<div class="flight-row"><span class="label">門票</span><span class="value">約 ¥2,200–2,600</span></div>
+<div class="flight-row"><span class="label">餐飲</span><span class="value">約 ¥7,200–9,600</span></div>
+<div class="flight-row highlight"><span class="label">人均 (人民幣)</span><span class="value">約 ¥7,250–8,750</span></div>
+<div class="flight-row" style="border-bottom:none;font-weight:600;"><span class="label">人均 (港幣 連機票)</span><span class="value">約 HK`$10,200–11,800</span></div>
+</div>
+
+<div class="other-section">
+<h3>🚗 包車詳情</h3>
+<div class="row"><span class="lbl">基礎用車 (10天 × ¥800)</span><span class="val">¥8,000</span></div>
+<div class="row"><span class="lbl">白水台附加費</span><span class="val">+¥300</span></div>
+<div class="row"><span class="lbl">瀘沽湖單邊高速費</span><span class="val">+¥150</span></div>
+<div class="row"><span class="lbl">香格里拉單邊高速費</span><span class="val">+¥150</span></div>
+<div class="row highlight-row"><span class="lbl">合計</span><span class="val">¥8,600 ✅ 已確認</span></div>
+<div style="font-size:0.78rem;color:#6B5A4A;margin-top:8px;">
+✅ 已包：油費・停車費・師傅住宿・高速費・白水台繞路費<br />
+❌ 未包：師傅餐飲 (建議同食或補貼 ¥50–80/日)
+</div>
+</div>
+
+<div class="other-section">
+<h3>🚄 高鐵</h3>
+<div class="train-input-area" id="trainInputArea">
+<div class="train-row">
+<span class="label">昆明→大理</span>
+<input type="text" class="train-input" data-train="kunming-dali" placeholder="班次／時間／票價" />
+</div>
+<div class="train-row">
+<span class="label">麗江→昆明</span>
+<input type="text" class="train-input" data-train="lijiang-kunming" placeholder="班次／時間／票價" />
+</div>
+</div>
+<div style="font-size:0.78rem;color:#6B5A4A;margin-top:6px;">⏰ 昆明→大理：10月29日 14:30 起售</div>
+</div>
+
+<div class="other-section">
+<h3>⚠️ 海拔 & 洗澡提醒</h3>
+<div class="altitude-table">
+<div class="row"><span class="lbl">Day 4 (麗江)</span><span class="val">2,400m ❌ 唔沖涼</span></div>
+<div class="row"><span class="lbl">Day 5 (瀘沽湖)</span><span class="val">2,690m ❌ 唔沖涼</span></div>
+<div class="row"><span class="lbl">Day 8 (香格里拉)</span><span class="val">3,300m ❌ 強烈唔建議</span></div>
+<div class="row"><span class="lbl">Day 9 (香格里拉)</span><span class="val">3,300m ❌ 強烈唔建議</span></div>
+<div class="row" style="border-bottom:none;"><span class="lbl">Day 10 (返麗江)</span><span class="val">2,400m ✅ 可以舒服沖涼</span></div>
+</div>
+</div>
+
+<div class="other-section">
+<h3>🎒 建議行李</h3>
+<div class="packing-grid">
+<div class="cat">📄 證件</div>
+<div class="item">身份證、回鄉證、護照、高鐵票</div>
+<div class="cat">👕 衣物</div>
+<div class="item">羽絨外套、保暖內衣、防風外套</div>
+<div class="item">手套、冷帽、頸巾</div>
+<div class="cat">💄 護膚</div>
+<div class="item">防曬霜、潤唇膏、保濕面霜、面膜</div>
+<div class="cat">💊 藥物</div>
+<div class="item">紅景天 (出發前7-10天服)、必理痛</div>
+<div class="item">葡萄糖粉、止瀉藥</div>
+<div class="cat">🔋 其他</div>
+<div class="item">保溫瓶、充電器、相機</div>
+<div class="item">氧氣樽 (麗江/香格里拉買 ¥20-30)</div>
+</div>
+</div>
+
+<div class="other-section">
+<h3>💬 團友備註</h3>
+<div id="groupNoteContainer">
+<div class="group-note-empty" id="groupNoteEmpty">📝 未有備註，你嚟加第一條！</div>
+</div>
+<div class="group-note-form">
+<input type="text" id="groupNoteInput" placeholder="寫低任何想分享嘅資訊..." />
+<button class="submit-btn" id="groupNoteSubmit">➕ 新增</button>
+</div>
+</div>
+
+<div class="footer-bar">📌 按行程 v.7.1 整理</div>
+</div>
+
+<!-- ===== 底部海拔線 ===== -->
+<div class="altitude-footer" id="altitudeFooter">
+<canvas id="altitudeCanvas"></canvas>
+</div>
+
+<!-- ===== 固定地圖按鈕 ===== -->
+<a href="map.html" class="map-fab" id="mapFab" aria-label="查看地圖">
+🗺️
+<span class="tooltip">查看地圖</span>
+</a>
+
+<!-- ===== Toast 容器 ===== -->
+<div class="toast-container" id="toastContainer">
+<span class="toast-icon" id="toastIcon">🏔️</span>
+<div class="toast-title" id="toastTitle">Day 8 · 香格里拉</div>
+<div class="toast-sub" id="toastSub">3,300m</div>
+<div class="toast-tip" id="toastTip">💡 今晚唔好沖涼住啦～</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- JAVASCRIPT -->
+<!-- ============================================================ -->
+<script>
+// ================================================================
+// 1. FIREBASE CONFIG
+// ================================================================
+const firebaseConfig = {
+apiKey: "AIzaSyAtthBBNoHJkN6B_e8DVjzDpK_eB0wfExo",
+authDomain: "yunnan-trip-d5626.firebaseapp.com",
+databaseURL: "https://yunnan-trip-d5626-default-rtdb.asia-southeast1.firebasedatabase.app/",
+projectId: "yunnan-trip-d5626",
+storageBucket: "yunnan-trip-d5626.firebasestorage.app",
+messagingSenderId: "956753515518",
+appId: "1:956753515518:web:ef19ac8a7b45bdf83426af"
+};
+
+let firebaseInitialized = false;
+try {
+firebase.initializeApp(firebaseConfig);
+firebaseInitialized = true;
+} catch (e) { console.warn('Firebase init error:', e); }
+const db = firebaseInitialized ? firebase.database() : null;
+
+// ================================================================
+// 2. 行程數據
+// ================================================================
+const DAYS_DATA = [{
+id: 1,
+date: "11 Nov",
+weekday: "三",
+title: "香港 ✈️ 昆明（夜機）",
+hotel: "昆明長水國際機場美居酒店",
+hotelStatus: "✅ 已確認",
+place: "昆明",
+altitude: 1900,
+breakfast: "酒店早餐（可選）",
+lunch: "機上／機場",
+dinner: "昆明市區（可選）",
+attractions: [
+{ name: "香港國際機場 T1", time: "19:00 抵達 · 21:15 起飛" },
+{ name: "昆明長水國際機場", time: "23:55 抵達" }
+ ],
+shops: [],
+others: [],
+warnings: ["建議提前2-3小時到機場"]
+}, {
+id: 2,
+date: "12 Nov",
+weekday: "四",
+title: "昆明 → 高鐵 → 大理 → 雙廊",
+hotel: "大理牧心堡·法式懸崖海景度假莊園",
+hotelStatus: "✅ 訂單可保留",
+place: "大理",
+altitude: 1970,
+breakfast: "酒店早餐 (約¥58/人)",
+lunch: "高鐵上／大理市區",
+dinner: "雙廊海邊餐廳 (推薦大理酸辣魚)",
+attractions: [
+{ name: "昆明站", time: "11:11 高鐵 C4322" },
+{ name: "大理站", time: "13:28 抵達 · 包車接站" },
+{ name: "雙廊牧心堡", time: "14:30 入住" },
+{ name: "理想邦聖托里尼 (可選)", time: "16:00" },
+{ name: "洱海日落", time: "18:30" }
+ ],
+shops: [],
+others: [],
+warnings: ["包車正式開始 · 大理站→雙廊 約50公里"]
+}, {
+id: 3,
+date: "13 Nov",
+weekday: "五",
+title: "雙廊 → 沙溪古鎮（深度遊）",
+hotel: "沙溪古鎮五柳心宿",
+hotelStatus: "✅ 已確認",
+place: "沙溪",
+altitude: 2100,
+breakfast: "酒店早餐",
+lunch: "沙溪地道農家菜 (推薦沙溪火腿)",
+dinner: "沙溪農家菜",
+attractions: [
+{ name: "牧心堡露台日出", time: "07:15" },
+{ name: "沙溪古鎮", time: "11:30 抵達" },
+{ name: "古戲台 · 寺登街 · 興教寺", time: "14:00" },
+{ name: "玉津橋", time: "17:00" }
+ ],
+shops: [],
+others: [],
+warnings: ["雙廊→沙溪 約110公里 · 車程2小時"]
+}, {
+id: 4,
+date: "14 Nov",
+weekday: "六",
+title: "沙溪 → 麗江古城",
+hotel: "麗江古城大水車亞朵酒店",
+hotelStatus: "✅ 已確認",
+place: "麗江",
+altitude: 2400,
+breakfast: "早餐後退房",
+lunch: "麗江古城",
+dinner: "麗江古城",
+attractions: [
+{ name: "沙溪晨光漫步 (可選)", time: "08:00" },
+{ name: "麗江古城大水車 · 四方街", time: "14:00" },
+{ name: "木府", time: "15:30 門票約¥40" },
+{ name: "獅子山萬古樓", time: "17:00 門票約¥35" }
+ ],
+shops: [],
+others: [],
+warnings: ["⚠️ 海拔2,400m · 今晚嚴禁洗頭洗澡 · 嚴禁飲酒跑跳"]
+}, {
+id: 5,
+date: "15 Nov",
+weekday: "日",
+title: "麗江 → 瀘沽湖",
+hotel: "瀘沽湖水天壹舍",
+hotelStatus: "✅ 已確認 (連住2晚)",
+place: "瀘沽湖",
+altitude: 2690,
+breakfast: "酒店早餐",
+lunch: "寧蒗縣城 (途中午餐)",
+dinner: "摩梭火塘",
+attractions: [
+{ name: "麗寧十八彎觀景台", time: "10:30" },
+{ name: "瀘沽湖景區", time: "13:30 門票約¥70" },
+{ name: "大落水村碼頭", time: "17:30 欣賞日落" }
+ ],
+shops: [],
+others: [],
+warnings: ["⚠️ 海拔2,690m · 今晚嚴禁洗頭洗澡 · 車程約4小時"]
+}, {
+id: 6,
+date: "16 Nov",
+weekday: "一",
+title: "瀘沽湖環湖全日",
+hotel: "瀘沽湖水天壹舍",
+hotelStatus: "✅ 已確認",
+place: "瀘沽湖",
+altitude: 2690,
+breakfast: "酒店早餐",
+lunch: "里格半島或四川側",
+dinner: "瀘沽湖",
+attractions: [
+{ name: "瀘沽湖晨霧日出 (可選)", time: "06:30" },
+{ name: "雲南情人灘", time: "09:50" },
+{ name: "里格半島觀景台", time: "10:30" },
+{ name: "尼塞村 · 格姆女神山", time: "11:15" },
+{ name: "小洛水", time: "11:45" },
+{ name: "瀘源崖", time: "12:15" },
+{ name: "四川情人灘", time: "12:50" },
+{ name: "草海 · 走婚橋", time: "13:30" },
+{ name: "女神灣", time: "14:45" },
+{ name: "豬槽船遊湖 (可選)", time: "16:00" }
+ ],
+shops: [],
+others: [],
+warnings: ["環湖約70公里 · 逆時針方向 · 篝火晚會可選"]
+}, {
+id: 7,
+date: "17 Nov",
+weekday: "二",
+title: "瀘沽湖 → 束河古鎮 → 白沙古鎮",
+hotel: "不晚里予·Wild Aurora",
+hotelStatus: "✅ 已確認",
+place: "白沙",
+altitude: 2500,
+breakfast: "早餐後退房",
+lunch: "束河古鎮",
+dinner: "白沙古鎮",
+attractions: [
+{ name: "瀘沽湖晨霧 (可選)", time: "06:30" },
+{ name: "束河古鎮 · 青龍橋 · 九鼎龍潭", time: "14:00" },
+{ name: "茶馬古道博物館", time: "14:00" },
+{ name: "白沙古鎮民宿", time: "17:00" },
+{ name: "玉龍雪山日落", time: "17:30" }
+ ],
+shops: [],
+others: [],
+warnings: ["瀘沽湖→束河 約200公里 · 車程4小時"]
+}, {
+id: 8,
+date: "18 Nov",
+weekday: "三",
+title: "白沙 → 虎跳峽 → 白水台 → 香格里拉",
+hotel: "香格里拉（待定）",
+hotelStatus: "⏳ 未確認",
+place: "香格里拉",
+altitude: 3300,
+breakfast: "早餐後退房",
+lunch: "虎跳峽附近",
+dinner: "香格里拉 (藏式火鍋)",
+attractions: [
+{ name: "日照金山", time: "07:00" },
+{ name: "白沙壁畫", time: "08:30" },
+{ name: "虎跳峽 (上虎跳)", time: "11:00" },
+{ name: "白水台", time: "15:30" },
+{ name: "香格里拉", time: "19:30" }
+ ],
+shops: [],
+others: [],
+warnings: ["⭐ 最高海拔 · 3,300m · 今晚嚴禁洗頭洗澡"]
+}, {
+id: 9,
+date: "19 Nov",
+weekday: "四",
+title: "普達措國家公園全日",
+hotel: "香格里拉（待定）",
+hotelStatus: "⏳ 未確認",
+place: "香格里拉",
+altitude: 3300,
+breakfast: "酒店早餐",
+lunch: "景區內或自備乾糧",
+dinner: "香格里拉 (藏式火鍋)",
+attractions: [
+{ name: "普達措國家公園", time: "09:30" },
+{ name: "屬都湖徒步", time: "10:00" },
+{ name: "碧塔海", time: "14:00" }
+ ],
+shops: [],
+others: [],
+warnings: ["海拔3,400m · 週一閉園 · 嚴禁洗頭洗澡"]
+}, {
+id: 10,
+date: "20 Nov",
+weekday: "五",
+title: "香格里拉 → 納帕海 → 松贊林寺 → 麗江",
+hotel: "麗江古城大水車亞朵酒店（加訂）",
+hotelStatus: "⏳ 需加訂1晚",
+place: "麗江",
+altitude: 2400,
+breakfast: "酒店早餐",
+lunch: "香格里拉",
+dinner: "麗江古城",
+attractions: [
+{ name: "納帕海 (依拉草原)", time: "09:00" },
+{ name: "松贊林寺", time: "11:30" },
+{ name: "返回麗江", time: "15:00" }
+ ],
+shops: [],
+others: [],
+warnings: ["海拔回落至2,400m · 今晚可以舒服沖涼 🎉"]
+}, {
+id: 11,
+date: "21 Nov",
+weekday: "六",
+title: "麗江 → 高鐵 → 昆明",
+hotel: "昆明南屏步行街老街亞朵酒店",
+hotelStatus: "✅ 已確認",
+place: "昆明",
+altitude: 1900,
+breakfast: "自然醒 · 酒店早餐",
+lunch: "麗江",
+dinner: "昆明 (過橋米線)",
+attractions: [
+{ name: "麗江古城／束河自由活動", time: "10:00" },
+{ name: "麗江站", time: "14:30" },
+{ name: "昆明南屏步行街", time: "21:00" }
+ ],
+shops: [],
+others: [],
+warnings: ["包車服務結束 · 高鐵約3.5-4小時"]
+}, {
+id: 12,
+date: "22 Nov",
+weekday: "日",
+title: "昆明半日遊 → ✈️ 香港",
+hotel: "-",
+hotelStatus: "-",
+place: "昆明",
+altitude: 1900,
+breakfast: "自然醒 · 酒店早餐",
+lunch: "昆明 (過橋米線)",
+dinner: "機上",
+attractions: [
+{ name: "翠湖公園", time: "10:00" },
+{ name: "雲南大學 (可選)", time: "11:30" },
+{ name: "昆明長水機場", time: "13:50" },
+{ name: "香港國際機場 T1", time: "16:05" }
+ ],
+shops: [],
+others: [],
+warnings: ["🎉 旅程完結！"]
+}];
+
+const TIPS = [
+"今晚唔好沖涼住啦～",
+"海拔越高，心跳越快 ❤️",
+"記住飲多啲水，防高山症！",
+"慢啲行，享受每一刻 🚶",
+"影多啲相，留低美好回憶 📸",
+"天氣乾燥，記得搽潤唇膏！",
+"夜晚會好凍，著多件衫 🧥",
+"呢度嘅星空超靚，記得抬頭睇 ✨",
+"當地酥油茶好暖胃，試吓！",
+"今日行程好正，慢慢享受～"
+ ];
+
+// ================================================================
+// 3. 工具函數
+// ================================================================
+function getNoteKey(dayId, category, index) {
+if (category === 'attraction') return day-${dayId}-attr-${index};
+if (category === 'shop') return day-${dayId}-shop-${index};
+if (category === 'other') return day-${dayId}-other-${index};
+return day-${dayId}-${category};
+}
+
+function escapeHtml(text) {
+const div = document.createElement('div');
+div.textContent = text;
+return div.innerHTML;
+}
+
+// ================================================================
+// 4. 倒數計時
+// ================================================================
+function updateCountdown() {
+const target = new Date('2026-11-11T21:15:00+08:00').getTime();
+const now = Date.now();
+const diff = target - now;
+const el = document.getElementById('countdown');
+if (diff <= 0) {
+el.innerHTML = '🎉 旅程已開始！';
+return;
+}
+const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+el.innerHTML =
+⏳ 距離出發仲有 &lt;span class="highlight"&gt;${days}</span> 日 <span class="highlight">${hours}&lt;/span&gt; 小時 &lt;span class="highlight"&gt;${minutes}</span> 分鐘 <span class="highlight">${seconds}&lt;/span&gt; 秒;
+}
+
+// ================================================================
+// 5. 天氣小工具
+// ================================================================
+const WEATHER_API_KEY = '236796fae33215243c53c1a42b345773';
+
+const dayCityMap = {
+1: 'Kunming',
+2: 'Dali',
+3: 'Shaxi',
+4: 'Lijiang',
+5: 'Lugu Lake',
+6: 'Lugu Lake',
+7: 'Lijiang',
+8: 'Shangri-La',
+9: 'Shangri-La',
+10: 'Lijiang',
+11: 'Kunming',
+12: 'Kunming'
+};
+
+const cityNameMap = {
+'Kunming': '昆明',
+'Dali': '大理',
+'Shaxi': '沙溪',
+'Lijiang': '麗江',
+'Lugu Lake': '瀘沽湖',
+'Shangri-La': '香格里拉'
+};
+
+const weatherIconMap = {
+'Clear': '☀️',
+'Clouds': '☁️',
+'Rain': '🌧️',
+'Drizzle': '🌦️',
+'Thunderstorm': '⛈️',
+'Snow': '❄️',
+'Mist': '🌫️',
+'Smoke': '🌫️',
+'Haze': '🌫️',
+'Dust': '🌫️',
+'Fog': '🌫️',
+'Sand': '🌫️',
+'Ash': '🌫️',
+'Squall': '💨',
+'Tornado': '🌪️'
+};
+
+function getTodayDayIndex() {
+const now = new Date();
+const start = new Date('2026-11-11');
+const diff = Math.floor((now - start) / (1000 * 60 * 60 * 24));
+if (diff < 0) return 1;
+if (diff >= 12) return 12;
+return diff + 1;
+}
+
+function fetchWeather() {
+const container = document.getElementById('weatherContainer');
+const dayIndex = getTodayDayIndex();
+const cityKey = dayCityMap[dayIndex] || 'Kunming';
+const cityName = cityNameMap[cityKey] || cityKey;
+
+if (WEATHER_API_KEY === '你的OpenWeatherMap_API_Key') {
+container.innerHTML = &lt;div class="weather-loading"&gt;⚠️ 請設定 OpenWeatherMap API Key&lt;/div&gt;;
+return;
+}
+
+const url =
+https://api.openweathermap.org/data/2.5/weather?q=${cityKey}&appid=${WEATHER_API_KEY}&units=metric&lang=zh_tw;
+
+fetch(url)
+.then(res => {
+if (!res.ok) throw new Error('API 請求失敗');
+return res.json();
+})
+.then(data => {
+const icon = weatherIconMap[data.weather[0].main] || '🌤️';
+const temp = Math.round(data.main.temp);
+const desc = data.weather[0].description || '';
+const humidity = data.main.humidity || 0;
+
+container.innerHTML = &lt;div class="weather-card"&gt; &lt;div class="weather-left"&gt; &lt;div class="weather-icon"&gt;${icon}</div>
+<div>
+<div class="weather-city">📍 ${cityName}&lt;/div&gt; &lt;div class="weather-desc"&gt;${desc}</div>
+</div>
+</div>
+<div>
+<div class="weather-temp">${temp}&lt;small&gt;°C&lt;/small&gt;&lt;/div&gt; &lt;div class="weather-extra"&gt;💧 ${humidity}%</div>
+</div>
+</div>
+; }) .catch(err =&gt; { console.warn('天氣載入失敗:', err); container.innerHTML =
+<div class="weather-loading">⚠️ 無法載入天氣，請稍後再試</div>
+`;
+});
+}
+
+// ================================================================
+// 6. 行程總覽
+// ================================================================
+function renderRouteTable() {
+const tbody = document.getElementById('routeTableBody');
+tbody.innerHTML = '';
+DAYS_DATA.forEach(d => {
+const tr = document.createElement('tr');
+tr.innerHTML = &lt;td class="day-cell"&gt;Day${d.id}</td>
+<td> {d.title}</td>
+<td class="place-cell">${d.place || '—'}&lt;/td&gt;;
+tbody.appendChild(tr);
+});
+}
+
+// ================================================================
+// 7. 狀態列表
+// ================================================================
+function renderStatusList() {
+const container = document.getElementById('statusList');
+container.innerHTML = '';
+DAYS_DATA.forEach(d => {
+if (d.hotel && d.hotel !== '-') {
+const storedHotel = localStorage.getItem(hotelName-${d.id}); const storedStatus = localStorage.getItem(hotelStatus-${d.id});
+if (storedHotel !== null) d.hotel = storedHotel;
+if (storedStatus !== null) d.hotelStatus = storedStatus;
+
+const row = document.createElement('div');
+row.className = 'row';
+row.innerHTML = &lt;span class="day-label"&gt;Day${d.id}</span>
+<input type="text" class="hotel-input" data-day=" {escapeHtml(d.hotel)}" placeholder="酒店名" />
+<input type="text" class="status-input" data-day=" {escapeHtml(d.hotelStatus)}" placeholder="狀態" />
+`;
+container.appendChild(row);
+}
+});
+
+container.querySelectorAll('.hotel-input').forEach(input => {
+input.addEventListener('change', function() {
+const dayId = parseInt(this.dataset.day);
+const val = this.value.trim();
+localStorage.setItem(hotelName-${dayId}`, val);
+const dayData = DAYS_DATA.find(d => d.id === dayId);
+if (dayData) dayData.hotel = val;
+updateDailyHeaderIfVisible(dayId);
+});
+});
+
+container.querySelectorAll('.status-input').forEach(input => {
+input.addEventListener('change', function() {
+const dayId = parseInt(this.dataset.day);
+const val = this.value.trim();
+localStorage.setItem(hotelStatus-${dayId}`, val);
+const dayData = DAYS_DATA.find(d => d.id === dayId);
+if (dayData) dayData.hotelStatus = val;
+updateDailyHeaderIfVisible(dayId);
+});
+});
+}
+
+function updateDailyHeaderIfVisible(dayId) {
+const dailyPage = document.getElementById('page-daily');
+if (dailyPage.classList.contains('active')) {
+const currentDay = currentDayId;
+if (currentDay === dayId) {
+renderDayDetail(currentDay);
+}
+}
+}
+
+// ================================================================
+// 8. 高鐵輸入
+// ================================================================
+function initTrainInputs() {
+const inputs = document.querySelectorAll('.train-input');
+inputs.forEach(input => {
+const key = train-${input.dataset.train}; const saved = localStorage.getItem(key); if (saved !== null) input.value = saved; input.addEventListener('change', function() { localStorage.setItem(train-${this.dataset.train}, this.value.trim());
+});
+});
+}
+
+// ================================================================
+// 9. 團友備註
+// ================================================================
+function renderGroupNotes() {
+const container = document.getElementById('groupNoteContainer');
+const notes = JSON.parse(localStorage.getItem('groupNotes') || '[]');
+const emptyMsg = document.getElementById('groupNoteEmpty');
+
+container.querySelectorAll('.group-note-item').forEach(el => el.remove());
+
+if (notes.length === 0) {
+emptyMsg.style.display = 'block';
+return;
+}
+emptyMsg.style.display = 'none';
+
+notes.forEach((note, idx) => {
+const div = document.createElement('div');
+div.className = 'group-note-item';
+div.innerHTML = &lt;span class="note-text"&gt;${escapeHtml(note)}</span>
+<button class="del-btn" data-idx="${idx}"&gt;✕&lt;/button&gt;;
+container.appendChild(div);
+});
+
+container.querySelectorAll('.group-note-item .del-btn').forEach(btn => {
+btn.onclick = function() {
+const idx = parseInt(this.dataset.idx);
+const notes = JSON.parse(localStorage.getItem('groupNotes') || '[]');
+notes.splice(idx, 1);
+localStorage.setItem('groupNotes', JSON.stringify(notes));
+renderGroupNotes();
+};
+});
+}
+
+function addGroupNote() {
+const input = document.getElementById('groupNoteInput');
+const text = input.value.trim();
+if (!text) { alert('請輸入內容'); return; }
+const notes = JSON.parse(localStorage.getItem('groupNotes') || '[]');
+notes.push(text);
+localStorage.setItem('groupNotes', JSON.stringify(notes));
+input.value = '';
+renderGroupNotes();
+}
+
+// ================================================================
+// 10. 每日行程
+// ================================================================
+let currentDayId = 1;
+
+function renderDayTabs() {
+const container = document.getElementById('dayTabs');
+container.innerHTML = '';
+DAYS_DATA.forEach(d => {
+const btn = document.createElement('button');
+btn.textContent = Day ${d.id} (${d.date});
+btn.dataset.dayId = d.id;
+if (d.id === currentDayId) btn.classList.add('active');
+btn.onclick = () => {
+currentDayId = d.id;
+renderDayTabs();
+renderDayDetail(d.id);
+drawAltitude(currentDayId);
+setTimeout(() => {
+const detail = document.querySelector('.day-detail');
+if (detail) {
+const topOffset = 130;
+const elementPosition = detail.getBoundingClientRect().top + window.pageYOffset;
+window.scrollTo({ top: elementPosition - topOffset, behavior: 'smooth' });
+}
+}, 100);
+};
+container.appendChild(btn);
+});
+}
+
+function renderDayDetail(dayId) {
+const container = document.getElementById('dayDetailContainer');
+const day = DAYS_DATA.find(d => d.id === dayId);
+if (!day) return;
+
+let html = <div class="day-detail">;
+
+html += &lt;div class="day-head"&gt; &lt;span class="day-label"&gt;Day ${day.id} · ${day.date} (${day.weekday})</span>
+<span class="day-sub">${day.title}&lt;/span&gt; ${day.hotel && day.hotel !== '-' ? <span class="hotel"&gt;🏨${day.hotel} ${day.hotelStatus}&lt;/span> : ''}
+</div>
+`;
+
+if (day.warnings && day.warnings.length) {
+html += <div class="warning-banner"&gt;&lt;strong&gt;⚠️ 提示&lt;/strong&gt;${day.warnings.join(' · ')}</div>`;
+}
+
+// 景點（先）
+html += <div class="attractions-header"&gt;📍 景點&lt;/div>;
+if (day.attractions && day.attractions.length) {
+day.attractions.forEach((attr, idx) => {
+const label = attr.name;
+const timeStr = attr.time ? · &lt;span class="time-tag"&gt;${attr.time}</span>` : '';
+html += renderAttractionItem(day.id, 'attraction', label + timeStr, '', idx);
+});
+}
+
+// 餐飲（後）
+const mealCategories = [
+{ key: 'breakfast', emoji: '🍳', label: '早餐', value: day.breakfast, cls: 'breakfast' },
+{ key: 'lunch', emoji: '🥢', label: '午餐', value: day.lunch, cls: 'lunch' },
+{ key: 'dinner', emoji: '🍽️', label: '晚餐', value: day.dinner, cls: 'dinner' },
+{ key: 'other', emoji: '📌', label: '其他', value: '', cls: 'other' }
+ ];
+mealCategories.forEach(cat => {
+html += renderMealItem(day.id, cat.key, ``${cat.emoji} ${cat.label}, cat.value, cat.cls);
+});
+
+html += </div>;
+container.innerHTML = html;
+// 強制重新整理所有備註（防止 Firebase 延遲）
+setTimeout(() => {
+const noteAreas = container.querySelectorAll('.note-area');
+noteAreas.forEach(area => {
+const key = area.id.replace('note-area-', '');
+if (db) {
+db.ref(key).once('value').then(snap => {
+const notes = snap.val() || [];
+if (notes.length === 0) {
+area.innerHTML = <div class="empty-msg"&gt;💬 未有備註 · 你嚟加第一條！&lt;/div>;
+} else {
+let html = '';
+notes.forEach((note, idx) => {
+const text = note.text || '';
+const linkedText = text.replace(
+/(https?://[^\s]+)/g,
+'<a href="$1" target="_blank" rel="noopener"&gt;$1</a>'
+);
+html += &lt;div class="note-item"&gt; &lt;span class="note-text"&gt;${linkedText}</span>
+<button class="del-btn" data-key=" {idx}">✕</button>
+</div>
+`;
+});
+area.innerHTML = html;
+// 重新綁定刪除事件
+area.querySelectorAll('.del-btn').forEach(btn => {
+btn.onclick = function() {
+const k = this.dataset.key;
+const idx = parseInt(this.dataset.idx);
+if (!db) return;
+db.ref(k).once('value').then(snap => {
+const arr = snap.val() || [];
+arr.splice(idx, 1);
+db.ref(k).set(arr);
+}).catch(e => alert('刪除失敗: ' + e.message));
+};
+});
+}
+}).catch(() => {});
+}
+});
+}, 50);
+container.querySelectorAll('.add-btn').forEach(btn => {
+btn.onclick = function(e) {
+e.stopPropagation();
+const form = this.closest('.day-item-meal')?.querySelector('.add-note-form') ||
+this.closest('.day-item-attraction')?.querySelector('.add-note-form');
+if (form) {
+form.classList.toggle('open');
+if (form.classList.contains('open')) {
+form.querySelector('.msg-input')?.focus();
+}
+}
+};
+});
+
+container.querySelectorAll('.submit-btn').forEach(btn => {
+btn.onclick = function() {
+const form = this.closest('.add-note-form');
+const dayId = parseInt(this.dataset.dayId);
+const category = this.dataset.category;
+const index = this.dataset.index !== undefined ? parseInt(this.dataset.index) : undefined;
+const msgInput = form.querySelector('.msg-input');
+const text = msgInput.value.trim();
+if (!text) { alert('請輸入內容'); return; }
+if (!db) {
+alert('❌ Firebase 未連線');
+return;
+}
+const key = getNoteKey(dayId, category, index);
+db.ref(key).once('value').then(snap => {
+const existing = snap.val() || [];
+existing.push({ text, time: Date.now() });
+return db.ref(key).set(existing);
+}).then(() => {
+msgInput.value = '';
+form.classList.remove('open');
+}).catch(e => {
+if (e.code === 'PERMISSION_DENIED') {
+alert('❌ 權限不足！請去 Firebase 控制台將 Realtime Database 規則設為「測試模式」');
+} else {
+alert('儲存失敗: ' + e.message);
+}
+});
+};
+});
+
+container.querySelectorAll('.cancel-btn').forEach(btn => {
+btn.onclick = function() {
+const form = this.closest('.add-note-form');
+form.querySelector('.msg-input').value = '';
+form.classList.remove('open');
+};
+});
+}
+
+function renderMealItem(dayId, category, label, defaultValue, cls) {
+const key = getNoteKey(dayId, category, undefined);
+const hasDefault = defaultValue && defaultValue.length > 0;
+return &lt;div class="day-item-meal ${cls}">
+<div class="item-label">
+<span>${label}&lt;/span&gt; ${hasDefault ? <span class="badge"&gt;${defaultValue}</span>: ''} &lt;button class="add-btn"&gt;＋&lt;/button&gt; &lt;/div&gt; &lt;div class="note-area" id="note-area-${key}">
+<div class="empty-msg">⏳ 載入中...</div>
+</div>
+<div class="add-note-form">
+<input type="text" class="msg-input" placeholder="寫低分享... (可貼 Link)" />
+<button class="submit-btn" data-day-id="${dayId}" data-category="${category}">新增</button>
+<button class="cancel-btn">取消</button>
+</div>
+</div>
+`;
+}
+
+function renderAttractionItem(dayId, category, label, defaultValue, index) {
+const key = getNoteKey(dayId, category, index);
+const hasDefault = defaultValue && defaultValue.length > 0;
+const idxAttr = data-index="${index}"; return
+<div class="day-item-attraction">
+<div class="item-label">
+<span> {hasDefault ? <span class="badge"&gt;${defaultValue}</span>: ''} &lt;button class="add-btn"&gt;＋&lt;/button&gt; &lt;/div&gt; &lt;div class="note-area" id="note-area-${key}">
+<div class="empty-msg">⏳ 載入中...</div>
+</div>
+<div class="add-note-form">
+<input type="text" class="msg-input" placeholder="寫低分享... (可貼 Link)" />
+<button class="submit-btn" data-day-id=" {category}" ${idxAttr}&gt;新增&lt;/button&gt; &lt;button class="cancel-btn"&gt;取消&lt;/button&gt; &lt;/div&gt; &lt;/div&gt;;
+}
+
+// ================================================================
+// 11. Firebase 監聽
+// ================================================================
+function setupAllListeners() {
+if (!db) {
+document.querySelectorAll('.note-area').forEach(el => {
+el.innerHTML = <div class="empty-msg" style="color:#C07A5A;"&gt;❌ Firebase 未連線&lt;/div>;
+});
+return;
+}
+DAYS_DATA.forEach(day => {
+const cats = ['breakfast', 'lunch', 'dinner', 'other'];
+day.attractions.forEach((, idx) => {
+const key = getNoteKey(day.id, 'attraction', idx);
+listenNote(key);
+});
+day.shops.forEach((, idx) => {
+const key = getNoteKey(day.id, 'shop', idx);
+listenNote(key);
+});
+cats.forEach(cat => {
+const key = getNoteKey(day.id, cat, undefined);
+listenNote(key);
+});
+});
+}
+
+function listenNote(key) {
+if (!db) return;
+db.ref(key).on('value', (snap) => {
+const notes = snap.val() || [];
+const area = document.getElementById(note-area-${key}); if (!area) return; if (notes.length === 0) { area.innerHTML =<div class="empty-msg">💬 未有備註 · 你嚟加第一條！</div>; return; } let html = ''; notes.forEach((note, idx) =&gt; { const text = note.text || ''; const linkedText = text.replace( /(https?:\/\/[^\s]+)/g, '&lt;a href="$1" target="_blank" rel="noopener">$1&lt;/a&gt;' ); html +=
+<div class="note-item">
+<span class="note-text"> {key}" data-idx="latex
+{idx}"&gt;✕&lt;/button&gt; &lt;/div&gt; `; }); area.innerHTML = html; area.querySelectorAll('.del-btn').forEach(btn =&gt; { btn.onclick = function() { const k = this.dataset.key; const idx = parseInt(this.dataset.idx); if (!db) return; db.ref(k).once('value').then(snap =&gt; { const arr = snap.val() || []; arr.splice(idx, 1); db.ref(k).set(arr); }).catch(e =&gt; alert('刪除失敗: ' + e.message)); }; }); }, (error) =&gt; { const area = document.getElementById(`note-area-
+
+{key}); if (area) { area.innerHTML =<div class="empty-msg" style="color:#C07A5A;">⚠️ 讀取失敗</div>`;
+}
+});
+}
+
+// ================================================================
+// 12. 海拔線
+// ================================================================
+let toastTimer = null;
+
+function showToast(dayId) {
+const day = DAYS_DATA.find(d => d.id === dayId);
+if (!day) return;
+const container = document.getElementById('toastContainer');
+document.getElementById('toastIcon').textContent = '🏔️';
+document.getElementById('toastTitle').textContent = Day ${day.id} · ${day.place};
+document.getElementById('toastSub').textContent = ${day.altitude}m`;
+
+let tip = TIPS[Math.floor(Math.random() * TIPS.length)];
+if (day.warnings && day.warnings.length) {
+const raw = day.warnings[0];
+if (raw.includes('嚴禁洗頭') || raw.includes('唔沖涼')) {
+tip = '今晚唔好沖涼住啦～';
+} else if (raw.includes('車程')) {
+tip = '🚗 車程較長，記得準備小食～';
+} else if (raw.includes('海拔')) {
+tip = '⛰️ 留意高山反應，慢慢行！';
+} else {
+tip = '💡 ' + raw.replace(/⚠️/g, '').trim();
+}
+}
+document.getElementById('toastTip').textContent = tip;
+
+container.classList.add('show');
+clearTimeout(toastTimer);
+toastTimer = setTimeout(() => {
+container.classList.remove('show');
+}, 2800);
+}
+
+function drawAltitude(activeDayId) {
+const canvas = document.getElementById('altitudeCanvas');
+const rect = canvas.parentElement.getBoundingClientRect();
+const dpr = window.devicePixelRatio || 1;
+const w = rect.width - 12;
+const h = 80;
+canvas.width = w * dpr;
+canvas.height = h * dpr;
+canvas.style.width = w + 'px';
+canvas.style.height = h + 'px';
+const ctx = canvas.getContext('2d');
+ctx.scale(dpr, dpr);
+
+const data = DAYS_DATA;
+const n = data.length;
+const padL = 8,
+padR = 8,
+padT = 14,
+padB = 16;
+const chartW = w - padL - padR;
+const chartH = h - padT - padB;
+const minAlt = 1800,
+maxAlt = 3500,
+range = maxAlt - minAlt;
+
+const points = data.map((d, i) => {
+const x = padL + (i / (n - 1)) * chartW;
+const y = padT + chartH - ((d.altitude - minAlt) / range) * chartH;
+const wave = Math.sin(i / n * Math.PI * 2) * 1.2;
+return { x, y: y + wave, alt: d.altitude, id: d.id, place: d.place };
+});
+
+ctx.clearRect(0, 0, w, h);
+
+const bgGrad = ctx.createLinearGradient(0, padT, 0, padT + chartH);
+bgGrad.addColorStop(0, 'rgba(200, 215, 230, 0.05)');
+bgGrad.addColorStop(0.5, 'rgba(220, 200, 180, 0.05)');
+bgGrad.addColorStop(1, 'rgba(210, 180, 170, 0.05)');
+ctx.fillStyle = bgGrad;
+ctx.fillRect(padL, padT, chartW, chartH);
+
+const grad = ctx.createLinearGradient(0, padT, 0, padT + chartH);
+grad.addColorStop(0, '#1A3A5C');
+grad.addColorStop(0.3, '#2D6A4F');
+grad.addColorStop(0.6, '#B88A3A');
+grad.addColorStop(1, '#D97A4A');
+
+ctx.beginPath();
+points.forEach((p, i) => {
+if (i === 0) ctx.moveTo(p.x, p.y);
+else {
+const cpX = (points[i - 1].x + p.x) / 2;
+const cpY = (points[i - 1].y + p.y) / 2 + (i % 2 === 0 ? 1 : -1) * 0.8;
+ctx.quadraticCurveTo(cpX, cpY, p.x, p.y);
+}
+});
+ctx.strokeStyle = grad;
+ctx.lineWidth = 3.5;
+ctx.lineJoin = 'round';
+ctx.lineCap = 'round';
+ctx.stroke();
+
+const y3000 = padT + chartH - ((3000 - minAlt) / range) * chartH;
+ctx.beginPath();
+ctx.moveTo(padL, y3000);
+ctx.lineTo(w - padR, y3000);
+ctx.strokeStyle = 'rgba(224, 122, 95, 0.30)';
+ctx.lineWidth = 1.8;
+ctx.setLineDash([4, 6]);
+ctx.stroke();
+ctx.setLineDash([]);
+ctx.fillStyle = 'rgba(224, 122, 95, 0.40)';
+ctx.font = '8px sans-serif';
+ctx.fillText('3000m', 2, y3000 - 3);
+
+points.forEach((p) => {
+const isActive = p.id === activeDayId;
+const altRatio = (p.alt - minAlt) / range;
+const r = Math.round(50 + altRatio * 180);
+const g = Math.round(180 - altRatio * 140);
+const b = Math.round(80 - altRatio * 60);
+const color = rgb(${r},  {b})`;
+
+const size = isActive ? 9 : 6.5;
+ctx.save();
+ctx.translate(p.x, p.y);
+ctx.rotate(Math.PI / 4);
+ctx.beginPath();
+ctx.rect(-size / 2, -size / 2, size, size);
+ctx.fillStyle = color;
+ctx.shadowColor = isActive ? 'rgba(224, 122, 95, 0.25)' : 'rgba(0,0,0,0.04)';
+ctx.shadowBlur = isActive ? 10 : 2;
+ctx.fill();
+ctx.shadowBlur = 0;
+ctx.restore();
+
+if (isActive) {
+const time = Date.now() / 800;
+const pulse = 0.7 + 0.3 * Math.sin(time);
+ctx.beginPath();
+ctx.arc(p.x, p.y, 12 * pulse, 0, Math.PI * 2);
+ctx.strokeStyle = rgba(224, 122, 95, ${0.12 * pulse})`;
+ctx.lineWidth = 2;
+ctx.stroke();
+}
+
+ctx.fillStyle = isActive ? '#E07A5F' : 'rgba(80, 70, 60, 0.35)';
+ctx.font = isActive ? 'bold 7px sans-serif' : '6px sans-serif';
+ctx.textAlign = 'center';
+ctx.fillText(p.alt + 'm', p.x, p.y - 10);
+});
+
+canvas._points = points;
+canvas._activeId = activeDayId;
+}
+
+document.getElementById('altitudeCanvas').addEventListener('click', function(e) {
+const rect = this.getBoundingClientRect();
+const x = e.clientX - rect.left;
+const points = this._points || [];
+let found = null;
+let minDist = 30;
+points.forEach(p => {
+const dist = Math.abs(x - p.x);
+if (dist < minDist) {
+minDist = dist;
+found = p;
+}
+});
+if (found) {
+currentDayId = found.id;
+renderDayTabs();
+renderDayDetail(currentDayId);
+drawAltitude(currentDayId);
+showToast(found.id);
+document.querySelectorAll('.tab-nav button').forEach(b => b.classList.remove('active'));
+document.querySelector('[data-page="daily"]').classList.add('active');
+document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+document.getElementById('page-daily').classList.add('active');
+}
+});
+
+let pulseAnimId = null;
+
+function startPulseAnimation() {
+function pulseLoop() {
+const canvas = document.getElementById('altitudeCanvas');
+if (canvas._activeId !== undefined) {
+drawAltitude(canvas._activeId);
+}
+pulseAnimId = requestAnimationFrame(pulseLoop);
+}
+if (pulseAnimId) cancelAnimationFrame(pulseAnimId);
+pulseLoop();
+}
+
+// ================================================================
+// 13. Tab 切換
+// ================================================================
+document.getElementById('tabNav').addEventListener('click', (e) => {
+const btn = e.target.closest('button');
+if (!btn) return;
+const page = btn.dataset.page;
+document.querySelectorAll('.tab-nav button').forEach(b => b.classList.remove('active'));
+btn.classList.add('active');
+document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+document.getElementById(page-${page}`).classList.add('active');
+if (page === 'daily') {
+renderDayDetail(currentDayId);
+drawAltitude(currentDayId);
+} else {
+drawAltitude(currentDayId);
+}
+});
+
+// ================================================================
+// 14. 團友備註事件
+// ================================================================
+document.getElementById('groupNoteSubmit').addEventListener('click', addGroupNote);
+document.getElementById('groupNoteInput').addEventListener('keydown', (e) => {
+if (e.key === 'Enter') addGroupNote();
+});
+
+// ================================================================
+// 15. Resize
+// ================================================================
+let resizeTimer;
+window.addEventListener('resize', () => {
+clearTimeout(resizeTimer);
+resizeTimer = setTimeout(() => drawAltitude(currentDayId), 200);
+});
+
+// ================================================================
+// 16. 啟動
+// ================================================================
+renderRouteTable();
+renderStatusList();
+renderDayTabs();
+renderDayDetail(1);
+setupAllListeners();
+initTrainInputs();
+renderGroupNotes();
+updateCountdown();
+setInterval(updateCountdown, 1000);
+fetchWeather();
+
+setTimeout(() => {
+drawAltitude(1);
+startPulseAnimation();
+}, 300);
+
+console.log('🌄 雲南滇西12日行程網頁已啟動！（完整版）');
+if (!db) console.warn('⚠️ Firebase 未連線');
+else console.log('✅ Firebase 已連線');
+</script>
 
 </body>
 </html>
