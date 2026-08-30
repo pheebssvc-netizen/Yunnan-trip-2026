@@ -26,7 +26,7 @@
             min-height: 100vh;
         }
 
-        /* ===== HERO HEADER：封面圖風格 ===== */
+        /* ===== HEADER ===== */
         .app-header {
             position: sticky;
             top: 0;
@@ -930,7 +930,7 @@
             gap: 8px;
         }
 
-        /* ===== 底部海拔線（手繪美化版） ===== */
+        /* ===== 底部海拔線 ===== */
         .altitude-footer {
             position: fixed;
             bottom: 0;
@@ -1112,7 +1112,7 @@
 </head>
 <body>
 
-    <!-- ===== HEADER：Hero 封面圖 ===== -->
+    <!-- ===== HEADER ===== -->
     <header class="app-header" style="background-image: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80');">
         <div class="header-overlay"></div>
         <div class="header-content">
@@ -1754,170 +1754,179 @@
         }
 
         // ================================================================
-//  7. 狀態列表（改用 Firebase 同步）
-// ================================================================
-function renderStatusList() {
-    const container = document.getElementById('statusList');
-    container.innerHTML = '';
+        //  7. 狀態列表（改用 Firebase 同步）
+        // ================================================================
+        function renderStatusList() {
+            const container = document.getElementById('statusList');
+            container.innerHTML = '';
 
-    // 如果 Firebase 未連線，顯示提示
-    if (!db) {
-        container.innerHTML = `<div style="color:#C07A5A; padding:10px 0;">⚠️ Firebase 未連線，無法同步住宿資料</div>`;
-        return;
-    }
+            if (!db) {
+                container.innerHTML = `<div style="color:#C07A5A; padding:10px 0;">⚠️ Firebase 未連線，無法同步住宿資料</div>`;
+                return;
+            }
 
-    // 先顯示「載入中」
-    DAYS_DATA.forEach(d => {
-        if (d.hotel && d.hotel !== '-') {
-            const row = document.createElement('div');
-            row.className = 'row';
-            row.id = `status-row-${d.id}`;
-            row.innerHTML = `
-                <span class="day-label">Day ${d.id}</span>
-                <input type="text" class="hotel-input" data-day="${d.id}" value="⏳ 載入中..." placeholder="酒店名" />
-                <input type="text" class="status-input" data-day="${d.id}" value="⏳ 載入中..." placeholder="狀態" />
-            `;
-            container.appendChild(row);
-        }
-    });
-
-    // 從 Firebase 讀取數據
-    DAYS_DATA.forEach(d => {
-        if (d.hotel && d.hotel !== '-') {
-            const hotelRef = db.ref(`hotels/${d.id}/name`);
-            const statusRef = db.ref(`hotels/${d.id}/status`);
-
-            // 監聽酒店名變化
-            hotelRef.on('value', (snap) => {
-                const val = snap.val();
-                if (val !== null && val !== undefined) {
-                    d.hotel = val;
+            // 顯示載入中
+            DAYS_DATA.forEach(d => {
+                if (d.hotel && d.hotel !== '-') {
+                    const row = document.createElement('div');
+                    row.className = 'row';
+                    row.id = `status-row-${d.id}`;
+                    row.innerHTML = `
+                        <span class="day-label">Day ${d.id}</span>
+                        <input type="text" class="hotel-input" data-day="${d.id}" value="⏳ 載入中..." placeholder="酒店名" />
+                        <input type="text" class="status-input" data-day="${d.id}" value="⏳ 載入中..." placeholder="狀態" />
+                    `;
+                    container.appendChild(row);
                 }
-                const input = document.querySelector(`#status-row-${d.id} .hotel-input`);
-                if (input) input.value = d.hotel;
             });
 
-            // 監聽狀態變化
-            statusRef.on('value', (snap) => {
-                const val = snap.val();
-                if (val !== null && val !== undefined) {
-                    d.hotelStatus = val;
+            // 從 Firebase 讀取
+            DAYS_DATA.forEach(d => {
+                if (d.hotel && d.hotel !== '-') {
+                    const hotelRef = db.ref(`hotels/${d.id}/name`);
+                    const statusRef = db.ref(`hotels/${d.id}/status`);
+
+                    hotelRef.on('value', (snap) => {
+                        const val = snap.val();
+                        if (val !== null && val !== undefined) {
+                            d.hotel = val;
+                        }
+                        const input = document.querySelector(`#status-row-${d.id} .hotel-input`);
+                        if (input) input.value = d.hotel;
+                    });
+
+                    statusRef.on('value', (snap) => {
+                        const val = snap.val();
+                        if (val !== null && val !== undefined) {
+                            d.hotelStatus = val;
+                        }
+                        const input = document.querySelector(`#status-row-${d.id} .status-input`);
+                        if (input) input.value = d.hotelStatus;
+                    });
                 }
-                const input = document.querySelector(`#status-row-${d.id} .status-input`);
-                if (input) input.value = d.hotelStatus;
+            });
+
+            // 綁定修改事件（寫入 Firebase）
+            container.querySelectorAll('.hotel-input').forEach(input => {
+                input.addEventListener('change', function() {
+                    const dayId = parseInt(this.dataset.day);
+                    const val = this.value.trim();
+                    if (!val) { alert('請輸入酒店名'); return; }
+                    if (!db) return;
+                    db.ref(`hotels/${dayId}/name`).set(val);
+                    const dayData = DAYS_DATA.find(d => d.id === dayId);
+                    if (dayData) dayData.hotel = val;
+                    updateDailyHeaderIfVisible(dayId);
+                });
+            });
+
+            container.querySelectorAll('.status-input').forEach(input => {
+                input.addEventListener('change', function() {
+                    const dayId = parseInt(this.dataset.day);
+                    const val = this.value.trim();
+                    if (!db) return;
+                    db.ref(`hotels/${dayId}/status`).set(val);
+                    const dayData = DAYS_DATA.find(d => d.id === dayId);
+                    if (dayData) dayData.hotelStatus = val;
+                    updateDailyHeaderIfVisible(dayId);
+                });
             });
         }
-    });
-
-    // 綁定修改事件（寫入 Firebase）
-    container.querySelectorAll('.hotel-input').forEach(input => {
-        input.addEventListener('change', function() {
-            const dayId = parseInt(this.dataset.day);
-            const val = this.value.trim();
-            if (!val) { alert('請輸入酒店名'); return; }
-            if (!db) return;
-            db.ref(`hotels/${dayId}/name`).set(val);
-            const dayData = DAYS_DATA.find(d => d.id === dayId);
-            if (dayData) dayData.hotel = val;
-            updateDailyHeaderIfVisible(dayId);
-        });
-    });
-
-    container.querySelectorAll('.status-input').forEach(input => {
-        input.addEventListener('change', function() {
-            const dayId = parseInt(this.dataset.day);
-            const val = this.value.trim();
-            if (!db) return;
-            db.ref(`hotels/${dayId}/status`).set(val);
-            const dayData = DAYS_DATA.find(d => d.id === dayId);
-            if (dayData) dayData.hotelStatus = val;
-            updateDailyHeaderIfVisible(dayId);
-        });
-    });
-}
 
         function updateDailyHeaderIfVisible(dayId) {
-    const dailyPage = document.getElementById('page-daily');
-    if (dailyPage.classList.contains('active')) {
-        const currentDay = currentDayId;
-        if (currentDay === dayId) {
-            renderDayDetail(currentDay);
-        }
-    }
-        }
-
-// ================================================================
-//  8. 高鐵輸入（改用 Firebase 同步）
-// ================================================================
-function initTrainInputs() {
-    const area = document.getElementById('trainInputArea');
-    if (!area) return;
-
-    const inputs = area.querySelectorAll('.train-input');
-    
-    // 先顯示「載入中...」
-    inputs.forEach(input => {
-        input.value = '⏳ 載入中...';
-    });
-
-    // 從 Firebase 讀取數據
-    const trainKeys = ['kunming-dali', 'lijiang-kunming'];
-    trainKeys.forEach(key => {
-        const ref = db.ref(`trains/${key}`);
-        ref.on('value', (snap) => {
-            const val = snap.val();
-            const input = area.querySelector(`.train-input[data-train="${key}"]`);
-            if (input) {
-                input.value = (val !== null && val !== undefined) ? val : '';
+            const dailyPage = document.getElementById('page-daily');
+            if (dailyPage.classList.contains('active')) {
+                const currentDay = currentDayId;
+                if (currentDay === dayId) {
+                    renderDayDetail(currentDay);
+                }
             }
-        });
-    });
-
-    // 綁定修改事件（寫入 Firebase）
-    inputs.forEach(input => {
-        input.addEventListener('change', function() {
-            const key = this.dataset.train;
-            const val = this.value.trim();
-            if (!db) return;
-            db.ref(`trains/${key}`).set(val);
-        });
-    });
-}
+        }
 
         // ================================================================
-        //  9. 團友備註
+        //  8. 高鐵輸入（改用 Firebase 同步）
+        // ================================================================
+        function initTrainInputs() {
+            const area = document.getElementById('trainInputArea');
+            if (!area) return;
+
+            const inputs = area.querySelectorAll('.train-input');
+
+            // 先顯示「載入中...」
+            inputs.forEach(input => {
+                input.value = '⏳ 載入中...';
+            });
+
+            // 從 Firebase 讀取數據
+            const trainKeys = ['kunming-dali', 'lijiang-kunming'];
+            trainKeys.forEach(key => {
+                const ref = db.ref(`trains/${key}`);
+                ref.on('value', (snap) => {
+                    const val = snap.val();
+                    const input = area.querySelector(`.train-input[data-train="${key}"]`);
+                    if (input) {
+                        input.value = (val !== null && val !== undefined) ? val : '';
+                    }
+                });
+            });
+
+            // 綁定修改事件（寫入 Firebase）
+            inputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    const key = this.dataset.train;
+                    const val = this.value.trim();
+                    if (!db) return;
+                    db.ref(`trains/${key}`).set(val);
+                });
+            });
+        }
+
+        // ================================================================
+        //  9. 團友備註（改用 Firebase 同步）
         // ================================================================
         function renderGroupNotes() {
             const container = document.getElementById('groupNoteContainer');
-            const notes = JSON.parse(localStorage.getItem('groupNotes') || '[]');
-            const emptyMsg = document.getElementById('groupNoteEmpty');
-
-            container.querySelectorAll('.group-note-item').forEach(el => el.remove());
-
-            if (notes.length === 0) {
-                emptyMsg.style.display = 'block';
+            if (!db) {
+                container.innerHTML = `<div style="color:#C07A5A; padding:10px 0;">⚠️ Firebase 未連線，無法同步團友備註</div>`;
                 return;
             }
-            emptyMsg.style.display = 'none';
 
-            notes.forEach((note, idx) => {
-                const div = document.createElement('div');
-                div.className = 'group-note-item';
-                div.innerHTML = `
-                    <span class="note-text">${escapeHtml(note)}</span>
-                    <button class="del-btn" data-idx="${idx}">✕</button>
-                `;
-                container.appendChild(div);
-            });
+            // 監聽 Firebase 數據
+            const notesRef = db.ref('groupNotes');
+            notesRef.on('value', (snap) => {
+                const notes = snap.val() || [];
+                const emptyMsg = document.getElementById('groupNoteEmpty');
 
-            container.querySelectorAll('.group-note-item .del-btn').forEach(btn => {
-                btn.onclick = function() {
-                    const idx = parseInt(this.dataset.idx);
-                    const notes = JSON.parse(localStorage.getItem('groupNotes') || '[]');
-                    notes.splice(idx, 1);
-                    localStorage.setItem('groupNotes', JSON.stringify(notes));
-                    renderGroupNotes();
-                };
+                // 移除舊的 note items（保留 empty msg）
+                container.querySelectorAll('.group-note-item').forEach(el => el.remove());
+
+                if (notes.length === 0) {
+                    emptyMsg.style.display = 'block';
+                    return;
+                }
+                emptyMsg.style.display = 'none';
+
+                notes.forEach((note, idx) => {
+                    const div = document.createElement('div');
+                    div.className = 'group-note-item';
+                    div.innerHTML = `
+                        <span class="note-text">${escapeHtml(note)}</span>
+                        <button class="del-btn" data-idx="${idx}">✕</button>
+                    `;
+                    container.appendChild(div);
+                });
+
+                // 綁定刪除事件
+                container.querySelectorAll('.group-note-item .del-btn').forEach(btn => {
+                    btn.onclick = function() {
+                        const idx = parseInt(this.dataset.idx);
+                        db.ref('groupNotes').once('value').then(snap => {
+                            const arr = snap.val() || [];
+                            arr.splice(idx, 1);
+                            db.ref('groupNotes').set(arr);
+                        });
+                    };
+                });
             });
         }
 
@@ -1925,11 +1934,14 @@ function initTrainInputs() {
             const input = document.getElementById('groupNoteInput');
             const text = input.value.trim();
             if (!text) { alert('請輸入內容'); return; }
-            const notes = JSON.parse(localStorage.getItem('groupNotes') || '[]');
-            notes.push(text);
-            localStorage.setItem('groupNotes', JSON.stringify(notes));
+            if (!db) { alert('❌ Firebase 未連線'); return; }
+
+            db.ref('groupNotes').once('value').then(snap => {
+                const notes = snap.val() || [];
+                notes.push(text);
+                db.ref('groupNotes').set(notes);
+            });
             input.value = '';
-            renderGroupNotes();
         }
 
         // ================================================================
@@ -1968,13 +1980,27 @@ function initTrainInputs() {
             const day = DAYS_DATA.find(d => d.id === dayId);
             if (!day) return;
 
+            // 從 Firebase 讀取最新酒店名 + 狀態
+            if (db) {
+                db.ref(`hotels/${dayId}/name`).once('value', (snap) => {
+                    if (snap.val() !== null && snap.val() !== undefined) {
+                        day.hotel = snap.val();
+                    }
+                });
+                db.ref(`hotels/${dayId}/status`).once('value', (snap) => {
+                    if (snap.val() !== null && snap.val() !== undefined) {
+                        day.hotelStatus = snap.val();
+                    }
+                });
+            }
+
             let html = `<div class="day-detail">`;
 
             html += `
                 <div class="day-head">
                     <span class="day-label">Day ${day.id} · ${day.date} (${day.weekday})</span>
                     <span class="day-sub">${day.title}</span>
-                    ${day.hotel && day.hotel !== '-' ? `<span class="hotel">🏨 ${day.hotel} ${day.hotelStatus}</span>` : ''}
+                    ${day.hotel && day.hotel !== '-' ? `<span class="hotel">🏨 ${day.hotel} ${day.hotelStatus || ''}</span>` : ''}
                 </div>
             `;
 
@@ -2075,170 +2101,83 @@ function initTrainInputs() {
                     const text = msgInput.value.trim();
                     if (!text) { alert('請輸入內容'); return; }
                     if (!db) {
-// ================================================================
-//  10. 每日行程（顯示酒店名 + 狀態，從 Firebase 同步）
-// ================================================================
-function renderDayDetail(dayId) {
-    const container = document.getElementById('dayDetailContainer');
-    const day = DAYS_DATA.find(d => d.id === dayId);
-    if (!day) return;
-
-    // 先從 Firebase 讀取最新酒店名 + 狀態（確保同步）
-    if (db) {
-        db.ref(`hotels/${dayId}/name`).once('value', (snap) => {
-            if (snap.val() !== null && snap.val() !== undefined) {
-                day.hotel = snap.val();
-            }
-        });
-        db.ref(`hotels/${dayId}/status`).once('value', (snap) => {
-            if (snap.val() !== null && snap.val() !== undefined) {
-                day.hotelStatus = snap.val();
-            }
-        });
-    }
-
-    let html = `<div class="day-detail">`;
-
-    // ===== 頭部（日期 + 行程名 + 酒店名 + 狀態） =====
-    html += `
-        <div class="day-head">
-            <span class="day-label">Day ${day.id} · ${day.date} (${day.weekday})</span>
-            <span class="day-sub">${day.title}</span>
-            ${day.hotel && day.hotel !== '-' ? `<span class="hotel">🏨 ${day.hotel} ${day.hotelStatus || ''}</span>` : ''}
-        </div>
-    `;
-
-    // ===== 警告 =====
-    if (day.warnings && day.warnings.length) {
-        html += `<div class="warning-banner"><strong>⚠️ 提示</strong>${day.warnings.join(' · ')}</div>`;
-    }
-
-    // ===== 景點（先） =====
-    html += `<div class="attractions-header">📍 景點</div>`;
-    if (day.attractions && day.attractions.length) {
-        day.attractions.forEach((attr, idx) => {
-            const label = attr.name;
-            const timeStr = attr.time ? ` · <span class="time-tag">${attr.time}</span>` : '';
-            html += renderAttractionItem(day.id, 'attraction', label + timeStr, '', idx);
-        });
-    }
-
-    // ===== 餐飲（後） =====
-    const mealCategories = [
-        { key: 'breakfast', emoji: '🍳', label: '早餐', value: day.breakfast, cls: 'breakfast' },
-        { key: 'lunch', emoji: '🥢', label: '午餐', value: day.lunch, cls: 'lunch' },
-        { key: 'dinner', emoji: '🍽️', label: '晚餐', value: day.dinner, cls: 'dinner' },
-        { key: 'other', emoji: '📌', label: '其他', value: '', cls: 'other' }
-    ];
-    mealCategories.forEach(cat => {
-        html += renderMealItem(day.id, cat.key, `${cat.emoji} ${cat.label}`, cat.value, cat.cls);
-    });
-
-    html += `</div>`;
-    container.innerHTML = html;
-
-    // ===== 強制重新整理所有備註（防止 Firebase 延遲） =====
-    setTimeout(() => {
-        const noteAreas = container.querySelectorAll('.note-area');
-        noteAreas.forEach(area => {
-            const key = area.id.replace('note-area-', '');
-            if (db) {
-                db.ref(key).once('value').then(snap => {
-                    const notes = snap.val() || [];
-                    if (notes.length === 0) {
-                        area.innerHTML = `<div class="empty-msg">💬 未有備註 · 你嚟加第一條！</div>`;
-                    } else {
-                        let html = '';
-                        notes.forEach((note, idx) => {
-                            const text = note.text || '';
-                            const linkedText = text.replace(
-                                /(https?:\/\/[^\s]+)/g,
-                                '<a href="$1" target="_blank" rel="noopener">$1</a>'
-                            );
-                            html += `
-                                <div class="note-item">
-                                    <span class="note-text">${linkedText}</span>
-                                    <button class="del-btn" data-key="${key}" data-idx="${idx}">✕</button>
-                                </div>
-                            `;
-                        });
-                        area.innerHTML = html;
-                        // 重新綁定刪除事件
-                        area.querySelectorAll('.del-btn').forEach(btn => {
-                            btn.onclick = function() {
-                                const k = this.dataset.key;
-                                const idx = parseInt(this.dataset.idx);
-                                if (!db) return;
-                                db.ref(k).once('value').then(snap => {
-                                    const arr = snap.val() || [];
-                                    arr.splice(idx, 1);
-                                    db.ref(k).set(arr);
-                                }).catch(e => alert('刪除失敗: ' + e.message));
-                            };
-                        });
+                        alert('❌ Firebase 未連線');
+                        return;
                     }
-                }).catch(() => {});
-            }
-        });
-    }, 50);
-
-    // ===== 綁定事件 =====
-    container.querySelectorAll('.add-btn').forEach(btn => {
-        btn.onclick = function(e) {
-            e.stopPropagation();
-            const form = this.closest('.day-item-meal')?.querySelector('.add-note-form') ||
-                this.closest('.day-item-attraction')?.querySelector('.add-note-form');
-            if (form) {
-                form.classList.toggle('open');
-                if (form.classList.contains('open')) {
-                    form.querySelector('.msg-input')?.focus();
-                }
-            }
-        };
-    });
-
-    container.querySelectorAll('.submit-btn').forEach(btn => {
-        btn.onclick = function() {
-            const form = this.closest('.add-note-form');
-            const dayId = parseInt(this.dataset.dayId);
-            const category = this.dataset.category;
-            const index = this.dataset.index !== undefined ? parseInt(this.dataset.index) : undefined;
-            const msgInput = form.querySelector('.msg-input');
-            const text = msgInput.value.trim();
-            if (!text) { alert('請輸入內容'); return; }
-            if (!db) {
-                alert('❌ Firebase 未連線');
-                return;
-            }
-            const key = getNoteKey(dayId, category, index);
-            db.ref(key).once('value').then(snap => {
-                const existing = snap.val() || [];
-                existing.push({ text, time: Date.now() });
-                return db.ref(key).set(existing);
-            }).then(() => {
-                msgInput.value = '';
-                form.classList.remove('open');
-            }).catch(e => {
-                if (e.code === 'PERMISSION_DENIED') {
-                    alert('❌ 權限不足！請去 Firebase 控制台將 Realtime Database 規則設為「測試模式」');
-                } else {
-                    alert('儲存失敗: ' + e.message);
-                }
+                    const key = getNoteKey(dayId, category, index);
+                    db.ref(key).once('value').then(snap => {
+                        const existing = snap.val() || [];
+                        existing.push({ text, time: Date.now() });
+                        return db.ref(key).set(existing);
+                    }).then(() => {
+                        msgInput.value = '';
+                        form.classList.remove('open');
+                    }).catch(e => {
+                        if (e.code === 'PERMISSION_DENIED') {
+                            alert('❌ 權限不足！請去 Firebase 控制台將 Realtime Database 規則設為「測試模式」');
+                        } else {
+                            alert('儲存失敗: ' + e.message);
+                        }
+                    });
+                };
             });
-        };
-    });
 
-    container.querySelectorAll('.cancel-btn').forEach(btn => {
-        btn.onclick = function() {
-            const form = this.closest('.add-note-form');
-            form.querySelector('.msg-input').value = '';
-            form.classList.remove('open');
-        };
-    });
-}
+            container.querySelectorAll('.cancel-btn').forEach(btn => {
+                btn.onclick = function() {
+                    const form = this.closest('.add-note-form');
+                    form.querySelector('.msg-input').value = '';
+                    form.classList.remove('open');
+                };
+            });
+        }
+
+        function renderMealItem(dayId, category, label, defaultValue, cls) {
+            const key = getNoteKey(dayId, category, undefined);
+            const hasDefault = defaultValue && defaultValue.length > 0;
+            return `
+                <div class="day-item-meal ${cls}">
+                    <div class="item-label">
+                        <span>${label}</span>
+                        ${hasDefault ? `<span class="badge">${defaultValue}</span>` : ''}
+                        <button class="add-btn">＋</button>
+                    </div>
+                    <div class="note-area" id="note-area-${key}">
+                        <div class="empty-msg">⏳ 載入中...</div>
+                    </div>
+                    <div class="add-note-form">
+                        <input type="text" class="msg-input" placeholder="寫低分享... (可貼 Link)" />
+                        <button class="submit-btn" data-day-id="${dayId}" data-category="${category}">新增</button>
+                        <button class="cancel-btn">取消</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderAttractionItem(dayId, category, label, defaultValue, index) {
+            const key = getNoteKey(dayId, category, index);
+            const hasDefault = defaultValue && defaultValue.length > 0;
+            const idxAttr = `data-index="${index}"`;
+            return `
+                <div class="day-item-attraction">
+                    <div class="item-label">
+                        <span>${label}</span>
+                        ${hasDefault ? `<span class="badge">${defaultValue}</span>` : ''}
+                        <button class="add-btn">＋</button>
+                    </div>
+                    <div class="note-area" id="note-area-${key}">
+                        <div class="empty-msg">⏳ 載入中...</div>
+                    </div>
+                    <div class="add-note-form">
+                        <input type="text" class="msg-input" placeholder="寫低分享... (可貼 Link)" />
+                        <button class="submit-btn" data-day-id="${dayId}" data-category="${category}" ${idxAttr}>新增</button>
+                        <button class="cancel-btn">取消</button>
+                    </div>
+                </div>
+            `;
+        }
 
         // ================================================================
-        //  11. Firebase 監聽
+        //  11. Firebase 監聽（每日行程備註）
         // ================================================================
         function setupAllListeners() {
             if (!db) {
@@ -2310,7 +2249,7 @@ function renderDayDetail(dayId) {
         }
 
         // ================================================================
-        //  12. 海拔線（手繪美化版：漸層填充 + 3000m 變色）
+        //  12. 海拔線
         // ================================================================
         let toastTimer = null;
 
@@ -2369,7 +2308,6 @@ function renderDayDetail(dayId) {
                 maxAlt = 3500,
                 range = maxAlt - minAlt;
 
-            // 計算點座標（保留手繪抖動）
             const points = data.map((d, i) => {
                 const x = padL + (i / (n - 1)) * chartW;
                 const y = padT + chartH - ((d.altitude - minAlt) / range) * chartH;
@@ -2379,7 +2317,6 @@ function renderDayDetail(dayId) {
 
             ctx.clearRect(0, 0, w, h);
 
-            // ===== 底色 =====
             const bgGrad = ctx.createLinearGradient(0, padT, 0, padT + chartH);
             bgGrad.addColorStop(0, 'rgba(200, 215, 230, 0.05)');
             bgGrad.addColorStop(0.5, 'rgba(220, 200, 180, 0.05)');
@@ -2387,8 +2324,7 @@ function renderDayDetail(dayId) {
             ctx.fillStyle = bgGrad;
             ctx.fillRect(padL, padT, chartW, chartH);
 
-            // ===== ★ 新增：漸層填充（線下面） =====
-            // 先畫一條路徑用嚟填充
+            // 漸層填充
             ctx.beginPath();
             points.forEach((p, i) => {
                 if (i === 0) ctx.moveTo(p.x, p.y);
@@ -2398,12 +2334,10 @@ function renderDayDetail(dayId) {
                     ctx.quadraticCurveTo(cpX, cpY, p.x, p.y);
                 }
             });
-            // 連到右下角再連返左下角，形成封閉區域
             ctx.lineTo(points[points.length - 1].x, padT + chartH);
             ctx.lineTo(points[0].x, padT + chartH);
             ctx.closePath();
 
-            // 漸層填充（珊瑚橘 fade out 至透明）
             const fillGrad = ctx.createLinearGradient(0, padT, 0, padT + chartH);
             fillGrad.addColorStop(0, 'rgba(224, 122, 95, 0.30)');
             fillGrad.addColorStop(0.4, 'rgba(224, 122, 95, 0.12)');
@@ -2411,7 +2345,6 @@ function renderDayDetail(dayId) {
             ctx.fillStyle = fillGrad;
             ctx.fill();
 
-            // ===== 主線 =====
             const grad = ctx.createLinearGradient(0, padT, 0, padT + chartH);
             grad.addColorStop(0, '#1A3A5C');
             grad.addColorStop(0.3, '#2D6A4F');
@@ -2433,7 +2366,6 @@ function renderDayDetail(dayId) {
             ctx.lineCap = 'round';
             ctx.stroke();
 
-            // ===== 3000m 參考線 =====
             const y3000 = padT + chartH - ((3000 - minAlt) / range) * chartH;
             ctx.beginPath();
             ctx.moveTo(padL, y3000);
@@ -2447,15 +2379,13 @@ function renderDayDetail(dayId) {
             ctx.font = '8px sans-serif';
             ctx.fillText('3000m', 2, y3000 - 3);
 
-            // ===== 點（★ 超過 3000m 變橙色） =====
             points.forEach((p) => {
                 const isActive = p.id === activeDayId;
                 const isHigh = p.alt >= 3000;
 
-                // 超過 3000m 用橙色，否則用海拔漸變色
                 let color;
                 if (isHigh) {
-                    color = '#FF5722'; // 橙紅色（高反警告）
+                    color = '#FF5722';
                 } else {
                     const altRatio = (p.alt - minAlt) / range;
                     const r = Math.round(50 + altRatio * 180);
@@ -2477,7 +2407,6 @@ function renderDayDetail(dayId) {
                 ctx.shadowBlur = 0;
                 ctx.restore();
 
-                // 當前點脈衝光環
                 if (isActive) {
                     const time = Date.now() / 800;
                     const pulse = 0.7 + 0.3 * Math.sin(time);
@@ -2488,7 +2417,6 @@ function renderDayDetail(dayId) {
                     ctx.stroke();
                 }
 
-                // 海拔標籤
                 ctx.fillStyle = isActive ? '#E07A5F' : 'rgba(80, 70, 60, 0.35)';
                 ctx.font = isActive ? 'bold 7px sans-serif' : '6px sans-serif';
                 ctx.textAlign = 'center';
@@ -2594,10 +2522,10 @@ function renderDayDetail(dayId) {
             startPulseAnimation();
         }, 300);
 
-        console.log('🌄 雲南滇西12日行程網頁已啟動！（手繪海拔線美化版）');
+        console.log('🌄 雲南滇西12日行程網頁已啟動！（全 Firebase 同步版）');
         if (!db) console.warn('⚠️ Firebase 未連線');
         else console.log('✅ Firebase 已連線');
     </script>
 
 </body>
-    </html>
+</html>
