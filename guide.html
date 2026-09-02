@@ -380,7 +380,7 @@
 
             try {
                 // 3.1 載入目錄
-                const indexRes = await fetch('guide-data/_index.json');
+                const indexRes = await fetch('https://raw.githubusercontent.com/pheebssvc-netizen/Yunnan-trip-2026/main/guide-data/_index.json');
                 if (!indexRes.ok) throw new Error('無法載入 _index.json');
                 const indexData = await indexRes.json();
                 const spotList = indexData.景點列表 || [];
@@ -392,7 +392,7 @@
 
                 // 3.2 載入每個景點嘅詳細內容（逐個 fetch）
                 const spotPromises = spotList.map(async (meta) => {
-                    const url = `guide-data/${meta.id}.json`;
+                    const url = `https://raw.githubusercontent.com/pheebssvc-netizen/Yunnan-trip-2026/main/guide-data/${meta.id}.json`;
                     try {
                         const res = await fetch(url);
                         if (!res.ok) {
