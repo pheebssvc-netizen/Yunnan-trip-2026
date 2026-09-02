@@ -1159,15 +1159,19 @@
                 <div class="weather-loading">⏳ 載入天氣中...</div>
             </div>
         </div>
-<!-- 私人導遊入口（方案 B：卡片名片風） -->
-<div class="overview-card" style="text-align:center; padding:20px 20px 18px; background: linear-gradient(145deg, #FFFBF5 0%, #F8F0E8 100%); border-left: 5px solid #E07A5F;">
-    <div style="display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:6px;">
-        <span style="font-size:1.8rem;">🤠</span>
-        <span style="font-size:1.2rem; font-weight:700; color:#2D241A; letter-spacing:1px;">私人導遊</span>
+<!-- 私人導遊入口（同天氣卡片風格一致） -->
+<a href="guide.html" style="text-decoration:none; display:block;">
+    <div class="weather-card" style="cursor:pointer; transition:transform 0.15s; background: linear-gradient(145deg, #2D4A6A, #1E3A5A); border-radius:16px; padding:16px 20px; color:#fff; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 12px rgba(0,0,0,0.08); margin-top:4px;">
+        <div class="weather-left">
+            <div class="weather-icon" style="font-size:2.4rem; line-height:1;">🤠</div>
+            <div>
+                <div class="weather-city" style="font-size:1.0rem; font-weight:600; letter-spacing:0.5px;">私人導遊</div>
+                <div class="weather-desc" style="font-size:0.8rem; opacity:0.8; margin-top:2px;">每個景點 · 歷史 · 傳說 · 習俗 · 打卡位 · 避坑 · 美食</div>
+            </div>
+        </div>
+        <div style="font-size:1.2rem; opacity:0.7;">→</div>
     </div>
-    <div style="font-size:0.9rem; color:#6B5A4A; font-style:italic; margin-bottom:8px; letter-spacing:0.5px;">
-        「每個景點背後，都有段故事等緊你。」
-    </div>
+</a>
     <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:6px 12px; margin-bottom:14px; font-size:0.75rem; color:#8A7A6A; letter-spacing:0.3px;">
         <span>📜 歷史</span>
         <span>·</span>
