@@ -292,6 +292,7 @@
             max-width: 720px;
             margin-left: auto;
             margin-right: auto;
+            display: block !important; /* 強制顯示 */
         }
         .error-log .error-item {
             padding: 2px 0;
@@ -301,7 +302,6 @@
             border-bottom: none;
         }
 
-        /* ===== 返回頂部按鈕 ===== */
         .back-to-top {
             position: fixed;
             bottom: 30px;
@@ -371,14 +371,12 @@
 </head>
 <body>
 
-    <!-- ===== HEADER ===== -->
     <header class="guide-header">
         <a href="index.html" class="back-btn">← 返回行程</a>
         <h1>📖 導遊筆記</h1>
         <span style="width:80px;"></span>
     </header>
 
-    <!-- ===== 內容 ===== -->
     <div id="guideContainer">
         <div class="loading">
             <div class="spinner"></div>
@@ -386,11 +384,13 @@
         </div>
     </div>
 
-    <div id="errorLog" class="error-log" style="display:none;"></div>
+    <!-- 錯誤日誌會自動顯示 -->
+    <div id="errorLog" class="error-log">
+        <strong>⏳ 載入狀態：</strong> 正在載入景點...
+    </div>
 
     <div class="guide-footer">✏️ 每個景點都可以加團友筆記 · 4人同步</div>
 
-    <!-- ===== 返回頂部按鈕 ===== -->
     <button class="back-to-top" id="backToTopBtn" aria-label="返回頂部">⬆</button>
 
     <script>
@@ -437,6 +437,9 @@
             const errorLog = document.getElementById('errorLog');
             const errors = [];
 
+            // 顯示載入中
+            errorLog.innerHTML = `<strong>⏳ 載入狀態：</strong> 正在載入 _index.json...`;
+
             try {
                 console.log('📥 載入 _index.json...');
                 const indexRes = await fetch(BASE_URL + '_index.json');
@@ -446,12 +449,16 @@
                 const indexData = await indexRes.json();
                 const spotList = indexData.景點列表 || [];
                 console.log(`✅ 找到 ${spotList.length} 個景點`);
+                errorLog.innerHTML = `<strong>✅ 找到 ${spotList.length} 個景點</strong>，開始載入詳細資料...`;
 
                 if (spotList.length === 0) {
                     container.innerHTML = `<div class="loading">⚠️ 景點列表為空</div>`;
+                    errorLog.innerHTML = `<strong>⚠️ 錯誤：</strong> 景點列表為空`;
                     return;
                 }
 
+                // 載入每個景點
+                let loadedCount = 0;
                 const spotPromises = spotList.map(async (meta) => {
                     const url = BASE_URL + meta.id + '.json';
                     try {
@@ -463,6 +470,7 @@
                             return null;
                         }
                         const data = await res.json();
+                        loadedCount++;
                         console.log(`✅ ${meta.id} 載入成功`);
                         return data;
                     } catch (e) {
@@ -475,11 +483,11 @@
                 const spotDataArray = await Promise.all(spotPromises);
                 const validSpots = spotDataArray.filter(d => d !== null);
                 console.log(`✅ 成功載入 ${validSpots.length} 個景點，${errors.length} 個失敗`);
+                errorLog.innerHTML = `✅ 成功載入 ${validSpots.length} 個景點，${errors.length} 個失敗`;
 
                 if (validSpots.length === 0) {
                     container.innerHTML = `<div class="loading">⚠️ 無法載入任何景點數據</div>`;
                     if (errors.length) {
-                        errorLog.style.display = 'block';
                         errorLog.innerHTML = `<strong>❌ 載入錯誤：</strong>` + errors.map(e =>
                             `<div class="error-item">${e}</div>`
                         ).join('');
@@ -497,10 +505,11 @@
                 renderRegions(container, regions);
 
                 if (errors.length) {
-                    errorLog.style.display = 'block';
                     errorLog.innerHTML = `<strong>⚠️ 部分景點載入失敗：</strong>` + errors.map(e =>
                         `<div class="error-item">${e}</div>`
                     ).join('');
+                } else {
+                    errorLog.innerHTML = `<strong>✅ 全部載入成功！</strong> 共 ${validSpots.length} 個景點`;
                 }
 
             } catch (error) {
@@ -511,6 +520,7 @@
                         <span style="font-size:0.8rem;color:#B0A090;">請檢查網絡或檔案是否存在</span>
                     </div>
                 `;
+                errorLog.innerHTML = `<strong>❌ 致命錯誤：</strong> ${error.message}`;
             }
         }
 
@@ -636,6 +646,8 @@
         //  渲染單個景點卡片
         // ================================================================
         function renderSpotCard(spot, spotId) {
+            // 如果 spot 冇名稱，用 id 代替
+            const spotName = spot.名稱 || spot.id || '景點';
             const history = spot.歷史 || '暫無歷史資料';
             const legend = spot.傳說 || '暫無相關傳說';
             const custom = spot.習俗 || '暫無習俗資料';
@@ -653,7 +665,7 @@
             return `
                 <div class="spot-card" data-spot-id="${spotId}">
                     <div class="spot-card-header">
-                        <span class="spot-name">📍 ${escapeHtml(spot.名稱 || '景點')}</span>
+                        <span class="spot-name">📍 ${escapeHtml(spotName)}</span>
                         <span class="spot-toggle">▼</span>
                     </div>
                     <div class="spot-card-body">
