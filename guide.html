@@ -25,7 +25,6 @@
             min-height: 100vh;
         }
 
-        /* ===== HEADER ===== */
         .guide-header {
             background: linear-gradient(145deg, #2D241A 0%, #3D2E22 100%);
             position: sticky;
@@ -62,7 +61,6 @@
             letter-spacing: 1px;
         }
 
-        /* ===== 地區標題 ===== */
         .region-section {
             max-width: 720px;
             margin: 0 auto;
@@ -84,7 +82,6 @@
             line-height: 1.5;
         }
 
-        /* ===== 景點卡片（摺疊式） ===== */
         .spot-card {
             background: #fff;
             border-radius: 16px;
@@ -131,7 +128,6 @@
             display: block;
         }
 
-        /* ===== 內容樣式 ===== */
         .spot-card-body .section {
             margin-top: 14px;
         }
@@ -165,7 +161,6 @@
             color: #E07A5F;
         }
 
-        /* ===== 團友筆記 ===== */
         .note-section {
             margin-top: 16px;
             padding-top: 14px;
@@ -252,7 +247,6 @@
             padding: 4px 0 2px 6px;
         }
 
-        /* ===== 載入中 ===== */
         .loading {
             text-align: center;
             padding: 60px 20px;
@@ -275,7 +269,6 @@
             }
         }
 
-        /* ===== 底部 ===== */
         .guide-footer {
             text-align: center;
             font-size: 0.7rem;
@@ -286,6 +279,26 @@
             max-width: 720px;
             margin-left: auto;
             margin-right: auto;
+        }
+
+        .error-log {
+            background: #fff3f0;
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin: 10px 16px;
+            font-size: 0.8rem;
+            color: #A3512B;
+            border-left: 4px solid #E07A5F;
+            max-width: 720px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .error-log .error-item {
+            padding: 2px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.04);
+        }
+        .error-log .error-item:last-child {
+            border-bottom: none;
         }
 
         @media (max-width: 480px) {
@@ -318,14 +331,12 @@
 </head>
 <body>
 
-    <!-- ===== HEADER ===== -->
     <header class="guide-header">
         <a href="index.html" class="back-btn">← 返回行程</a>
         <h1>📖 導遊筆記</h1>
         <span style="width:80px;"></span>
     </header>
 
-    <!-- ===== 內容容器 ===== -->
     <div id="guideContainer">
         <div class="loading">
             <div class="spinner"></div>
@@ -333,14 +344,13 @@
         </div>
     </div>
 
+    <div id="errorLog" class="error-log" style="display:none;"></div>
+
     <div class="guide-footer">✏️ 每個景點都可以加團友筆記 · 4人同步</div>
 
-    <!-- ============================================================ -->
-    <!-- JAVASCRIPT -->
-    <!-- ============================================================ -->
     <script>
         // ================================================================
-        //  1. FIREBASE CONFIG（同你主頁一樣）
+        //  FIREBASE CONFIG
         // ================================================================
         const firebaseConfig = {
             apiKey: "AIzaSyAtthBBNoHJkN6B_e8DVjzDpK_eB0wfExo",
@@ -360,7 +370,7 @@
         const db = firebaseInitialized ? firebase.database() : null;
 
         // ================================================================
-        //  2. 工具函數
+        //  工具
         // ================================================================
         function escapeHtml(text) {
             const div = document.createElement('div');
@@ -373,36 +383,42 @@
         }
 
         // ================================================================
-        //  3. 載入所有景點數據
+        //  主程式
         // ================================================================
+        const BASE_URL = 'https://raw.githubusercontent.com/pheebssvc-netizen/Yunnan-trip-2026/main/guide-data/';
+
         async function loadGuideData() {
             const container = document.getElementById('guideContainer');
+            const errorLog = document.getElementById('errorLog');
+            const errors = [];
 
             try {
-                // 3.1 載入目錄
-                const indexRes = await fetch('https://raw.githubusercontent.com/pheebssvc-netizen/Yunnan-trip-2026/main/guide-data/_index.json');
-                if (!indexRes.ok) throw new Error('無法載入 _index.json');
+                // 1. 載入 _index.json
+                const indexRes = await fetch(BASE_URL + '_index.json');
+                if (!indexRes.ok) {
+                    throw new Error(`HTTP ${indexRes.status} - 無法載入 _index.json`);
+                }
                 const indexData = await indexRes.json();
                 const spotList = indexData.景點列表 || [];
 
                 if (spotList.length === 0) {
-                    container.innerHTML = `<div class="loading">⚠️ 暫時未有景點數據</div>`;
+                    container.innerHTML = `<div class="loading">⚠️ 景點列表為空</div>`;
                     return;
                 }
 
-                // 3.2 載入每個景點嘅詳細內容（逐個 fetch）
+                // 2. 載入每個景點
                 const spotPromises = spotList.map(async (meta) => {
-                    const url = `https://raw.githubusercontent.com/pheebssvc-netizen/Yunnan-trip-2026/main/guide-data/${meta.id}.json`;
+                    const url = BASE_URL + meta.id + '.json';
                     try {
                         const res = await fetch(url);
                         if (!res.ok) {
-                            console.warn(`無法載入 ${meta.id}`);
+                            errors.push(`⚠️ ${meta.name}（${meta.id}）無法載入（HTTP ${res.status}）`);
                             return null;
                         }
                         const data = await res.json();
                         return data;
                     } catch (e) {
-                        console.warn(`Error loading ${meta.id}:`, e);
+                        errors.push(`❌ ${meta.name}（${meta.id}）載入失敗：${e.message}`);
                         return null;
                     }
                 });
@@ -412,10 +428,16 @@
 
                 if (validSpots.length === 0) {
                     container.innerHTML = `<div class="loading">⚠️ 無法載入任何景點數據</div>`;
+                    if (errors.length) {
+                        errorLog.style.display = 'block';
+                        errorLog.innerHTML = `<strong>❌ 載入錯誤：</strong>` + errors.map(e =>
+                            `<div class="error-item">${e}</div>`
+                        ).join('');
+                    }
                     return;
                 }
 
-                // 3.3 按地區分組
+                // 3. 按地區分組
                 const regions = {};
                 validSpots.forEach(spot => {
                     const region = spot.region || '未分類';
@@ -423,27 +445,32 @@
                     regions[region].push(spot);
                 });
 
-                // 3.4 渲染
+                // 4. 渲染
                 renderRegions(container, regions);
+
+                // 5. 如果有錯誤，顯示
+                if (errors.length) {
+                    errorLog.style.display = 'block';
+                    errorLog.innerHTML = `<strong>⚠️ 部分景點載入失敗：</strong>` + errors.map(e =>
+                        `<div class="error-item">${e}</div>`
+                    ).join('');
+                }
 
             } catch (error) {
                 console.error('載入導遊數據失敗:', error);
                 container.innerHTML = `
                     <div class="loading">
-                        ⚠️ 載入失敗，請檢查網絡或檔案是否存在<br/>
-                        <span style="font-size:0.8rem;color:#B0A090;">${error.message}</span>
+                        ⚠️ 載入失敗：${error.message}<br/>
+                        <span style="font-size:0.8rem;color:#B0A090;">請檢查網絡或檔案是否存在</span>
                     </div>
                 `;
             }
         }
 
         // ================================================================
-        //  4. 渲染地區及景點
+        //  渲染
         // ================================================================
         function renderRegions(container, regions) {
-            let html = '';
-
-            // 定義地區排序（跟行程順序）
             const regionOrder = ['昆明', '大理', '沙溪', '麗江', '瀘沽湖', '香格里拉', '虎跳峽'];
             const sortedRegions = Object.keys(regions).sort((a, b) => {
                 const idxA = regionOrder.indexOf(a);
@@ -453,6 +480,7 @@
                 return idxA - idxB;
             });
 
+            let html = '';
             sortedRegions.forEach(regionName => {
                 const spots = regions[regionName];
                 const regionIntro = spots[0]?.regionIntro || '';
@@ -463,7 +491,6 @@
                         ${regionIntro ? `<div class="region-intro">${escapeHtml(regionIntro)}</div>` : ''}
                 `;
 
-                // 每個景點卡片
                 spots.forEach((spot, index) => {
                     const spotId = spot.id || `spot-${index}`;
                     html += renderSpotCard(spot, spotId);
@@ -474,7 +501,7 @@
 
             container.innerHTML = html;
 
-            // 5. 綁定卡片摺疊事件
+            // 卡片摺疊
             document.querySelectorAll('.spot-card-header').forEach(header => {
                 header.addEventListener('click', function() {
                     const body = this.nextElementSibling;
@@ -489,7 +516,7 @@
                 });
             });
 
-            // 6. 綁定團友筆記事件
+            // 團友筆記提交
             document.querySelectorAll('.note-submit-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const spotId = this.dataset.spotId;
@@ -508,7 +535,7 @@
                 });
             });
 
-            // 7. 監聽所有團友筆記
+            // 團友筆記監聽
             document.querySelectorAll('.spot-card').forEach(card => {
                 const spotId = card.dataset.spotId;
                 if (!spotId || !db) return;
@@ -541,7 +568,6 @@
                     });
                     list.innerHTML = html;
 
-                    // 綁定刪除事件
                     list.querySelectorAll('.del-btn').forEach(btn => {
                         btn.addEventListener('click', function() {
                             const spot = this.dataset.spot;
@@ -560,7 +586,7 @@
         }
 
         // ================================================================
-        //  5. 渲染單個景點卡片
+        //  渲染單個景點卡片
         // ================================================================
         function renderSpotCard(spot, spotId) {
             const history = spot.歷史 || '暫無歷史資料';
@@ -623,7 +649,7 @@
         }
 
         // ================================================================
-        //  6. 啟動
+        //  啟動
         // ================================================================
         loadGuideData();
         console.log('📖 導遊筆記已啟動！');
