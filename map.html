@@ -11,7 +11,6 @@
     </script>
 
     <style>
-        /* ===== RESET ===== */
         * {
             margin: 0;
             padding: 0;
@@ -25,7 +24,6 @@
             flex-direction: column;
         }
 
-        /* ===== HEADER ===== */
         .map-header {
             background: linear-gradient(145deg, #2D241A 0%, #3D2E22 100%);
             padding: 14px 20px;
@@ -64,7 +62,6 @@
             transform: scale(0.94);
         }
 
-        /* ===== MAP CONTAINER ===== */
         #map {
             flex: 1;
             width: 100%;
@@ -72,7 +69,6 @@
             z-index: 1;
         }
 
-        /* ===== CUSTOM LEGEND ===== */
         .legend {
             position: absolute;
             bottom: 30px;
@@ -111,7 +107,6 @@
             font-weight: 500;
         }
 
-        /* ===== FOOTER ===== */
         .map-footer {
             text-align: center;
             font-size: 0.6rem;
@@ -147,22 +142,15 @@
 </head>
 <body>
 
-    <!-- ===== HEADER ===== -->
     <header class="map-header">
         <h1>🗺️ 雲南滇西12日 · 行程地圖</h1>
         <a href="index.html" class="back-btn">← 返回行程</a>
     </header>
 
-    <!-- ===== MAP ===== -->
     <div id="map"></div>
-
-    <!-- ===== LEGEND (用 JavaScript 加入) ===== -->
 
     <div class="map-footer">📍 藍色 = 住宿 ｜ 紅色 = 景點 ｜ 撳 Marker 睇詳情</div>
 
-    <!-- ============================================================ -->
-    <!-- JAVASCRIPT -->
-    <!-- ============================================================ -->
     <script>
         // ================================================================
         //  1. 初始化地圖
@@ -207,7 +195,7 @@
         const attractionIcon = createMarkerIcon('#D94A4A', 14);
 
         // ================================================================
-        //  4. 地點數據（修正咗白沙、沙溪、瀘沽湖酒店座標）
+        //  4. 地點數據（酒店 + 所有景點，共 40+ 個）
         // ================================================================
         const locations = [
 
@@ -229,7 +217,7 @@
                 desc: '雙廊·洱海懸崖'
             },
             {
-                name: '🏨 沙溪古鎮五柳心宿（修正）',
+                name: '🏨 沙溪古鎮五柳心宿',
                 lat: 26.3159,
                 lng: 99.8579,
                 type: 'hotel',
@@ -245,7 +233,7 @@
                 desc: '麗江古城北門'
             },
             {
-                name: '🏨 瀘沽湖水天壹舍（修正）',
+                name: '🏨 瀘沽湖水天壹舍',
                 lat: 27.7165,
                 lng: 100.7862,
                 type: 'hotel',
@@ -253,7 +241,7 @@
                 desc: '大洛水村下村13號'
             },
             {
-                name: '🏨 不晚里予·Wild Aurora（修正）',
+                name: '🏨 不晚里予·Wild Aurora',
                 lat: 26.9310,
                 lng: 100.2145,
                 type: 'hotel',
@@ -277,143 +265,7 @@
                 desc: '昆明市中心'
             },
 
-            // ===== 景點（紅色） =====
-            {
-                name: '📍 昆明長水國際機場',
-                lat: 25.106,
-                lng: 102.948,
-                type: 'attraction',
-                day: 'Day 1',
-                desc: '✈️ 抵達／離開'
-            },
-            {
-                name: '📍 昆明站',
-                lat: 25.021,
-                lng: 102.720,
-                type: 'attraction',
-                day: 'Day 2',
-                desc: '🚄 高鐵往大理'
-            },
-            {
-                name: '📍 大理站',
-                lat: 25.588,
-                lng: 100.271,
-                type: 'attraction',
-                day: 'Day 2',
-                desc: '🚄 包車起點'
-            },
-            {
-                name: '📍 雙廊·理想邦聖托里尼',
-                lat: 25.871,
-                lng: 100.275,
-                type: 'attraction',
-                day: 'Day 2',
-                desc: '白牆藍窗·希臘風'
-            },
-            {
-                name: '📍 沙溪古鎮',
-                lat: 26.3159,
-                lng: 99.8579,
-                type: 'attraction',
-                day: 'Day 3',
-                desc: '古戲台·寺登街·玉津橋'
-            },
-            {
-                name: '📍 麗江古城·大水車',
-                lat: 26.872,
-                lng: 100.234,
-                type: 'attraction',
-                day: 'Day 4',
-                desc: '四方街·木府·萬古樓'
-            },
-            {
-                name: '📍 瀘沽湖觀景台',
-                lat: 27.680,
-                lng: 100.770,
-                type: 'attraction',
-                day: 'Day 5',
-                desc: '瀘沽湖全景'
-            },
-            {
-                name: '📍 瀘沽湖·里格半島',
-                lat: 27.718,
-                lng: 100.752,
-                type: 'attraction',
-                day: 'Day 6',
-                desc: '最經典打卡位'
-            },
-            {
-                name: '📍 瀘沽湖·草海·走婚橋',
-                lat: 27.771,
-                lng: 100.797,
-                type: 'attraction',
-                day: 'Day 6',
-                desc: '秋季金黃草海'
-            },
-            {
-                name: '📍 束河古鎮',
-                lat: 26.922,
-                lng: 100.201,
-                type: 'attraction',
-                day: 'Day 7',
-                desc: '青龍橋·九鼎龍潭'
-            },
-            {
-                name: '📍 白沙古鎮',
-                lat: 26.920,
-                lng: 100.218,
-                type: 'attraction',
-                day: 'Day 7',
-                desc: '玉龍雪山腳·壁畫'
-            },
-            {
-                name: '📍 虎跳峽（上虎跳）',
-                lat: 27.181,
-                lng: 100.042,
-                type: 'attraction',
-                day: 'Day 8',
-                desc: '金沙江峽谷·壯觀'
-            },
-            {
-                name: '📍 白水台',
-                lat: 27.134,
-                lng: 100.032,
-                type: 'attraction',
-                day: 'Day 8',
-                desc: '土耳其棉花堡·雲南版'
-            },
-            {
-                name: '📍 香格里拉·獨克宗古城',
-                lat: 27.834,
-                lng: 99.707,
-                type: 'attraction',
-                day: 'Day 8',
-                desc: '世界最大轉經筒'
-            },
-            {
-                name: '📍 普達措國家公園',
-                lat: 27.813,
-                lng: 99.977,
-                type: 'attraction',
-                day: 'Day 9',
-                desc: '屬都湖·碧塔海'
-            },
-            {
-                name: '📍 納帕海（依拉草原）',
-                lat: 27.857,
-                lng: 99.638,
-                type: 'attraction',
-                day: 'Day 10',
-                desc: '候鳥棲息·環湖'
-            },
-            {
-                name: '📍 松贊林寺',
-                lat: 27.868,
-                lng: 99.706,
-                type: 'attraction',
-                day: 'Day 10',
-                desc: '小布達拉宮'
-            },
+            // ===== 昆明篇（紅色） =====
             {
                 name: '📍 翠湖公園',
                 lat: 25.054,
@@ -423,12 +275,232 @@
                 desc: '紅嘴鷗·免費'
             },
             {
-                name: '📍 雲南大學（可選）',
+                name: '📍 雲南大學',
                 lat: 25.056,
                 lng: 102.706,
                 type: 'attraction',
                 day: 'Day 12',
-                desc: '百年校園'
+                desc: '百年校園·銀杏大道'
+            },
+
+            // ===== 大理篇（紅色） =====
+            {
+                name: '📍 大理古城',
+                lat: 25.686,
+                lng: 100.160,
+                type: 'attraction',
+                day: 'Day 2',
+                desc: '洋人街·人民路·南城樓'
+            },
+            {
+                name: '📍 崇聖寺三塔',
+                lat: 25.708,
+                lng: 100.145,
+                type: 'attraction',
+                day: 'Day 2',
+                desc: '大理國皇家寺院·聚影池倒影'
+            },
+            {
+                name: '📍 喜洲古鎮',
+                lat: 25.856,
+                lng: 100.115,
+                type: 'attraction',
+                day: 'Day 2',
+                desc: '白族民居·黃勝輝紅磚房·扎染'
+            },
+            {
+                name: '📍 周城',
+                lat: 25.900,
+                lng: 100.090,
+                type: 'attraction',
+                day: 'Day 2',
+                desc: '白族扎染之鄉'
+            },
+            {
+                name: '📍 洱海海西（磻溪村 S 灣）',
+                lat: 25.820,
+                lng: 100.130,
+                type: 'attraction',
+                day: 'Day 2',
+                desc: 'S形彎道·生態廊道騎行'
+            },
+            {
+                name: '📍 雙廊古鎮',
+                lat: 25.886,
+                lng: 100.277,
+                type: 'attraction',
+                day: 'Day 2',
+                desc: '洱海漁村·夕陽觀景'
+            },
+            {
+                name: '📍 理想邦聖托里尼',
+                lat: 25.850,
+                lng: 100.270,
+                type: 'attraction',
+                day: 'Day 2',
+                desc: '白牆藍窗·希臘風'
+            },
+
+            // ===== 沙溪篇（紅色） =====
+            {
+                name: '📍 沙溪古鎮',
+                lat: 26.3159,
+                lng: 99.8579,
+                type: 'attraction',
+                day: 'Day 3',
+                desc: '寺登街·茶馬古道市集'
+            },
+            {
+                name: '📍 玉津橋',
+                lat: 26.318,
+                lng: 99.861,
+                type: 'attraction',
+                day: 'Day 3',
+                desc: '黑潓江·晨霧景觀'
+            },
+            {
+                name: '📍 先鋒沙溪白族書局',
+                lat: 26.316,
+                lng: 99.858,
+                type: 'attraction',
+                day: 'Day 3',
+                desc: '老糧倉人文景點'
+            },
+
+            // ===== 麗江篇（紅色） =====
+            {
+                name: '📍 麗江古城',
+                lat: 26.872,
+                lng: 100.234,
+                type: 'attraction',
+                day: 'Day 4',
+                desc: '大研古鎮·納西族文化'
+            },
+            {
+                name: '📍 木府',
+                lat: 26.876,
+                lng: 100.232,
+                type: 'attraction',
+                day: 'Day 4',
+                desc: '麗江紫禁城'
+            },
+            {
+                name: '📍 獅子山萬古樓',
+                lat: 26.878,
+                lng: 100.231,
+                type: 'attraction',
+                day: 'Day 4',
+                desc: '俯瞰古城全景'
+            },
+            {
+                name: '📍 黑龍潭公園',
+                lat: 26.882,
+                lng: 100.238,
+                type: 'attraction',
+                day: 'Day 4',
+                desc: '雪山倒影經典機位'
+            },
+            {
+                name: '📍 忠義市場',
+                lat: 26.865,
+                lng: 100.236,
+                type: 'attraction',
+                day: 'Day 4',
+                desc: '在地煙火氣·特色小食'
+            },
+            {
+                name: '📍 束河古鎮',
+                lat: 26.922,
+                lng: 100.201,
+                type: 'attraction',
+                day: 'Day 7',
+                desc: '寧靜茶馬小鎮'
+            },
+            {
+                name: '📍 白沙古鎮',
+                lat: 26.920,
+                lng: 100.218,
+                type: 'attraction',
+                day: 'Day 7',
+                desc: '玉龍雪山腳·刺繡工藝'
+            },
+
+            // ===== 瀘沽湖篇（紅色） =====
+            {
+                name: '📍 瀘沽湖',
+                lat: 27.716,
+                lng: 100.786,
+                type: 'attraction',
+                day: 'Day 5',
+                desc: '東方女兒國·環湖'
+            },
+            {
+                name: '📍 里格半島',
+                lat: 27.718,
+                lng: 100.752,
+                type: 'attraction',
+                day: 'Day 6',
+                desc: '心形灣打卡位'
+            },
+            {
+                name: '📍 草海·走婚橋',
+                lat: 27.771,
+                lng: 100.797,
+                type: 'attraction',
+                day: 'Day 6',
+                desc: '摩梭人傳說'
+            },
+
+            // ===== 香格里拉篇（紅色） =====
+            {
+                name: '📍 獨克宗古城',
+                lat: 27.834,
+                lng: 99.707,
+                type: 'attraction',
+                day: 'Day 8',
+                desc: '世界最大轉經筒'
+            },
+            {
+                name: '📍 噶丹·松贊林寺',
+                lat: 27.868,
+                lng: 99.706,
+                type: 'attraction',
+                day: 'Day 10',
+                desc: '小布達拉宮·拉姆央措湖倒影'
+            },
+            {
+                name: '📍 納帕海',
+                lat: 27.857,
+                lng: 99.638,
+                type: 'attraction',
+                day: 'Day 10',
+                desc: '依拉草原·環湖公路'
+            },
+            {
+                name: '📍 普達措國家公園',
+                lat: 27.813,
+                lng: 99.977,
+                type: 'attraction',
+                day: 'Day 9',
+                desc: '屬都湖·碧塔海木棧道'
+            },
+            {
+                name: '📍 白水台',
+                lat: 27.134,
+                lng: 100.032,
+                type: 'attraction',
+                day: 'Day 8',
+                desc: '納西族發源地·雲南版棉花堡'
+            },
+
+            // ===== 虎跳峽篇（紅色） =====
+            {
+                name: '📍 虎跳峽',
+                lat: 27.181,
+                lng: 100.042,
+                type: 'attraction',
+                day: 'Day 8',
+                desc: '金沙江峽谷·震撼濤聲'
             }
         ];
 
@@ -467,7 +539,7 @@
             map.invalidateSize();
         }, 200);
 
-        console.log('🗺️ 雲南地圖已載入！（座標已修正）');
+        console.log('🗺️ 雲南地圖已載入！（共 ' + locations.length + ' 個地點）');
     </script>
 
 </body>
