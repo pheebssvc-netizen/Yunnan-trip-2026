@@ -385,6 +385,7 @@ function getTodayDayIndex() {
 
 function fetchWeather() {
     const container = document.getElementById('weatherContainer');
+    if (!container) return;
     const dayIndex = getTodayDayIndex();
     const cityKey = dayCityMap[dayIndex] || 'Kunming';
     const cityName = cityNameMap[cityKey] || cityKey;
@@ -454,7 +455,7 @@ function renderRouteTable() {
 }
 
 // ================================================================
-//  7. 狀態列表（改用 Firebase 同步）
+//  7. 狀態列表（Firebase 同步）
 // ================================================================
 function renderStatusList() {
     const container = document.getElementById('statusList');
@@ -542,7 +543,7 @@ function updateDailyHeaderIfVisible(dayId) {
 }
 
 // ================================================================
-//  8. 高鐵輸入（改用 Firebase 同步）
+//  8. 高鐵輸入（Firebase 同步）
 // ================================================================
 function initTrainInputs() {
     const area = document.getElementById('trainInputArea');
@@ -577,7 +578,7 @@ function initTrainInputs() {
 }
 
 // ================================================================
-//  9. 團友備註（改用 Firebase 同步）
+//  9. 團友備註（Firebase 同步）
 // ================================================================
 function renderGroupNotes() {
     const container = document.getElementById('groupNoteContainer');
@@ -1141,9 +1142,8 @@ document.addEventListener('click', function(e) {
             renderDayDetail(currentDayId);
             drawAltitude(currentDayId);
             showToast(found.id);
-            // 如果當前頁面係 daily.html，切換顯示；否則跳轉
             if (window.location.pathname.includes('daily.html')) {
-                // 已經喺 daily 頁，唔使跳
+                // 已經喺 daily 頁
             } else {
                 window.location.href = 'daily.html';
             }
@@ -1198,25 +1198,7 @@ window.addEventListener('resize', () => {
 });
 
 // ================================================================
-//  15. 啟動（由各頁面各自呼叫）
-// ================================================================
-function initApp() {
-    renderRouteTable();
-    renderStatusList();
-    renderDayTabs();
-    renderDayDetail(1);
-    setupAllListeners();
-    initTrainInputs();
-    renderGroupNotes();
-    updateCountdown();
-    setInterval(updateCountdown, 1000);
-    fetchWeather();
-    setTimeout(() => {
-        drawAltitude(1);
-        startPulseAnimation();
-    }, 300);
-// ================================================================
-//  返回頂部功能
+//  15. 返回頂部功能（統一所有頁面）
 // ================================================================
 const backToTopBtn = document.getElementById('backToTopBtn');
 
@@ -1236,45 +1218,48 @@ if (backToTopBtn) {
         });
     });
 }
-    console.log('🌄 雲南滇西12日行程網頁已啟動！');
-    if (!db) console.warn('⚠️ Firebase 未連線');
-    else console.log('✅ Firebase 已連線');
-}
 
-// 如果頁面有 #page-daily 或 #page-other，自動執行對應初始化
+// ================================================================
+//  16. 頁面自動初始化
+// ================================================================
 document.addEventListener('DOMContentLoaded', function() {
-    // 如果當前頁面有 daily 相關元素，渲染每日行程
-    if (document.getElementById('dayTabs') || document.getElementById('dayDetailContainer')) {
-        renderDayTabs();
-        renderDayDetail(currentDayId);
-        setupAllListeners();
-    }
-    // 如果當前頁面有 statusList，渲染狀態列表
-    if (document.getElementById('statusList')) {
-        renderStatusList();
-    }
-    // 如果當前頁面有 trainInputArea，初始化高鐵輸入
-    if (document.getElementById('trainInputArea')) {
-        initTrainInputs();
-    }
-    // 如果當前頁面有 groupNoteContainer，渲染團友備註
-    if (document.getElementById('groupNoteContainer')) {
-        renderGroupNotes();
-    }
-    // 如果當前頁面有 routeTableBody，渲染行程總覽
-    if (document.getElementById('routeTableBody')) {
-        renderRouteTable();
-    }
-    // 如果當前頁面有 weatherContainer，載入天氣
-    if (document.getElementById('weatherContainer')) {
-        fetchWeather();
-    }
     // 倒數計時（所有頁面）
     updateCountdown();
     setInterval(updateCountdown, 1000);
+
     // 海拔線（所有頁面）
     setTimeout(() => {
         drawAltitude(1);
         startPulseAnimation();
     }, 300);
+
+    // 每日行程
+    if (document.getElementById('dayTabs') || document.getElementById('dayDetailContainer')) {
+        renderDayTabs();
+        renderDayDetail(currentDayId);
+        setupAllListeners();
+    }
+
+    // 重要資訊
+    if (document.getElementById('statusList')) {
+        renderStatusList();
+    }
+    if (document.getElementById('trainInputArea')) {
+        initTrainInputs();
+    }
+    if (document.getElementById('groupNoteContainer')) {
+        renderGroupNotes();
+    }
+
+    // 行程總覽
+    if (document.getElementById('routeTableBody')) {
+        renderRouteTable();
+    }
+    if (document.getElementById('weatherContainer')) {
+        fetchWeather();
+    }
+
+    console.log('🌄 雲南滇西12日行程網頁已啟動！');
+    if (!db) console.warn('⚠️ Firebase 未連線');
+    else console.log('✅ Firebase 已連線');
 });
