@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <title>🎯 雲南 · 團友任務</title>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js">
+    </script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: #F8F4F0;
+            color: #2D241A;
+            padding-bottom: 40px;
+            min-height: 100vh;
+        }
+
+        .wishlist-header {
+            background: linear-gradient(145deg, #2D241A 0%, #3D2E22 100%);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            padding: 16px 20px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 3px solid #E9C46A;
+            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.15);
+        }
+        .wishlist-header .back-btn {
+            color: #E9C46A;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 30px;
+            border: 1.5px solid rgba(233, 196, 106, 0.3);
+            transition: 0.2s;
+        }
+        .wishlist-header .back-btn:active {
+            transform: scale(0.94);
+            background: rgba(233, 196, 106, 0.1);
+        }
+        .wishlist-header h1 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 1px;
+        }
+        .wishlist-header .progress-badge {
+            background: rgba(233, 196, 106, 0.2);
+            color: #E9C46A;
+            padding: 4px 14px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .wishlist-container {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 16px 16px 20px;
+        }
+
+        /* ===== 進度條 ===== */
+        .progress-section {
+            background: #fff;
+            border-radius: 16px;
+            padding: 20px 20px 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        }
+        .progress-section .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #2D241A;
+            margin-bottom: 6px;
+        }
+        .progress-section .progress-bar-bg {
+            width: 100%;
+            height: 8px;
+            background: #EDE7E0;
+            border-radius: 30px;
+            overflow: hidden;
+        }
+        .progress-section .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #E9C46A, #E07A5F);
+            border-radius: 30px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+        .progress-section .progress-emoji {
+            text-align: center;
+            font-size: 2rem;
+            margin-top: 8px;
+        }
+
+        /* ===== 完成慶祝 ===== */
+        .celebration {
+            display: none;
+            background: linear-gradient(145deg, #FEF9E7, #FFF5E6);
+            border: 2px solid #E9C46A;
+            border-radius: 16px;
+            padding: 24px 20px;
+            text-align: center;
+            margin-bottom: 16px;
+            animation: celebratePop 0.5s ease;
+        }
+        .celebration.show {
+            display: block;
+        }
+        @keyframes celebratePop {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .celebration .big-emoji {
+            font-size: 3.5rem;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .celebration .title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #E07A5F;
+        }
+        .celebration .sub {
+            font-size: 0.95rem;
+            color: #6B5A4A;
+            margin-top: 4px;
+        }
+
+        /* ===== 任務卡片 ===== */
+        .task-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 16px 18px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            transition: 0.2s;
+            border-left: 4px solid #EDE7E0;
+        }
+        .task-card.done {
+            border-left-color: #E9C46A;
+            opacity: 0.7;
+        }
+        .task-card .task-check {
+            flex-shrink: 0;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2.5px solid #B0A090;
+            background: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+            margin-top: 2px;
+            font-size: 0.9rem;
+            color: #fff;
+        }
+        .task-card .task-check.done {
+            background: #E9C46A;
+            border-color: #E9C46A;
+            color: #fff;
+        }
+        .task-card .task-check:active {
+            transform: scale(0.90);
+        }
+        .task-card .task-content {
+            flex: 1;
+        }
+        .task-card .task-name {
+            font-size: 1.0rem;
+            font-weight: 600;
+            color: #2D241A;
+        }
+        .task-card .task-name .done-strike {
+            text-decoration: line-through;
+            opacity: 0.5;
+        }
+        .task-card .task-tag {
+            display: inline-block;
+            font-size: 0.6rem;
+            font-weight: 600;
+            color: #fff;
+            background: #2B3A67;
+            padding: 1px 10px;
+            border-radius: 30px;
+            margin-left: 6px;
+            letter-spacing: 0.3px;
+            vertical-align: middle;
+        }
+        .task-card .task-tip {
+            font-size: 0.82rem;
+            color: #6B5A4A;
+            margin-top: 4px;
+            line-height: 1.5;
+            padding-left: 2px;
+        }
+        .task-card .task-tip .tip-label {
+            font-weight: 600;
+            color: #8A7A6A;
+        }
+        .task-card .task-day {
+            font-size: 0.65rem;
+            color: #B0A090;
+            margin-top: 2px;
+        }
+
+        @media (max-width: 480px) {
+            .wishlist-header h1 {
+                font-size: 0.9rem;
+            }
+            .wishlist-header .back-btn {
+                font-size: 0.75rem;
+                padding: 3px 10px;
+            }
+            .task-card {
+                padding: 14px 14px;
+            }
+            .task-card .task-name {
+                font-size: 0.9rem;
+            }
+            .task-card .task-tip {
+                font-size: 0.78rem;
+            }
+            .celebration .title {
+                font-size: 1.2rem;
+            }
+            .celebration .big-emoji {
+                font-size: 2.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <header class="wishlist-header">
+        <a href="index.html" class="back-btn">← 返回行程</a>
+        <h1>🎯 團友任務</h1>
+        <span class="progress-badge" id="progressBadge">0/10</span>
+    </header>
+
+    <!-- ===== 內容 ===== -->
+    <div class="wishlist-container" id="wishlistContainer">
+        <!-- 進度條 -->
+        <div class="progress-section">
+            <div class="progress-label">
+                <span>🏆 解鎖進度</span>
+                <span id="progressText">0 / 10</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-emoji" id="progressEmoji">🥚</div>
+        </div>
+
+        <!-- 慶祝區 -->
+        <div class="celebration" id="celebration">
+            <span class="big-emoji">🎉</span>
+            <div class="title">成就解鎖：初級雲南探索</div>
+            <div class="sub">你哋已經完成晒 10 件必做小事！<br />🌟 彩蛋已經變金色，返去睇吓！</div>
+        </div>
+
+        <!-- 任務列表 -->
+        <div id="taskList"></div>
+    </div>
+
+    <script>
+        // ================================================================
+        //  FIREBASE CONFIG
+        // ================================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyAtthBBNoHJkN6B_e8DVjzDpK_eB0wfExo",
+            authDomain: "yunnan-trip-d5626.firebaseapp.com",
+            databaseURL: "https://yunnan-trip-d5626-default-rtdb.asia-southeast1.firebasedatabase.app/",
+            projectId: "yunnan-trip-d5626",
+            storageBucket: "yunnan-trip-d5626.firebasestorage.app",
+            messagingSenderId: "956753515518",
+            appId: "1:956753515518:web:ef19ac8a7b45bdf83426af"
+        };
+
+        let firebaseInitialized = false;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            firebaseInitialized = true;
+        } catch (e) { console.warn('Firebase init error:', e); }
+        const db = firebaseInitialized ? firebase.database() : null;
+
+        // ================================================================
+        //  任務數據（按行程順序）
+        // ================================================================
+        const TASKS = [{
+            id: "task-1",
+            name: "喜洲古鎮食剛出爐嘅破酥粑粑",
+            tag: "喜洲",
+            day: "Day 2",
+            tip: "要揀啱啱由炭火爐烤出嚟嗰啲，熱辣辣先好食。記得試齊鹹味（蔥花肉餅）同甜味（玫瑰豆沙）！"
+        }, {
+            id: "task-2",
+            name: "洱海海西生態廊道騎單車／散步",
+            tag: "洱海",
+            day: "Day 2",
+            tip: "磻溪村 S 灣到喜洲段風景最靚，秋天嘅稻田加蒼山夕陽，相機要充滿電。"
+        }, {
+            id: "task-3",
+            name: "沙溪玉津橋睇清晨晨霧",
+            tag: "沙溪",
+            day: "Day 3",
+            tip: "清晨 7 點半左右，黑潓江面會升起薄霧。企喺橋上等馬幫經過，影到好似走入油畫嘅畫面。"
+        }, {
+            id: "task-4",
+            name: "白沙古鎮二樓咖啡館睇玉龍雪山",
+            tag: "白沙",
+            day: "Day 7",
+            tip: "二樓露台位最正，一邊飲雲南小粒咖啡，一邊以瓦頂同玉龍雪山做背景影相。"
+        }, {
+            id: "task-5",
+            name: "瀘沽湖坐豬槽船、餵海鷗",
+            tag: "瀘沽湖",
+            day: "Day 5",
+            tip: "11月海鷗開始飛嚟過冬，帶少少麵包上船，海鷗會追住你架船飛，超夢幻。"
+        }, {
+            id: "task-6",
+            name: "納帕海同草原動物合照",
+            tag: "納帕海",
+            day: "Day 10",
+            tip: "金黃色秋冬草原配藏式民居，搵隻唔怕人嘅氂牛或馬仔影相。行近動物要慢，唔好嚇親佢哋。"
+        }, {
+            id: "task-7",
+            name: "獨克宗古城轉動世界最大轉經筒",
+            tag: "獨克宗",
+            day: "Day 8",
+            tip: "夜晚點燈後最靚，4 個人要一齊出力先轉得郁。記得順時針轉 3 圈，為成個 trip 祈福。"
+        }, {
+            id: "task-8",
+            name: "香格里拉夜晚食牦牛肉火鍋",
+            tag: "香格里拉",
+            day: "Day 8/9",
+            tip: "高原夜晚氣溫驟降，圍住個熱辣辣火鍋，飲啖濃郁牛肉湯，再配杯熱酥油茶，係最幸福嘅 moment。"
+        }, {
+            id: "task-9",
+            name: "虎跳峽聽金沙江濤聲",
+            tag: "虎跳峽",
+            day: "Day 8",
+            tip: "企喺上虎跳觀景台，閂埋眼聽一次金沙江奔騰嘅聲音，感受峽谷嘅震撼力量。"
+        }, {
+            id: "task-10",
+            name: "高原夜晚睇滿天星斗",
+            tag: "星空",
+            day: "Day 5/8/9",
+            tip: "揀一晚冇月光、遠離路燈嘅地方（瀘沽湖或香格里拉近郊），肉眼已經可以見到銀河。記得帶腳架影星軌！"
+        }];
+
+        // ================================================================
+        //  渲染
+        // ================================================================
+        function renderTasks(completedIds) {
+            const container = document.getElementById('taskList');
+            container.innerHTML = '';
+
+            TASKS.forEach(task => {
+                const isDone = completedIds.includes(task.id);
+                const div = document.createElement('div');
+                div.className = `task-card${isDone ? ' done' : ''}`;
+
+                const check = document.createElement('div');
+                check.className = `task-check${isDone ? ' done' : ''}`;
+                check.textContent = isDone ? '✓' : '';
+                check.dataset.taskId = task.id;
+                check.addEventListener('click', function() {
+                    toggleTask(task.id);
+                });
+
+                const content = document.createElement('div');
+                content.className = 'task-content';
+
+                const name = document.createElement('div');
+                name.className = 'task-name';
+                name.innerHTML = isDone ? `<span class="done-strike">${task.name}</span>` : task.name;
+                name.innerHTML += ` <span class="task-tag">${task.tag}</span>`;
+
+                const tip = document.createElement('div');
+                tip.className = 'task-tip';
+                tip.innerHTML = `<span class="tip-label">💡 打卡Tips：</span>${task.tip}`;
+
+                const day = document.createElement('div');
+                day.className = 'task-day';
+                day.textContent = `📅 ${task.day}`;
+
+                content.appendChild(name);
+                content.appendChild(tip);
+                content.appendChild(day);
+                div.appendChild(check);
+                div.appendChild(content);
+                container.appendChild(div);
+            });
+        }
+
+        // ================================================================
+        //  Firebase 同步
+        // ================================================================
+        function getCompletedIds() {
+            return new Promise((resolve) => {
+                if (!db) {
+                    // 如果 Firebase 未連線，用 localStorage 代替
+                    const saved = localStorage.getItem('wishlist-completed');
+                    resolve(saved ? JSON.parse(saved) : []);
+                    return;
+                }
+                db.ref('wishlist/completed').once('value').then(snap => {
+                    const val = snap.val();
+                    resolve(val || []);
+                }).catch(() => {
+                    // fallback
+                    const saved = localStorage.getItem('wishlist-completed');
+                    resolve(saved ? JSON.parse(saved) : []);
+                });
+            });
+        }
+
+        function saveCompletedIds(ids) {
+            if (!db) {
+                localStorage.setItem('wishlist-completed', JSON.stringify(ids));
+                return Promise.resolve();
+            }
+            return db.ref('wishlist/completed').set(ids);
+        }
+
+        function listenTasks() {
+            if (!db) {
+                // fallback: 用 localStorage
+                const saved = localStorage.getItem('wishlist-completed');
+                const ids = saved ? JSON.parse(saved) : [];
+                updateUI(ids);
+                return;
+            }
+            db.ref('wishlist/completed').on('value', (snap) => {
+                const ids = snap.val() || [];
+                updateUI(ids);
+            });
+        }
+
+        let currentCompletedIds = [];
+
+        function updateUI(ids) {
+            currentCompletedIds = ids;
+            const count = ids.length;
+            const total = TASKS.length;
+
+            // 更新進度
+            document.getElementById('progressText').textContent = `${count} / ${total}`;
+            document.getElementById('progressBadge').textContent = `${count}/${total}`;
+            document.getElementById('progressFill').style.width = `${(count / total) * 100}%`;
+
+            // 更新表情符號
+            const emoji = document.getElementById('progressEmoji');
+            if (count === total) {
+                emoji.textContent = '🌟';
+            } else if (count >= 5) {
+                emoji.textContent = '🥚✨';
+            } else if (count >= 3) {
+                emoji.textContent = '🥚';
+            } else {
+                emoji.textContent = '🥚';
+            }
+
+            // 慶祝區
+            const celebration = document.getElementById('celebration');
+            if (count === total) {
+                celebration.classList.add('show');
+            } else {
+                celebration.classList.remove('show');
+            }
+
+            // 渲染任務列表
+            renderTasks(ids);
+
+            // 更新彩蛋入口（如果有）
+            updateEggEntry(count, total);
+        }
+
+        function toggleTask(taskId) {
+            const newIds = currentCompletedIds.includes(taskId) ?
+                currentCompletedIds.filter(id => id !== taskId) :
+                [...currentCompletedIds, taskId];
+
+            // 先更新 UI（optimistic）
+            updateUI(newIds);
+
+            // 然後儲存到 Firebase
+            saveCompletedIds(newIds).catch(() => {
+                // 如果儲存失敗，還原
+                updateUI(currentCompletedIds);
+            });
+        }
+
+        // ================================================================
+        //  更新首頁彩蛋入口（用 localStorage 通知 index.html）
+        // ================================================================
+        function updateEggEntry(count, total) {
+            // 儲存進度到 localStorage，畀 index.html 嘅彩蛋入口讀取
+            localStorage.setItem('wishlist-progress', JSON.stringify({ count, total }));
+            // 如果完成晒，set 一個 flag
+            if (count === total) {
+                localStorage.setItem('wishlist-done', 'true');
+            } else {
+                localStorage.setItem('wishlist-done', 'false');
+            }
+        }
+
+        // ================================================================
+        //  啟動
+        // ================================================================
+        listenTasks();
+
+        console.log('🎯 團友任務已啟動！');
+        if (!db) console.warn('⚠️ Firebase 未連線，使用 LocalStorage 備份');
+    </script>
+
+</body>
+</html>
