@@ -19,10 +19,16 @@ try {
 const db = firebaseInitialized ? firebase.database() : null;
 
 // ================================================================
-//  2. 行程數據
+//  2. 行程數據 ⚠️ 請貼返你原本嘅 12 日行程數據
 // ================================================================
-const DAYS_DATA = [/* 呢度保持你原本嘅 DAYS_DATA，太長唔重複貼出嚟 */];
+const DAYS_DATA = [
+    // ⚠️ 請將你原本嘅 12 日行程數據貼返喺呢度
+    // 即係由 { id: 1, date: "11 Nov", ... } 開始嗰段
+];
 
+// ================================================================
+//  3. TIPS
+// ================================================================
 const TIPS = [
     "今晚唔好沖涼住啦～",
     "海拔越高，心跳越快 ❤️",
@@ -37,7 +43,7 @@ const TIPS = [
 ];
 
 // ================================================================
-//  3. 工具函數
+//  4. 工具函數
 // ================================================================
 function getNoteKey(dayId, category, index) {
     if (category === 'attraction') return `day-${dayId}-attr-${index}`;
@@ -53,7 +59,7 @@ function escapeHtml(text) {
 }
 
 // ================================================================
-//  4. 倒數計時
+//  5. 倒數計時
 // ================================================================
 function updateCountdown() {
     const target = new Date('2026-11-11T21:15:00+08:00').getTime();
@@ -73,7 +79,7 @@ function updateCountdown() {
 }
 
 // ================================================================
-//  5. 天氣小工具
+//  6. 天氣小工具
 // ================================================================
 const WEATHER_API_KEY = '236796fae33215243c53c1a42b345773';
 
@@ -181,7 +187,7 @@ function fetchWeather() {
 }
 
 // ================================================================
-//  6. 行程總覽
+//  7. 行程總覽
 // ================================================================
 function renderRouteTable() {
     const tbody = document.getElementById('routeTableBody');
@@ -200,7 +206,7 @@ function renderRouteTable() {
 }
 
 // ================================================================
-//  7. 狀態列表（Firebase 同步）
+//  8. 狀態列表（Firebase 同步）
 // ================================================================
 function renderStatusList() {
     const container = document.getElementById('statusList');
@@ -288,7 +294,7 @@ function updateDailyHeaderIfVisible(dayId) {
 }
 
 // ================================================================
-//  8. 高鐵輸入（Firebase 同步）
+//  9. 高鐵輸入（Firebase 同步）
 // ================================================================
 function initTrainInputs() {
     const area = document.getElementById('trainInputArea');
@@ -323,7 +329,7 @@ function initTrainInputs() {
 }
 
 // ================================================================
-//  9. 團友備註（Firebase 同步）
+//  10. 團友備註（Firebase 同步）
 // ================================================================
 function renderGroupNotes() {
     const container = document.getElementById('groupNoteContainer');
@@ -385,7 +391,7 @@ function addGroupNote() {
 }
 
 // ================================================================
-//  10. 每日行程
+//  11. 每日行程
 // ================================================================
 let currentDayId = 1;
 
@@ -614,7 +620,7 @@ function renderAttractionItem(dayId, category, label, defaultValue, index) {
 }
 
 // ================================================================
-//  11. Firebase 監聽（每日行程備註）
+//  12. Firebase 監聽（每日行程備註）
 // ================================================================
 function setupAllListeners() {
     if (!db) {
@@ -686,7 +692,7 @@ function listenNote(key) {
 }
 
 // ================================================================
-//  12. 海拔線
+//  13. 海拔線
 // ================================================================
 let toastTimer = null;
 
@@ -911,7 +917,7 @@ function startPulseAnimation() {
 }
 
 // ================================================================
-//  13. Hero Header 隨機背景圖
+//  14. Hero Header 隨機背景圖
 // ================================================================
 (function setRandomHero() {
     const images = [
@@ -929,7 +935,7 @@ function startPulseAnimation() {
 })();
 
 // ================================================================
-//  14. Resize
+//  15. Resize
 // ================================================================
 let resizeTimer;
 window.addEventListener('resize', () => {
@@ -943,15 +949,15 @@ window.addEventListener('resize', () => {
 });
 
 // ================================================================
-//  15. 頁面自動初始化（包括返回頂部）
+//  16. 頁面初始化（DOMContentLoaded）
 // ================================================================
 document.addEventListener('DOMContentLoaded', function() {
-    // 倒數計時（所有頁面）
+    // 倒數計時
     updateCountdown();
     setInterval(updateCountdown, 1000);
 
-    // 海拔線（所有頁面）
-    setTimeout(() => {
+    // 海拔線
+    setTimeout(function() {
         drawAltitude(1);
         startPulseAnimation();
     }, 300);
@@ -983,10 +989,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ================================================================
-    //  返回頂部功能（統一所有頁面）
+    //  返回頂部功能
     // ================================================================
     const backToTopBtn = document.getElementById('backToTopBtn');
-
     if (backToTopBtn) {
         window.addEventListener('scroll', function() {
             if (window.scrollY > 500) {
@@ -995,37 +1000,35 @@ document.addEventListener('DOMContentLoaded', function() {
                 backToTopBtn.classList.remove('show');
             }
         });
-
         backToTopBtn.addEventListener('click', function() {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     }
-// ================================================================
-//  緊急求助 Modal（卡片版）
-// ================================================================
-const emergencyBtnCard = document.getElementById('emergencyBtnCard');
-const emergencyOverlay = document.getElementById('emergencyOverlay');
-const emergencyClose = document.getElementById('emergencyClose');
 
-if (emergencyBtnCard && emergencyOverlay) {
-    emergencyBtnCard.addEventListener('click', function() {
-        emergencyOverlay.classList.add('show');
-        document.body.style.overflow = 'hidden';
-    });
-    emergencyClose.addEventListener('click', function() {
-        emergencyOverlay.classList.remove('show');
-        document.body.style.overflow = '';
-    });
-    emergencyOverlay.addEventListener('click', function(e) {
-        if (e.target === this) {
+    // ================================================================
+    //  緊急求助 Modal（卡片版）
+    // ================================================================
+    const emergencyBtnCard = document.getElementById('emergencyBtnCard');
+    const emergencyOverlay = document.getElementById('emergencyOverlay');
+    const emergencyClose = document.getElementById('emergencyClose');
+
+    if (emergencyBtnCard && emergencyOverlay) {
+        emergencyBtnCard.addEventListener('click', function() {
+            emergencyOverlay.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        });
+        emergencyClose.addEventListener('click', function() {
             emergencyOverlay.classList.remove('show');
             document.body.style.overflow = '';
-        }
-    });
-}
+        });
+        emergencyOverlay.addEventListener('click', function(e) {
+            if (e.target === this) {
+                emergencyOverlay.classList.remove('show');
+                document.body.style.overflow = '';
+            }
+        });
+    }
+
     console.log('🌄 雲南滇西12日行程網頁已啟動！');
     if (!db) console.warn('⚠️ Firebase 未連線');
     else console.log('✅ Firebase 已連線');
