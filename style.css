@@ -1252,7 +1252,14 @@ body {
     border-top: 1px solid #EDE7E0;
     padding-top: 14px;
 }
-
+/* ===== 彩蛋彈跳動畫 ===== */
+@keyframes eggBounce {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    30% { transform: translateY(-8px) rotate(-6deg); }
+    50% { transform: translateY(0) rotate(0deg); }
+    70% { transform: translateY(-5px) rotate(6deg); }
+    85% { transform: translateY(0) rotate(0deg); }
+}
 /* ===== 手機微調 ===== */
 @media (max-width: 480px) {
     .emergency-modal {
