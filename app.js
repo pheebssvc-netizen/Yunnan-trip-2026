@@ -1003,7 +1003,29 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
+// ================================================================
+//  緊急求助 Modal（卡片版）
+// ================================================================
+const emergencyBtnCard = document.getElementById('emergencyBtnCard');
+const emergencyOverlay = document.getElementById('emergencyOverlay');
+const emergencyClose = document.getElementById('emergencyClose');
 
+if (emergencyBtnCard && emergencyOverlay) {
+    emergencyBtnCard.addEventListener('click', function() {
+        emergencyOverlay.classList.add('show');
+        document.body.style.overflow = 'hidden';
+    });
+    emergencyClose.addEventListener('click', function() {
+        emergencyOverlay.classList.remove('show');
+        document.body.style.overflow = '';
+    });
+    emergencyOverlay.addEventListener('click', function(e) {
+        if (e.target === this) {
+            emergencyOverlay.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+    });
+}
     console.log('🌄 雲南滇西12日行程網頁已啟動！');
     if (!db) console.warn('⚠️ Firebase 未連線');
     else console.log('✅ Firebase 已連線');
