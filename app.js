@@ -1215,6 +1215,27 @@ function initApp() {
         drawAltitude(1);
         startPulseAnimation();
     }, 300);
+// ================================================================
+//  返回頂部功能
+// ================================================================
+const backToTopBtn = document.getElementById('backToTopBtn');
+
+if (backToTopBtn) {
+    window.addEventListener('scroll', function() {
+        if (window.scrollY > 500) {
+            backToTopBtn.classList.add('show');
+        } else {
+            backToTopBtn.classList.remove('show');
+        }
+    });
+
+    backToTopBtn.addEventListener('click', function() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+}
     console.log('🌄 雲南滇西12日行程網頁已啟動！');
     if (!db) console.warn('⚠️ Firebase 未連線');
     else console.log('✅ Firebase 已連線');
