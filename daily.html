@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <title>每日行程 · 雲南滇西12日</title>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js">
+    </script>
+
+    <!-- 共用樣式 -->
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <header class="app-header" id="heroHeader">
+        <div class="header-overlay"></div>
+        <div class="header-content">
+            <h1>🌄 雲南滇西12日 · 4人同行</h1>
+            <div class="countdown" id="countdown">⏳ 載入中...</div>
+            <div class="header-divider">
+                <span class="dot"></span>
+                <span class="line"></span>
+                <span class="dot"></span>
+            </div>
+            <div class="sub">2026.11.11 – 11.22 ｜ Chill · Hea · 慢慢行</div>
+        </div>
+    </header>
+
+    <!-- ===== TAB NAV ===== -->
+    <nav class="tab-nav">
+        <a href="index.html">📋 行程總覽</a>
+        <a href="daily.html" class="active">📅 每日行程</a>
+        <a href="info.html">📌 重要資訊</a>
+    </nav>
+
+    <!-- ===== PAGE: 每日行程 ===== -->
+    <div class="page">
+        <div class="day-tabs-wrapper">
+            <div class="day-tabs" id="dayTabs"></div>
+        </div>
+        <div id="dayDetailContainer"></div>
+        <div class="footer-bar">✏️ 撳 [＋] 加備註 · 全部人即時睇到</div>
+    </div>
+
+    <!-- ===== 底部海拔線 ===== -->
+    <div class="altitude-footer" id="altitudeFooter">
+        <canvas id="altitudeCanvas"></canvas>
+    </div>
+
+    <!-- ===== 固定地圖按鈕 ===== -->
+    <a href="map.html" class="map-fab" id="mapFab" aria-label="查看地圖">
+        🗺️
+        <span class="tooltip">查看地圖</span>
+    </a>
+
+    <!-- ===== Toast 容器 ===== -->
+    <div class="toast-container" id="toastContainer">
+        <span class="toast-icon" id="toastIcon">🏔️</span>
+        <div class="toast-title" id="toastTitle">Day 8 · 香格里拉</div>
+        <div class="toast-sub" id="toastSub">3,300m</div>
+        <div class="toast-tip" id="toastTip">💡 今晚唔好沖涼住啦～</div>
+    </div>
+
+    <!-- ===== 共用 JavaScript ===== -->
+    <script src="app.js"></script>
+    <script>
+        // 頁面專屬初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            renderDayTabs();
+            renderDayDetail(1);
+            setupAllListeners();
+            // 海拔線由 app.js 啟動
+        });
+    </script>
+
+</body>
+</html>
