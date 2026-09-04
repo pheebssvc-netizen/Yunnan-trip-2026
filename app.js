@@ -1326,9 +1326,6 @@ if (eggImage && eggStatusIcon) {
     }
 }
 
-    // 如果 wishlist 頁面更新咗進度，重新整理時會 update
-    // 由於兩個頁面共用 localStorage，wishlist.html 改完後 refresh index 會見到更新
-}
     console.log('🌄 雲南滇西12日行程網頁已啟動！');
     if (!db) console.warn('⚠️ Firebase 未連線');
     else console.log('✅ Firebase 已連線');
