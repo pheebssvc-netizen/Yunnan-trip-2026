@@ -1325,7 +1325,6 @@ if (eggImage && eggStatusIcon) {
         eggStatusIcon.textContent = '🔒';
     }
 }
-
     console.log('🌄 雲南滇西12日行程網頁已啟動！');
     if (!db) console.warn('⚠️ Firebase 未連線');
     else console.log('✅ Firebase 已連線');
