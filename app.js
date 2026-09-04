@@ -1281,29 +1281,50 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 // ================================================================
-//  彩蛋入口（讀取 wishlist 進度）
+//  彩蛋入口（進度同步）
 // ================================================================
-const eggIcon = document.getElementById('eggIcon');
-const eggProgressLabel = document.getElementById('eggProgressLabel');
+const eggImage = document.getElementById('eggImage');
+const eggStatusIcon = document.getElementById('eggStatusIcon');
+const eggProgressBadge = document.getElementById('eggProgressBadge');
+const eggAchievement = document.getElementById('eggAchievement');
 
-if (eggIcon && eggProgressLabel) {
-    // 從 localStorage 讀取進度
+if (eggImage && eggStatusIcon) {
     const progressData = localStorage.getItem('wishlist-progress');
     const isDone = localStorage.getItem('wishlist-done') === 'true';
 
     if (isDone) {
-        eggIcon.textContent = '🌟';
-        eggProgressLabel.textContent = '✅ 10/10 · 成就解鎖！';
-        eggIcon.style.animation = 'none';
+        // 100% 完成
+        eggImage.className = 'done';
+        eggStatusIcon.textContent = '🏆';
+        eggProgressBadge.style.opacity = '0';
+        eggAchievement.style.opacity = '1';
+        eggAchievement.textContent = '🎉 成就解鎖！你哋已經完成雲南滇西線探索。';
     } else if (progressData) {
         try {
             const { count, total } = JSON.parse(progressData);
-            eggProgressLabel.textContent = `${count}/${total}`;
+            eggProgressBadge.textContent = `${count}/${total}`;
+            eggProgressBadge.style.opacity = '1';
+
             if (count >= 5) {
-                eggIcon.textContent = '🥚✨';
+                eggImage.className = 'unlocking';
+                eggStatusIcon.textContent = '🗝️';
+            } else if (count >= 1) {
+                eggImage.className = 'unlocking';
+                eggStatusIcon.textContent = '🗝️';
+            } else {
+                eggImage.className = 'locked';
+                eggStatusIcon.textContent = '🔒';
             }
-        } catch (e) {}
+        } catch (e) {
+            eggImage.className = 'locked';
+            eggStatusIcon.textContent = '🔒';
+        }
+    } else {
+        // 冇數據 = 未開始
+        eggImage.className = 'locked';
+        eggStatusIcon.textContent = '🔒';
     }
+}
 
     // 如果 wishlist 頁面更新咗進度，重新整理時會 update
     // 由於兩個頁面共用 localStorage，wishlist.html 改完後 refresh index 會見到更新
