@@ -123,6 +123,90 @@
         });
     </script>
 
+    <!-- ===== 緊急求助 Modal ===== -->
+<div class="emergency-overlay" id="emergencyOverlay">
+    <div class="emergency-modal">
+        <button class="modal-close" id="emergencyClose">✕</button>
+        <div class="modal-title">🚨 緊急求助</div>
+        <div class="modal-sub">高原反應 · 醫療級指引</div>
+
+        <!-- 血氧監測 -->
+        <div class="section">
+            <div class="section-title">🩸 血氧監測（智慧手環）</div>
+            <div class="section-content">
+                <p>靜息狀態下測量，手環讀數可作參考，但 <strong>不能取代專業診斷</strong>。</p>
+                <ul style="list-style:none; padding-left:4px; margin-top:6px;">
+                    <li style="padding:2px 0 2px 18px; position:relative;">✅ <span class="pill green">≥ 90%</span> 安全，繼續觀察</li>
+                    <li style="padding:2px 0 2px 18px; position:relative;">⚠️ <span class="pill yellow">85–89%</span> 中度缺氧，建議吸氧並下撤</li>
+                    <li style="padding:2px 0 2px 18px; position:relative;">🚨 <span class="pill red">&lt; 85%</span> 緊急，立即高流量吸氧 + 送醫</li>
+                </ul>
+                <p style="font-size:0.8rem; color:#6B5A4A; margin-top:4px;">💡 測量時保持安靜、手環貼合，避免移動或寒冷影響讀數。</p>
+            </div>
+        </div>
+
+        <div class="spacer"></div>
+
+        <!-- 輕度 -->
+        <div class="section">
+            <div class="section-title">🟢 輕度（AMS-I）</div>
+            <div class="level-box green">
+                <div class="level-label">症狀：頭痛、疲勞、噁心、失眠</div>
+                <ul>
+                    <li>✅ 停止上升，原地休息</li>
+                    <li>✅ 補充水分，可服布洛芬止痛</li>
+                    <li>✅ 血氧 ≥ 90%，通常安全</li>
+                </ul>
+                <div style="font-size:0.8rem; color:#2D6A2D; margin-top:4px;">❌ 禁止繼續上升、飲酒、服用安眠藥</div>
+            </div>
+        </div>
+
+        <!-- 中度 -->
+        <div class="section">
+            <div class="section-title">🟡 中度（AMS-II）</div>
+            <div class="level-box yellow">
+                <div class="level-label">症狀：持續嘔吐、步態不穩、嘴唇發紫</div>
+                <ul>
+                    <li>⚠️ 必須下撤 500-1000 米</li>
+                    <li>⚠️ 吸氧 2-3 升/分鐘</li>
+                    <li>⚠️ 血氧 85-89%</li>
+                </ul>
+                <div style="font-size:0.8rem; color:#8A6A1A; margin-top:4px;">⏱️ 1 小時內未緩解，立即就醫</div>
+            </div>
+        </div>
+
+        <!-- 重度 -->
+        <div class="section">
+            <div class="section-title">🔴 重度（AMS-III / HACE / HAPE）</div>
+            <div class="level-box red">
+                <div class="level-label">⚠️ 腦水腫：意識模糊、步態不穩、嗜睡</div>
+                <div class="level-label" style="margin-top:4px;">⚠️ 肺水腫：呼吸困難、粉紅色泡沫痰</div>
+                <ul>
+                    <li>🚨 立即高流量吸氧（5-6 升/分鐘）</li>
+                    <li>🚨 緊急下撤，呼叫救護車</li>
+                    <li>🚨 血氧 < 85% 或任何警號</li>
+                </ul>
+                <div style="font-size:0.8rem; color:#A33A2A; margin-top:4px;">⏰ 黃金救治時間 2-4 小時</div>
+            </div>
+        </div>
+
+        <div class="spacer"></div>
+
+        <!-- 藥物備註 -->
+        <div class="section">
+            <div class="section-title">💊 藥物備註（僅供參考，需遵醫囑）</div>
+            <div class="section-content">
+                <ul style="list-style:none; padding-left:4px; margin:4px 0;">
+                    <li style="padding:2px 0 2px 18px; position:relative;">• 乙醯唑胺：預防及輕中度 AMS</li>
+                    <li style="padding:2px 0 2px 18px; position:relative;">• 地塞米松：中重度 AMS 及 HACE</li>
+                </ul>
+                <p style="font-size:0.8rem; color:#6B5A4A; margin-top:4px;">⚠️ 以上均為處方藥，出發前請諮詢醫生。</p>
+            </div>
+        </div>
+
+        <div class="footer-note">📌 本指引不能代替專業醫療意見，緊急情況請立即就醫</div>
+    </div>
+</div>
+
     <!-- ===== 返回頂部按鈕 ===== -->
     <button class="back-to-top" id="backToTopBtn" aria-label="返回頂部">⬆</button>
 
