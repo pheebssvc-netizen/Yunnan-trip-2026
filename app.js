@@ -1280,7 +1280,34 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+// ================================================================
+//  彩蛋入口（讀取 wishlist 進度）
+// ================================================================
+const eggIcon = document.getElementById('eggIcon');
+const eggProgressLabel = document.getElementById('eggProgressLabel');
 
+if (eggIcon && eggProgressLabel) {
+    // 從 localStorage 讀取進度
+    const progressData = localStorage.getItem('wishlist-progress');
+    const isDone = localStorage.getItem('wishlist-done') === 'true';
+
+    if (isDone) {
+        eggIcon.textContent = '🌟';
+        eggProgressLabel.textContent = '✅ 10/10 · 成就解鎖！';
+        eggIcon.style.animation = 'none';
+    } else if (progressData) {
+        try {
+            const { count, total } = JSON.parse(progressData);
+            eggProgressLabel.textContent = `${count}/${total}`;
+            if (count >= 5) {
+                eggIcon.textContent = '🥚✨';
+            }
+        } catch (e) {}
+    }
+
+    // 如果 wishlist 頁面更新咗進度，重新整理時會 update
+    // 由於兩個頁面共用 localStorage，wishlist.html 改完後 refresh index 會見到更新
+}
     console.log('🌄 雲南滇西12日行程網頁已啟動！');
     if (!db) console.warn('⚠️ Firebase 未連線');
     else console.log('✅ Firebase 已連線');
