@@ -1079,7 +1079,7 @@ body {
         display: none;
     }
 }
-/* ===== 返回頂部按鈕 ===== */
+/* ===== 返回頂部按鈕（同 guide.html 一致） ===== */
 .back-to-top {
     position: fixed;
     bottom: 30px;
@@ -1116,14 +1116,5 @@ body {
         width: 48px;
         height: 48px;
         font-size: 1.3rem;
-    }
-}
-@media (max-width: 380px) {
-    .day-tabs button {
-        font-size: 0.65rem;
-        padding: 5px 10px;
-    }
-    .day-detail {
-        padding: 12px 12px 6px;
     }
 }
