@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <title>重要資訊 · 雲南滇西12日</title>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js">
+    </script>
+
+    <!-- 共用樣式 -->
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <header class="app-header" id="heroHeader">
+        <div class="header-overlay"></div>
+        <div class="header-content">
+            <h1>🌄 雲南滇西12日 · 4人同行</h1>
+            <div class="countdown" id="countdown">⏳ 載入中...</div>
+            <div class="header-divider">
+                <span class="dot"></span>
+                <span class="line"></span>
+                <span class="dot"></span>
+            </div>
+            <div class="sub">2026.11.11 – 11.22 ｜ Chill · Hea · 慢慢行</div>
+        </div>
+    </header>
+
+    <!-- ===== TAB NAV ===== -->
+    <nav class="tab-nav">
+        <a href="index.html">📋 行程總覽</a>
+        <a href="daily.html">📅 每日行程</a>
+        <a href="info.html" class="active">📌 重要資訊</a>
+    </nav>
+
+    <!-- ===== PAGE: 重要資訊 ===== -->
+    <div class="page">
+        <div class="other-section">
+            <h3>🏨 住宿編輯（可修改酒店名及狀態）</h3>
+            <div class="status-list" id="statusList"></div>
+            <div style="font-size:0.7rem;color:#8A7A6A;margin-top:6px;">💡 修改後會自動儲存，並同步到「每日行程」頭部</div>
+        </div>
+
+        <div class="other-section">
+            <h3>✈️ 航班</h3>
+            <div class="flight-row"><span class="label">去程 (11/11)</span><span class="value">MU9658 21:15 HKG → 23:55 KMG</span></div>
+            <div class="flight-row"><span class="label">回程 (11/22)</span><span class="value">MU733 13:50 KMG → 16:05 HKG</span></div>
+            <div class="flight-row" style="border-bottom:none;"><span class="label">人均機票</span><span class="value">HK$2,373</span></div>
+        </div>
+
+        <div class="other-section">
+            <h3>🚗 包車</h3>
+            <div class="flight-row"><span class="label">天數</span><span class="value">10天 (Day 2 → Day 11)</span></div>
+            <div class="flight-row" style="border-bottom:none;"><span class="label">費用</span><span class="value">¥8,600 (已確認)</span></div>
+        </div>
+
+        <div class="other-section">
+            <h3>💰 預算 (4人)</h3>
+            <div class="flight-row"><span class="label">包車</span><span class="value">¥8,600</span></div>
+            <div class="flight-row"><span class="label">住宿</span><span class="value">約 ¥10,000–13,000</span></div>
+            <div class="flight-row"><span class="label">高鐵</span><span class="value">約 ¥1,216</span></div>
+            <div class="flight-row"><span class="label">門票</span><span class="value">約 ¥2,200–2,600</span></div>
+            <div class="flight-row"><span class="label">餐飲</span><span class="value">約 ¥7,200–9,600</span></div>
+            <div class="flight-row highlight"><span class="label">人均 (人民幣)</span><span class="value">約 ¥7,250–8,750</span></div>
+            <div class="flight-row" style="border-bottom:none;font-weight:600;"><span class="label">人均 (港幣 連機票)</span><span class="value">約 HK$10,200–11,800</span></div>
+        </div>
+
+        <div class="other-section">
+            <h3>🚗 包車詳情</h3>
+            <div class="row"><span class="lbl">基礎用車 (10天 × ¥800)</span><span class="val">¥8,000</span></div>
+            <div class="row"><span class="lbl">白水台附加費</span><span class="val">+¥300</span></div>
+            <div class="row"><span class="lbl">瀘沽湖單邊高速費</span><span class="val">+¥150</span></div>
+            <div class="row"><span class="lbl">香格里拉單邊高速費</span><span class="val">+¥150</span></div>
+            <div class="row highlight-row"><span class="lbl">合計</span><span class="val">¥8,600 ✅ 已確認</span></div>
+            <div style="font-size:0.78rem;color:#6B5A4A;margin-top:8px;">
+                ✅ 已包：油費・停車費・師傅住宿・高速費・白水台繞路費<br />
+                ❌ 未包：師傅餐飲 (建議同食或補貼 ¥50–80/日)
+            </div>
+        </div>
+
+        <div class="other-section">
+            <h3>🚄 高鐵</h3>
+            <div class="train-input-area" id="trainInputArea">
+                <div class="train-row">
+                    <span class="label">昆明→大理</span>
+                    <input type="text" class="train-input" data-train="kunming-dali" placeholder="班次／時間／票價" />
+                </div>
+                <div class="train-row">
+                    <span class="label">麗江→昆明</span>
+                    <input type="text" class="train-input" data-train="lijiang-kunming" placeholder="班次／時間／票價" />
+                </div>
+            </div>
+            <div style="font-size:0.78rem;color:#6B5A4A;margin-top:6px;">⏰ 昆明→大理：10月29日 14:30 起售</div>
+        </div>
+
+        <div class="other-section">
+            <h3>⚠️ 海拔 &amp; 洗澡提醒</h3>
+            <div class="altitude-table">
+                <div class="row"><span class="lbl">Day 4 (麗江)</span><span class="val">2,400m ❌ 唔沖涼</span></div>
+                <div class="row"><span class="lbl">Day 5 (瀘沽湖)</span><span class="val">2,690m ❌ 唔沖涼</span></div>
+                <div class="row"><span class="lbl">Day 8 (香格里拉)</span><span class="val">3,300m ❌ 強烈唔建議</span></div>
+                <div class="row"><span class="lbl">Day 9 (香格里拉)</span><span class="val">3,300m ❌ 強烈唔建議</span></div>
+                <div class="row" style="border-bottom:none;"><span class="lbl">Day 10 (返麗江)</span><span class="val">2,400m ✅ 可以舒服沖涼</span></div>
+            </div>
+        </div>
+
+        <div class="other-section">
+            <h3>🎒 建議行李</h3>
+            <div class="packing-grid">
+                <div class="cat">📄 證件</div>
+                <div class="item">身份證、回鄉證、護照、高鐵票</div>
+                <div class="cat">👕 衣物</div>
+                <div class="item">羽絨外套、保暖內衣、防風外套</div>
+                <div class="item">手套、冷帽、頸巾</div>
+                <div class="cat">💄 護膚</div>
+                <div class="item">防曬霜、潤唇膏、保濕面霜、面膜</div>
+                <div class="cat">💊 藥物</div>
+                <div class="item">紅景天 (出發前7-10天服)、必理痛</div>
+                <div class="item">葡萄糖粉、止瀉藥</div>
+                <div class="cat">🔋 其他</div>
+                <div class="item">保溫瓶、充電器、相機</div>
+                <div class="item">氧氣樽 (麗江/香格里拉買 ¥20-30)</div>
+            </div>
+        </div>
+
+        <div class="other-section">
+            <h3>💬 團友備註</h3>
+            <div id="groupNoteContainer">
+                <div class="group-note-empty" id="groupNoteEmpty">📝 未有備註，你嚟加第一條！</div>
+            </div>
+            <div class="group-note-form">
+                <input type="text" id="groupNoteInput" placeholder="寫低任何想分享嘅資訊..." />
+                <button class="submit-btn" id="groupNoteSubmit">➕ 新增</button>
+            </div>
+        </div>
+
+        <div class="footer-bar">📌 按行程 v.7.1 整理</div>
+    </div>
+
+    <!-- ===== 底部海拔線 ===== -->
+    <div class="altitude-footer" id="altitudeFooter">
+        <canvas id="altitudeCanvas"></canvas>
+    </div>
+
+    <!-- ===== 固定地圖按鈕 ===== -->
+    <a href="map.html" class="map-fab" id="mapFab" aria-label="查看地圖">
+        🗺️
+        <span class="tooltip">查看地圖</span>
+    </a>
+
+    <!-- ===== Toast 容器 ===== -->
+    <div class="toast-container" id="toastContainer">
+        <span class="toast-icon" id="toastIcon">🏔️</span>
+        <div class="toast-title" id="toastTitle">Day 8 · 香格里拉</div>
+        <div class="toast-sub" id="toastSub">3,300m</div>
+        <div class="toast-tip" id="toastTip">💡 今晚唔好沖涼住啦～</div>
+    </div>
+
+    <!-- ===== 共用 JavaScript ===== -->
+    <script src="app.js"></script>
+    <script>
+        // 頁面專屬初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            renderStatusList();
+            initTrainInputs();
+            renderGroupNotes();
+            // 團友備註 submit 事件
+            document.getElementById('groupNoteSubmit').addEventListener('click', addGroupNote);
+            document.getElementById('groupNoteInput').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') addGroupNote();
+            });
+        });
+    </script>
+
+</body>
+</html>
