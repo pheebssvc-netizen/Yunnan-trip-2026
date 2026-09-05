@@ -112,7 +112,8 @@
             margin-bottom: 4px;
         }
         .bill-form .form-row input[type="date"],
-        .bill-form .form-row input[type="number"] {
+        .bill-form .form-row input[type="number"],
+        .bill-form .form-row input[type="text"] {
             width: 100%;
             padding: 10px 14px;
             border-radius: 30px;
@@ -277,6 +278,18 @@
         .bill-item .left .meta {
             font-size: 0.7rem;
             color: #8A7A6A;
+        }
+        .bill-item .left .note {
+            font-size: 0.75rem;
+            color: #6B5A4A;
+            background: #F5F0EB;
+            padding: 2px 10px;
+            border-radius: 30px;
+            display: inline-block;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
         .bill-item .right {
             text-align: right;
@@ -451,6 +464,12 @@
                     </div>
                 </div>
 
+                <!-- ===== 🆕 備註欄位 ===== -->
+                <div class="form-row">
+                    <label>📝 備註 (選擇性)</label>
+                    <input type="text" id="billNote" placeholder="e.g. 古城餐廳 / 玉龍雪山門票" />
+                </div>
+
                 <button type="submit" class="btn-add-bill">➕ 記帳</button>
             </form>
         </div>
@@ -504,12 +523,12 @@
 
     </div>
 
-    <!-- ===== 返回頂部按鈕 (同其他頁面一致) ===== -->
+    <!-- ===== 返回頂部按鈕 ===== -->
     <button class="back-to-top" id="backToTopBtn" aria-label="返回頂部">⬆</button>
 
     <script>
         // ================================================================
-        //  1. FIREBASE 設定 (已填好你提供嘅 config)
+        //  1. FIREBASE 設定
         // ================================================================
         const firebaseConfig = {
             apiKey: "AIzaSyAtthBBNoHJkN6B_e8DVjzDpK_eB0wfExo",
@@ -558,6 +577,7 @@
         const categoryPills = $('categoryPills');
         const payerButtons = $('payerButtons');
         const billAmount = $('billAmount');
+        const billNote = $('billNote');
         const participantGroup = $('participantGroup');
         const selectAllToggle = $('selectAllToggle');
         const billList = $('billList');
@@ -617,7 +637,7 @@
         }
 
         // ================================================================
-        //  4. 新增帳單
+        //  4. 新增帳單 (含備註)
         // ================================================================
         function handleAddBill(e) {
             e.preventDefault();
@@ -642,6 +662,9 @@
             });
             if (participants.length === 0) { alert('至少揀一位參與人'); return; }
 
+            // 取得備註 (可選)
+            const note = billNote.value.trim();
+
             const bill = {
                 date: date,
                 category: category,
@@ -649,6 +672,7 @@
                 payer: payer,
                 amount: Math.round(amount * 100) / 100,
                 participants: participants,
+                note: note, // 🆕 備註欄位
                 timestamp: Date.now(),
                 id: 'local_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6)
             };
@@ -663,6 +687,7 @@
             }
 
             billAmount.value = '';
+            billNote.value = '';
             billAmount.focus();
         }
 
@@ -760,7 +785,7 @@
         function renderSettlement() {
             if (allBills.length === 0) {
                 settlementList.innerHTML =
-                `<li style="color:#B5A89A; text-align:center; padding:12px 0;">未有帳單，記第一筆數啦！</li>`;
+                    `<li style="color:#B5A89A; text-align:center; padding:12px 0;">未有帳單，記第一筆數啦！</li>`;
                 return;
             }
 
@@ -834,6 +859,9 @@
                 const isPending = bill.id && bill.id.startsWith('local_');
                 const pendingBadge = isPending ? `<span class="pending-badge">⏳ 同步中</span>` : '';
 
+                // 🆕 如果有備註就顯示
+                const noteHtml = bill.note ? `<span class="note">📝 ${bill.note}</span>` : '';
+
                 html += `
                             <div class="bill-item">
                                 <div class="left">
@@ -843,6 +871,7 @@
                                         ${pendingBadge}
                                     </div>
                                     <div class="meta">👤 ${bill.payer} ｜ 👥 ${participantsStr}</div>
+                                    ${noteHtml}
                                 </div>
                                 <div class="right">
                                     <div class="amount">¥${bill.amount.toFixed(2)}</div>
