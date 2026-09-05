@@ -1,34 +1,33 @@
 <!DOCTYPE html>
 <html lang="zh-HK">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
   <title>香格里拉 · 互動吉祥物</title>
   <style>
-    /* ===== 基礎 Reset ===== */
-    * {
-      box-sizing: border-box;
-    }
+    /* ===== 基礎 ===== */
+    * { box-sizing: border-box; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       background: #f4f6f8;
       margin: 0;
       padding: 20px;
-      min-height: 200vh; /* 模擬長頁面，方便測試 */
+      min-height: 200vh;
       padding-top: 80px;
+      padding-bottom: 120px;
     }
 
-    /* ===== 吉祥物容器 (固定在最上層) ===== */
+    /* ===== 吉祥物容器 ===== */
     #mascot-container {
       position: fixed;
-      z-index: 9999;
-      display: none;          /* 預設隱藏，由 JS 控制顯示 */
-      width: 110px;
+      z-index: 99999;
+      display: none;
+      width: 70px;          /* 手機用 70px，夠大又唔阻掟 */
       height: auto;
-      pointer-events: none;   /* 容器本身唔擋 click，但內部圖片可點 */
+      pointer-events: none;
       left: 0;
       top: 0;
-      /* 所有動畫用嘅初始值都會喺 JS 度 set，唔喺呢度寫死 */
+      /* 所有位置由 JS / CSS 動畫控制 */
     }
 
     /* ===== 小女孩圖片 ===== */
@@ -36,145 +35,17 @@
       width: 100%;
       height: auto;
       display: block;
-      pointer-events: auto;   /* 容許點擊 */
+      pointer-events: auto;
       cursor: pointer;
-      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.25));
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
       transition: transform 0.15s ease;
-      /* 預設顯示全圖，但部分動作會用 clip-path 裁切 */
+      /* 預設顯示全圖 */
     }
     #mascot-img:active {
-      transform: scale(0.92);
+      transform: scale(0.90);
     }
 
-    /* ===== 對話泡泡 ===== */
-    #mascot-speech {
-      position: absolute;
-      top: -50px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #ffffff;
-      color: #2c3e50;
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      white-space: nowrap;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.12);
-      border: 2px solid #8e2a2a;
-      display: none;
-      pointer-events: auto;
-      animation: speechPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-    /* 泡泡尖角 */
-    #mascot-speech::after {
-      content: '';
-      position: absolute;
-      bottom: -8px;
-      left: 50%;
-      transform: translateX(-50%);
-      border-width: 8px 8px 0;
-      border-style: solid;
-      border-color: #8e2a2a transparent;
-      display: block;
-      width: 0;
-    }
-
-    @keyframes speechPop {
-      0% { transform: translateX(-50%) scale(0.5); opacity: 0; }
-      100% { transform: translateX(-50%) scale(1); opacity: 1; }
-    }
-
-    /* ================================================================
-       四種動作嘅 CSS Keyframes
-       ================================================================ */
-
-    /* ----- 動作 1：由左行到右 (walk) ----- */
-    @keyframes actionWalk {
-      0%   { left: -130px; bottom: 20px; }
-      100% { left: 110vw; bottom: 20px; }
-    }
-    /* 行路時輕微上下晃動，模擬步伐 */
-    @keyframes walkBounce {
-      0%, 100% { transform: translateY(0); }
-      25%      { transform: translateY(-8px); }
-      75%      { transform: translateY(-4px); }
-    }
-
-    /* ----- 動作 2：右邊框伸出上半身 Say Hi ----- */
-    @keyframes actionSayHi {
-      0%   { right: -120px; bottom: 200px; opacity: 0; }
-      20%  { right: 0px; bottom: 200px; opacity: 1; }
-      80%  { right: 0px; bottom: 200px; opacity: 1; }
-      100% { right: -120px; bottom: 200px; opacity: 0; }
-    }
-    /* 打招呼時輕輕左右擺動 */
-    @keyframes sayHiSway {
-      0%, 100% { transform: rotate(0deg); }
-      25%      { transform: rotate(-5deg); }
-      75%      { transform: rotate(5deg); }
-    }
-
-    /* ----- 動作 3：由中間跳出擺 Pose ----- */
-    @keyframes actionJumpPose {
-      0%   { left: 50%; bottom: -150px; transform: translateX(-50%) scale(0.3); opacity: 0; }
-      30%  { left: 50%; bottom: 40%; transform: translateX(-50%) scale(1.1); opacity: 1; }
-      60%  { left: 50%; bottom: 45%; transform: translateX(-50%) scale(0.95); opacity: 1; }
-      80%  { left: 50%; bottom: 43%; transform: translateX(-50%) scale(1); opacity: 1; }
-      100% { left: 50%; bottom: -150px; transform: translateX(-50%) scale(0.5); opacity: 0; }
-    }
-    /* 擺 Pose 時加個旋轉同放大 effect */
-    @keyframes poseSpin {
-      0%, 100% { transform: rotate(0deg) scale(1); }
-      50%      { transform: rotate(8deg) scale(1.05); }
-    }
-
-    /* ----- 動作 4：由 Header 爬出，坐低踢腳 ----- */
-    @keyframes actionClimbSit {
-      0%   { left: 30%; top: -130px; transform: rotate(10deg); opacity: 0; }
-      25%  { left: 30%; top: 10px; transform: rotate(0deg); opacity: 1; }
-      50%  { left: 30%; top: 10px; transform: rotate(0deg); }
-      70%  { left: 30%; top: 10px; transform: rotate(-5deg); }
-      100% { left: 30%; top: 10px; transform: rotate(0deg); opacity: 1; }
-    }
-    /* 踢腳動作：左右搖擺下半身（靠旋轉模擬） */
-    @keyframes kickLegs {
-      0%, 100% { transform: rotate(0deg); }
-      25%      { transform: rotate(-12deg); }
-      75%      { transform: rotate(12deg); }
-    }
-
-    /* ================================================================
-       容器嘅通用動畫 class（由 JS 動態加上）
-       ================================================================ */
-    .anim-walk {
-      animation: actionWalk 8s linear forwards;
-    }
-    .anim-walk .mascot-img-inner {
-      animation: walkBounce 0.6s infinite alternate;
-    }
-
-    .anim-sayhi {
-      animation: actionSayHi 6s ease-in-out forwards;
-    }
-    .anim-sayhi .mascot-img-inner {
-      animation: sayHiSway 0.8s infinite alternate;
-    }
-
-    .anim-jumppose {
-      animation: actionJumpPose 5s ease forwards;
-    }
-    .anim-jumppose .mascot-img-inner {
-      animation: poseSpin 1.2s infinite alternate;
-    }
-
-    .anim-climbsit {
-      animation: actionClimbSit 7s ease forwards;
-    }
-    .anim-climbsit .mascot-img-inner {
-      animation: kickLegs 0.8s infinite alternate;
-    }
-
-    /* 輔助 class：令圖片可以獨立旋轉／縮放（唔影響容器位置） */
+    /* 內層 wrapper，用嚟獨立控制旋轉／縮放，唔影響容器位置 */
     .mascot-img-inner {
       display: block;
       width: 100%;
@@ -182,33 +53,155 @@
       transform-origin: bottom center;
     }
 
-    /* ===== 控制按鈕 (美觀) ===== */
+    /* ===== 對話泡泡 ===== */
+    #mascot-speech {
+      position: absolute;
+      top: -44px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #ffffff;
+      color: #2c3e50;
+      padding: 6px 14px;
+      border-radius: 18px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      white-space: nowrap;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.13);
+      border: 2px solid #8e2a2a;
+      display: none;
+      pointer-events: auto;
+      animation: speechPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      max-width: 90vw;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    /* 泡泡尖角 */
+    #mascot-speech::after {
+      content: '';
+      position: absolute;
+      bottom: -7px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 7px 7px 0;
+      border-style: solid;
+      border-color: #8e2a2a transparent;
+      display: block;
+      width: 0;
+    }
+
+    @keyframes speechPop {
+      0% { transform: translateX(-50%) scale(0.4); opacity: 0; }
+      100% { transform: translateX(-50%) scale(1); opacity: 1; }
+    }
+
+    /* ================================================================
+       四種動作嘅 Keyframes（手機優化版）
+       ================================================================ */
+
+    /* ----- ① 散步：由左行到右，帶上下晃動 ----- */
+    @keyframes actionWalk {
+      0%   { left: -80px; bottom: 18px; }
+      100% { left: 110vw; bottom: 18px; }
+    }
+    @keyframes walkBounce {
+      0%, 100% { transform: translateY(0); }
+      25%      { transform: translateY(-7px); }
+      75%      { transform: translateY(-3px); }
+    }
+    .anim-walk {
+      animation: actionWalk 7.5s linear forwards;
+    }
+    .anim-walk .mascot-img-inner {
+      animation: walkBounce 0.55s infinite alternate;
+    }
+
+    /* ----- ② Say Hi：由右邊伸出上半身，輕微搖擺 ----- */
+    @keyframes actionSayHi {
+      0%   { right: -90px; bottom: 180px; opacity: 0; }
+      18%  { right: 0px; bottom: 180px; opacity: 1; }
+      82%  { right: 0px; bottom: 180px; opacity: 1; }
+      100% { right: -90px; bottom: 180px; opacity: 0; }
+    }
+    @keyframes sayHiSway {
+      0%, 100% { transform: rotate(0deg); }
+      30%      { transform: rotate(-6deg); }
+      70%      { transform: rotate(6deg); }
+    }
+    .anim-sayhi {
+      animation: actionSayHi 5.5s ease-in-out forwards;
+    }
+    .anim-sayhi .mascot-img-inner {
+      animation: sayHiSway 0.7s infinite alternate;
+    }
+
+    /* ----- ③ 跳起擺 Pose：由底跳出，旋轉落地 ----- */
+    @keyframes actionJumpPose {
+      0%   { left: 50%; bottom: -120px; transform: translateX(-50%) scale(0.3); opacity: 0; }
+      28%  { left: 50%; bottom: 48%; transform: translateX(-50%) scale(1.15); opacity: 1; }
+      55%  { left: 50%; bottom: 52%; transform: translateX(-50%) scale(0.92); opacity: 1; }
+      78%  { left: 50%; bottom: 50%; transform: translateX(-50%) scale(1.02); opacity: 1; }
+      100% { left: 50%; bottom: -120px; transform: translateX(-50%) scale(0.4); opacity: 0; }
+    }
+    @keyframes poseSpin {
+      0%, 100% { transform: rotate(0deg) scale(1); }
+      50%      { transform: rotate(10deg) scale(1.06); }
+    }
+    .anim-jumppose {
+      animation: actionJumpPose 4.8s ease forwards;
+    }
+    .anim-jumppose .mascot-img-inner {
+      animation: poseSpin 1.0s infinite alternate;
+    }
+
+    /* ----- ④ 爬出踢腳：由頂部爬出，坐低踢腳 ----- */
+    @keyframes actionClimbSit {
+      0%   { left: 25%; top: -100px; transform: rotate(12deg); opacity: 0; }
+      22%  { left: 25%; top: 8px; transform: rotate(0deg); opacity: 1; }
+      50%  { left: 25%; top: 8px; transform: rotate(0deg); }
+      72%  { left: 25%; top: 8px; transform: rotate(-4deg); }
+      100% { left: 25%; top: 8px; transform: rotate(0deg); opacity: 1; }
+    }
+    @keyframes kickLegs {
+      0%, 100% { transform: rotate(0deg); }
+      30%      { transform: rotate(-14deg); }
+      70%      { transform: rotate(14deg); }
+    }
+    .anim-climbsit {
+      animation: actionClimbSit 6.5s ease forwards;
+    }
+    .anim-climbsit .mascot-img-inner {
+      animation: kickLegs 0.7s infinite alternate;
+    }
+
+    /* ===== 控制按鈕（測試用） ===== */
     .controls {
       position: fixed;
-      bottom: 30px;
+      bottom: 12px;
       left: 0;
       right: 0;
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 12px;
-      padding: 16px;
-      background: rgba(255,255,255,0.85);
+      gap: 8px;
+      padding: 12px 10px;
+      background: rgba(255,255,255,0.92);
       backdrop-filter: blur(8px);
       border-top: 1px solid #ddd;
-      z-index: 10000;
+      z-index: 100000;
     }
     .controls button {
-      padding: 10px 18px;
+      padding: 8px 14px;
       border: none;
       border-radius: 30px;
       background: #8e2a2a;
       color: #fff;
       font-weight: 600;
-      font-size: 0.9rem;
+      font-size: 0.75rem;
       cursor: pointer;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
       transition: 0.15s;
+      flex: 1 0 auto;
+      min-width: 60px;
     }
     .controls button:active {
       transform: scale(0.94);
@@ -216,18 +209,36 @@
     .controls button:nth-child(2) { background: #2a6f8e; }
     .controls button:nth-child(3) { background: #6f8e2a; }
     .controls button:nth-child(4) { background: #8e6f2a; }
+
+    /* ===== 提示文字 ===== */
+    .info {
+      text-align: center;
+      color: #6a5a4a;
+      font-size: 0.9rem;
+      margin-bottom: 30px;
+    }
+    .info small {
+      display: block;
+      color: #999;
+      font-size: 0.75rem;
+      margin-top: 6px;
+    }
   </style>
 </head>
 <body>
 
   <h1>🏔️ 香格里拉 · 互動吉祥物</h1>
-  <p>小女孩會自動四圍走，你亦可以㩒下面嘅掣叫佢做特定動作。</p>
+  <div class="info">
+    小女孩會隨機出現，做唔同動作。<br />
+    㩒佢一下會講嘢。<br />
+    <small>👇 下面啲掣可以手動觸發每種動作</small>
+  </div>
 
-  <!-- ===== 吉祥物 HTML ===== -->
+  <!-- ===== 吉祥物 ===== -->
   <div id="mascot-container">
     <div id="mascot-speech">扎西德勒！👋</div>
     <div class="mascot-img-inner">
-      <img id="mascot-img" src="girl-walk.png" alt="藏族小女孩" onclick="onMascotClick()">
+      <img id="mascot-img" src="girl-walk.png" alt="藏族小女孩" onclick="onMascotClick()" />
     </div>
   </div>
 
@@ -235,23 +246,25 @@
   <div class="controls">
     <button onclick="triggerAction('walk')">🚶 散步</button>
     <button onclick="triggerAction('sayhi')">👋 Say Hi</button>
-    <button onclick="triggerAction('jumppose')">📸 跳起擺 Pose</button>
-    <button onclick="triggerAction('climbsit')">🧗 爬出踢腳</button>
+    <button onclick="triggerAction('jumppose')">📸 擺 Pose</button>
+    <button onclick="triggerAction('climbsit')">🧗 踢腳</button>
   </div>
 
   <script>
     // ================================================================
-    //  1. 對話庫 (藏式風味)
+    //  1. 對話庫
     // ================================================================
     const GREETINGS = [
       "扎西德勒！歡迎嚟到香格里拉～ 🏔️",
-      "獨克宗古城嘅轉經筒好大好靚呀！✨",
-      "今日記住飲多啲水，防高山症！💧",
-      "諗好今晚食藏式火鍋未？🍲",
-      "記帳未呀？記得 mark 低今日洗費～ 💰",
-      "呢度嘅星空超靚，記得抬頭望！🌟",
+      "獨克宗古城嘅轉經筒好大呀！✨",
+      "記住飲多啲水，防高山症！💧",
+      "今晚食藏式火鍋好唔好？🍲",
+      "記帳未呀？記得 mark 低洗費～ 💰",
+      "呢度嘅星空超靚，抬頭望吓！🌟",
       "著多件衫呀，夜晚好凍㗎！🧥",
-      "行慢啲，享受吓呢度嘅寧靜～ 🍃"
+      "行慢啲，享受吓寧靜嘅時光～ 🍃",
+      "你有冇見到氂牛呀？🐮",
+      "祝旅途愉快！扎西德勒！🙏"
     ];
 
     // ================================================================
@@ -262,80 +275,80 @@
     const speech = document.getElementById('mascot-speech');
     const imgInner = document.querySelector('.mascot-img-inner');
 
-    let autoHideTimer = null;
-    let currentAction = null;
+    let hideTimer = null;
+    let isVisible = false;
 
     // ================================================================
-    //  3. 核心函數：觸發動作
+    //  3. 觸發動作
     // ================================================================
     function triggerAction(actionType) {
-      // 清除之前的 timer 同 animation class
-      clearTimeout(autoHideTimer);
+      // 清除之前嘅 timer 同狀態
+      clearTimeout(hideTimer);
       container.style.display = 'block';
       container.style.animation = 'none';
       container.style.left = 'auto';
       container.style.right = 'auto';
       container.style.top = 'auto';
       container.style.bottom = 'auto';
+      container.style.transform = 'none';
+
       // 移除所有動作 class
       container.classList.remove('anim-walk', 'anim-sayhi', 'anim-jumppose', 'anim-climbsit');
-      // 移除圖片內層嘅 animation
       imgInner.style.animation = 'none';
-
-      // 隱藏對話框
       speech.style.display = 'none';
 
-      // 重置圖片（確保冇 clip-path 殘留）
+      // 重置圖片
       img.style.clipPath = 'none';
       img.style.transform = 'none';
+      img.style.opacity = '1';
 
       // 強制 reflow
       void container.offsetWidth;
 
       // 根據動作類型設定
+      let duration = 0;
+
       switch (actionType) {
         case 'walk':
-          // 由左至右行
-          container.style.left = '-130px';
-          container.style.bottom = '20px';
+          container.style.left = '-80px';
+          container.style.bottom = '18px';
           container.style.top = 'auto';
           container.style.right = 'auto';
+          img.style.transform = 'scaleX(-1)'; // 面向右
           container.classList.add('anim-walk');
-          // 自動隱藏時間 = 動畫持續時間 (8s) + 少少緩衝
-          autoHideTimer = setTimeout(() => { container.style.display = 'none'; }, 9000);
+          duration = 7500;
           break;
 
         case 'sayhi':
-          // 由右邊伸出上半身
-          container.style.right = '-120px';
-          container.style.bottom = '200px';
+          container.style.right = '-90px';
+          container.style.bottom = '180px';
           container.style.left = 'auto';
           container.style.top = 'auto';
-          // 用 clip-path 裁切只顯示上半身 (假設圖片高 200px，顯示上半 100px)
-          // 具體數值要根據你圖片比例調整，呢度只做示範
-          img.style.clipPath = 'inset(0 0 40% 0)'; // 切走下面 40%
+          img.style.clipPath = 'inset(0 0 42% 0)'; // 切走下半身
+          img.style.transform = 'none';
           container.classList.add('anim-sayhi');
-          autoHideTimer = setTimeout(() => { container.style.display = 'none'; }, 6500);
+          duration = 5500;
           break;
 
         case 'jumppose':
-          // 由中間跳出擺 pose
           container.style.left = '50%';
-          container.style.bottom = '-150px';
+          container.style.bottom = '-120px';
           container.style.top = 'auto';
           container.style.right = 'auto';
+          container.style.transform = 'translateX(-50%)';
+          img.style.transform = 'none';
           container.classList.add('anim-jumppose');
-          autoHideTimer = setTimeout(() => { container.style.display = 'none'; }, 5500);
+          duration = 4800;
           break;
 
         case 'climbsit':
-          // 由 header 爬出坐低踢腳
-          container.style.left = '30%';
-          container.style.top = '-130px';
+          container.style.left = '25%';
+          container.style.top = '-100px';
           container.style.bottom = 'auto';
           container.style.right = 'auto';
+          img.style.transform = 'none';
           container.classList.add('anim-climbsit');
-          autoHideTimer = setTimeout(() => { container.style.display = 'none'; }, 7500);
+          duration = 6500;
           break;
 
         default:
@@ -343,73 +356,82 @@
           return;
       }
 
-      // 為咗令行路更似，加個水平反轉（行去右邊時面向右）
-      if (actionType === 'walk') {
-        // 由於圖片本身可能面向左，我哋用 scaleX(-1) 反轉
-        img.style.transform = 'scaleX(-1)';
-        // 但行去右邊應該面向右，所以反轉
-      } else {
-        img.style.transform = 'none';
-      }
+      isVisible = true;
 
-      // 紀錄當前動作，用嚟俾點擊對話時用
-      currentAction = actionType;
-
-      // 自動顯示對話框（動作中途彈一句）
+      // 動作中途彈對話框
       setTimeout(() => {
         if (container.style.display !== 'none') {
           showRandomSpeech();
         }
-      }, 1500);
+      }, Math.min(duration * 0.25, 1500));
+
+      // 動作完結後隱藏
+      hideTimer = setTimeout(() => {
+        container.style.display = 'none';
+        isVisible = false;
+      }, duration + 400);
     }
 
     // ================================================================
-    //  4. 對話框相關
+    //  4. 對話框
     // ================================================================
     function showRandomSpeech() {
       const text = GREETINGS[Math.floor(Math.random() * GREETINGS.length)];
       speech.innerText = text;
       speech.style.display = 'block';
-      // 自動隱藏
       setTimeout(() => {
         speech.style.display = 'none';
-      }, 3000);
+      }, 2800);
     }
 
-    // 點擊圖片時觸發對話
     function onMascotClick() {
-      showRandomSpeech();
+      // 如果已經有對話框顯示，就換一句
+      if (speech.style.display === 'block') {
+        speech.style.display = 'none';
+        setTimeout(showRandomSpeech, 200);
+      } else {
+        showRandomSpeech();
+      }
     }
 
     // ================================================================
-    //  5. 自動觸發（定時器 + 隨機）
+    //  5. 自動隨機觸發（手機版：間隔較短，增加趣味）
     // ================================================================
     const ACTIONS = ['walk', 'sayhi', 'jumppose', 'climbsit'];
 
     function autoTrigger() {
-      // 隨機揀一個動作
+      // 如果已經顯示緊，就唔好重疊
+      if (isVisible) return;
       const randomAction = ACTIONS[Math.floor(Math.random() * ACTIONS.length)];
       triggerAction(randomAction);
     }
 
-    // 頁面載入後 2 秒首次出場
+    // 頁面載入後 2.5 秒首次登場
     document.addEventListener('DOMContentLoaded', () => {
-      setTimeout(autoTrigger, 2000);
-      // 之後每隔 25~45 秒隨機觸發一次
+      setTimeout(autoTrigger, 2500);
+
+      // 之後每隔 18~35 秒隨機觸發一次（手機版密啲）
       setInterval(() => {
-        if (Math.random() > 0.5) { // 50% 機率
+        // 70% 機率觸發，等佢唔會太 predictable
+        if (Math.random() > 0.3 && !isVisible) {
           autoTrigger();
         }
-      }, 30000);
+      }, 22000);
     });
 
     // ================================================================
-    //  6. 小工具：點擊頁面其他地方可隱藏吉祥物（可選）
+    //  6. 㩒背景可強制隱藏（可選）
     // ================================================================
-    // 如果㩒背景，可以隱藏（但為咗體驗，我哋唔做，因為有控制掣）
-    // 你如果有需要可以自行加。
+    // 如果㩒空白地方想佢消失，可以 uncomment 下面
+    // document.addEventListener('click', function(e) {
+    //   if (!container.contains(e.target) && isVisible) {
+    //     container.style.display = 'none';
+    //     isVisible = false;
+    //     clearTimeout(hideTimer);
+    //   }
+    // });
 
-    console.log('🏔️ 吉祥物已啟動！ 㩒下面啲掣玩吓啦～');
+    console.log('🏔️ 吉祥物已啟動！手機版四種動作 ready～');
   </script>
 
 </body>
