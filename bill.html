@@ -15,9 +15,6 @@
     <link rel="stylesheet" href="style.css" />
 
     <style>
-        /* ===== 額外樣式 (不影響原有 style.css) ===== */
-
-        /* 記帳專用卡片 */
         .bill-card {
             background: #fff;
             border-radius: 16px;
@@ -32,8 +29,6 @@
             padding-left: 12px;
             margin-bottom: 12px;
         }
-
-        /* 連線狀態燈 */
         .status-dot {
             display: inline-block;
             width: 12px;
@@ -55,8 +50,6 @@
             color: #6B5A4A;
             vertical-align: middle;
         }
-
-        /* 結算結果 */
         .settlement-list {
             list-style: none;
             padding: 0;
@@ -71,10 +64,6 @@
         }
         .settlement-list li:last-child {
             border-bottom: none;
-        }
-        .settlement-arrow {
-            color: #E07A5F;
-            font-weight: 600;
         }
         .settlement-amount {
             font-weight: 700;
@@ -99,8 +88,6 @@
         .total-spend strong {
             color: #2D241A;
         }
-
-        /* 表單 */
         .bill-form .form-row {
             margin-bottom: 12px;
         }
@@ -132,8 +119,6 @@
             font-size: 1.3rem;
             font-weight: 600;
         }
-
-        /* 分類 Pills */
         .category-pills {
             display: flex;
             flex-wrap: wrap;
@@ -159,8 +144,6 @@
             color: #fff;
             border-color: #E07A5F;
         }
-
-        /* 付款人按鈕 (J, C, K, Z) */
         .payer-buttons {
             display: flex;
             gap: 10px;
@@ -190,8 +173,6 @@
             border-color: #E07A5F;
             box-shadow: 0 0 0 3px rgba(224, 122, 95, 0.25);
         }
-
-        /* 參與人 Checkbox */
         .participant-group {
             display: flex;
             gap: 14px;
@@ -220,8 +201,6 @@
             font-weight: 600;
             margin-left: 4px;
         }
-
-        /* 記帳按鈕 */
         .btn-add-bill {
             width: 100%;
             padding: 14px;
@@ -239,8 +218,6 @@
             transform: scale(0.96);
             background: #C96A4F;
         }
-
-        /* 歷史明細 */
         .bill-item {
             display: flex;
             justify-content: space-between;
@@ -303,10 +280,6 @@
             font-size: 1.0rem;
             color: #2D241A;
         }
-        .bill-item .right .payers {
-            font-size: 0.65rem;
-            color: #8A7A6A;
-        }
         .bill-item .delete-btn {
             background: none;
             border: none;
@@ -320,8 +293,6 @@
             color: #E07A5F;
             transform: scale(0.9);
         }
-
-        /* 篩選列 */
         .filter-bar {
             display: flex;
             gap: 8px;
@@ -347,16 +318,12 @@
             color: #fff;
             border-color: #E07A5F;
         }
-
-        /* 空狀態 */
         .empty-state {
             text-align: center;
             padding: 24px 0;
             color: #B5A89A;
             font-size: 0.9rem;
         }
-
-        /* 離線提示小標籤 */
         .pending-badge {
             font-size: 0.6rem;
             background: #F39C12;
@@ -365,8 +332,6 @@
             border-radius: 30px;
             margin-left: 6px;
         }
-
-        /* 響應式微調 */
         @media (max-width: 480px) {
             .payer-buttons .payer-btn {
                 width: 48px;
@@ -385,22 +350,20 @@
         }
     </style>
 </head>
-
 <body>
 
-    <!-- ===== HEADER ===== -->
-    <header class="app-header" id="heroHeader" style="background-image: url('https://raw.githubusercontent.com/pheebssvc-netizen/Yunnan-trip-2026/main/images/Lijiang.jpg');">
+    <!-- ===== HEADER (與 index, info, daily 完全一致) ===== -->
+    <header class="app-header" id="heroHeader">
         <div class="header-overlay"></div>
         <div class="header-content">
-            <h1>🧾 神算醒</h1>
-            <div class="countdown" id="countdown">⏳ 距離出發仲有 <span class="highlight">67</span> 日 <span class="highlight">5</span> 小時 <span class="highlight">5</span> 分鐘 <span class="highlight">8</span> 秒</div>
+            <h1>🌄 雲南滇西12日 · 4人同行</h1>
+            <div class="countdown" id="countdown">⏳ 載入中...</div>
             <div class="header-divider">
                 <span class="dot"></span>
                 <span class="line"></span>
                 <span class="dot"></span>
             </div>
-            <!-- ✅ 修正：由「4人同步」改為「4人同行」 -->
-            <div class="sub">4人同行 ｜ 即時同步 · 離線都用到</div>
+            <div class="sub">2026.11.11 – 11.22 ｜ Chill · Hea · 慢慢行</div>
         </div>
     </header>
 
@@ -415,18 +378,14 @@
     <!-- ===== PAGE ===== -->
     <div class="page">
 
-        <!-- ============================================================ -->
-        <!-- 區域一：快速入帳 -->
-        <!-- ============================================================ -->
+        <!-- 快速入帳 -->
         <div class="bill-card">
             <h3>⚡ 快速入帳</h3>
             <form class="bill-form" id="billForm" autocomplete="off">
-
                 <div class="form-row">
                     <label>📅 日期</label>
                     <input type="date" id="billDate" />
                 </div>
-
                 <div class="form-row">
                     <label>🏷️ 分類</label>
                     <div class="category-pills" id="categoryPills">
@@ -439,7 +398,6 @@
                         <span class="pill" data-cat="other">🛍️ 雜項</span>
                     </div>
                 </div>
-
                 <div class="form-row">
                     <label>👤 誰付款？</label>
                     <div class="payer-buttons" id="payerButtons">
@@ -449,12 +407,10 @@
                         <button type="button" class="payer-btn" data-payer="Z">Z</button>
                     </div>
                 </div>
-
                 <div class="form-row">
                     <label>💰 金額 (¥)</label>
                     <input type="number" id="billAmount" placeholder="0.00" step="0.01" min="0" />
                 </div>
-
                 <div class="form-row">
                     <label>👥 參與人 <span class="select-all" id="selectAllToggle">全選</span></label>
                     <div class="participant-group" id="participantGroup">
@@ -464,23 +420,17 @@
                         <label><input type="checkbox" value="Z" checked /> Z</label>
                     </div>
                 </div>
-
-                <!-- 📝 備註欄位 -->
                 <div class="form-row">
                     <label>📝 備註 (選擇性)</label>
                     <input type="text" id="billNote" placeholder="e.g. 古城餐廳 / 玉龍雪山門票" />
                 </div>
-
                 <button type="submit" class="btn-add-bill">➕ 記帳</button>
             </form>
         </div>
 
-        <!-- ============================================================ -->
-        <!-- 區域二：歷史消費 -->
-        <!-- ============================================================ -->
+        <!-- 歷史消費 -->
         <div class="bill-card">
             <h3>📜 歷史消費</h3>
-
             <div class="filter-bar" id="filterBar">
                 <button class="filter-btn active" data-filter="all">全部</button>
                 <button class="filter-btn" data-filter="today">今日</button>
@@ -492,15 +442,12 @@
                 <button class="filter-btn" data-filter="transport">🚗</button>
                 <button class="filter-btn" data-filter="other">🛍️</button>
             </div>
-
             <div id="billList">
                 <div class="empty-state">📭 未有消費記錄</div>
             </div>
         </div>
 
-        <!-- ============================================================ -->
-        <!-- 區域三：結算總覽 -->
-        <!-- ============================================================ -->
+        <!-- 結算總覽 -->
         <div class="bill-card">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
                 <h3 style="margin-bottom:0;">📊 結算總覽</h3>
@@ -509,13 +456,11 @@
                     <span class="status-label" id="statusLabel">連線中...</span>
                 </div>
             </div>
-
             <div id="settlementResult">
                 <ul class="settlement-list" id="settlementList">
                     <li style="color:#B5A89A; text-align:center; padding:12px 0;">未有帳單，記第一筆數啦！</li>
                 </ul>
             </div>
-
             <div class="total-spend">
                 <span>🧾 團隊總支出</span>
                 <span><strong id="totalSpend">¥0.00</strong></span>
@@ -528,9 +473,6 @@
     <button class="back-to-top" id="backToTopBtn" aria-label="返回頂部">⬆</button>
 
     <script>
-        // ================================================================
-        //  1. FIREBASE 設定
-        // ================================================================
         const firebaseConfig = {
             apiKey: "AIzaSyAtthBBNoHJkN6B_e8DVjzDpK_eB0wfExo",
             authDomain: "yunnan-trip-d5626.firebaseapp.com",
@@ -540,38 +482,17 @@
             messagingSenderId: "956753515518",
             appId: "1:956753515518:web:ef19ac8a7b45bdf83426af"
         };
-
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // ================================================================
-        //  2. 狀態 & 常量
-        // ================================================================
         const MEMBERS = ['J', 'C', 'K', 'Z'];
-        const CATEGORY_LABELS = {
-            breakfast: '早餐',
-            lunch: '午餐',
-            dinner: '晚餐',
-            snack: '咖啡小食',
-            ticket: '門票',
-            transport: '交通',
-            other: '雜項'
-        };
-        const CATEGORY_ICONS = {
-            breakfast: '🍞',
-            lunch: '🍱',
-            dinner: '🍷',
-            snack: '☕',
-            ticket: '🎟️',
-            transport: '🚗',
-            other: '🛍️'
-        };
+        const CATEGORY_LABELS = { breakfast: '早餐', lunch: '午餐', dinner: '晚餐', snack: '咖啡小食', ticket: '門票', transport: '交通', other: '雜項' };
+        const CATEGORY_ICONS = { breakfast: '🍞', lunch: '🍱', dinner: '🍷', snack: '☕', ticket: '🎟️', transport: '🚗', other: '🛍️' };
 
         let allBills = [];
         let currentFilter = 'all';
         let isOnline = navigator.onLine;
 
-        // DOM refs
         const $ = id => document.getElementById(id);
         const billForm = $('billForm');
         const billDate = $('billDate');
@@ -588,46 +509,35 @@
         const statusLabel = $('statusLabel');
         const filterBar = $('filterBar');
 
-        // ================================================================
-        //  3. 初始化
-        // ================================================================
         function initForm() {
             const today = new Date();
             billDate.value = today.toISOString().split('T')[0];
-
             const firstPill = categoryPills.querySelector('.pill');
             if (firstPill) firstPill.classList.add('active');
-
             const firstPayer = payerButtons.querySelector('.payer-btn');
             if (firstPayer) firstPayer.classList.add('active');
-
             updateSelectAllText();
-
             categoryPills.querySelectorAll('.pill').forEach(el => {
                 el.addEventListener('click', function() {
                     categoryPills.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
                     this.classList.add('active');
                 });
             });
-
             payerButtons.querySelectorAll('.payer-btn').forEach(el => {
                 el.addEventListener('click', function() {
                     payerButtons.querySelectorAll('.payer-btn').forEach(p => p.classList.remove('active'));
                     this.classList.add('active');
                 });
             });
-
             selectAllToggle.addEventListener('click', function() {
                 const checks = participantGroup.querySelectorAll('input[type="checkbox"]');
                 const allChecked = Array.from(checks).every(c => c.checked);
                 checks.forEach(c => c.checked = !allChecked);
                 updateSelectAllText();
             });
-
             participantGroup.querySelectorAll('input[type="checkbox"]').forEach(cb => {
                 cb.addEventListener('change', updateSelectAllText);
             });
-
             billForm.addEventListener('submit', handleAddBill);
         }
 
@@ -637,63 +547,41 @@
             selectAllToggle.textContent = allChecked ? '全選' : '全部取消';
         }
 
-        // ================================================================
-        //  4. 新增帳單 (含備註)
-        // ================================================================
         function handleAddBill(e) {
             e.preventDefault();
-
             const date = billDate.value;
             if (!date) { alert('請揀日期'); return; }
-
             const activeCat = categoryPills.querySelector('.pill.active');
             if (!activeCat) { alert('請揀分類'); return; }
             const category = activeCat.dataset.cat;
-
             const activePayer = payerButtons.querySelector('.payer-btn.active');
             if (!activePayer) { alert('請揀付款人'); return; }
             const payer = activePayer.dataset.payer;
-
             const amount = parseFloat(billAmount.value);
             if (!amount || amount <= 0) { alert('請輸入有效金額'); return; }
-
             const participants = [];
             participantGroup.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => {
                 participants.push(cb.value);
             });
             if (participants.length === 0) { alert('至少揀一位參與人'); return; }
-
             const note = billNote.value.trim();
-
             const bill = {
-                date: date,
-                category: category,
-                categoryLabel: CATEGORY_LABELS[category] || category,
-                payer: payer,
-                amount: Math.round(amount * 100) / 100,
-                participants: participants,
-                note: note,
+                date, category, categoryLabel: CATEGORY_LABELS[category] || category,
+                payer, amount: Math.round(amount * 100) / 100,
+                participants, note,
                 timestamp: Date.now(),
                 id: 'local_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6)
             };
-
             savePendingBill(bill);
             allBills.push(bill);
             sortBills();
             renderAll();
-
-            if (isOnline) {
-                syncPendingBills();
-            }
-
+            if (isOnline) syncPendingBills();
             billAmount.value = '';
             billNote.value = '';
             billAmount.focus();
         }
 
-        // ================================================================
-        //  5. localStorage 離線佇列
-        // ================================================================
         function savePendingBill(bill) {
             const pending = JSON.parse(localStorage.getItem('pendingBills') || '[]');
             pending.push(bill);
@@ -704,16 +592,11 @@
             return JSON.parse(localStorage.getItem('pendingBills') || '[]');
         }
 
-        // ================================================================
-        //  6. Firebase 同步
-        // ================================================================
         function syncPendingBills() {
             if (!isOnline) return;
             const pending = getPendingBills();
             if (pending.length === 0) return;
-
             const billsRef = db.ref('trip-bills');
-
             pending.forEach((bill, index) => {
                 const { id, ...billData } = bill;
                 billsRef.push(billData, (error) => {
@@ -733,16 +616,11 @@
                 const firebaseBills = [];
                 if (data) {
                     Object.keys(data).forEach(key => {
-                        firebaseBills.push({
-                            id: key,
-                            ...data[key]
-                        });
+                        firebaseBills.push({ id: key, ...data[key] });
                     });
                 }
-
                 const pending = getPendingBills();
                 const all = [...firebaseBills, ...pending];
-
                 const unique = [];
                 const seen = new Set();
                 all.forEach(b => {
@@ -752,7 +630,6 @@
                         unique.push(b);
                     }
                 });
-
                 allBills = unique;
                 sortBills();
                 renderAll();
@@ -769,9 +646,6 @@
             });
         }
 
-        // ================================================================
-        //  7. 排序 & 渲染
-        // ================================================================
         function sortBills() {
             allBills.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
         }
@@ -784,29 +658,22 @@
 
         function renderSettlement() {
             if (allBills.length === 0) {
-                settlementList.innerHTML =
-                    `<li style="color:#B5A89A; text-align:center; padding:12px 0;">未有帳單，記第一筆數啦！</li>`;
+                settlementList.innerHTML = `<li style="color:#B5A89A; text-align:center; padding:12px 0;">未有帳單，記第一筆數啦！</li>`;
                 return;
             }
-
             const balance = {};
             MEMBERS.forEach(m => balance[m] = 0);
-
             allBills.forEach(bill => {
                 const share = bill.amount / bill.participants.length;
-                bill.participants.forEach(p => {
-                    if (balance[p] !== undefined) balance[p] -= share;
-                });
+                bill.participants.forEach(p => { if (balance[p] !== undefined) balance[p] -= share; });
                 if (balance[bill.payer] !== undefined) balance[bill.payer] += bill.amount;
             });
-
             const debtors = [];
             const creditors = [];
             MEMBERS.forEach(m => {
                 if (balance[m] < -0.005) debtors.push({ name: m, amt: -balance[m] });
                 if (balance[m] > 0.005) creditors.push({ name: m, amt: balance[m] });
             });
-
             const transactions = [];
             let i = 0,
                 j = 0;
@@ -822,16 +689,12 @@
                 if (d.amt < 0.005) i++;
                 if (c.amt < 0.005) j++;
             }
-
             if (transactions.length === 0) {
                 settlementList.innerHTML = `<li class="settlement-clear">🎉 數已清，冇拖冇欠！</li>`;
             } else {
                 let html = '';
                 transactions.forEach(t => {
-                    html += `<li>
-                                <span>👉 <strong>${t.from}</strong> 俾 <strong>${t.to}</strong></span>
-                                <span class="settlement-amount">¥${t.amount.toFixed(2)}</span>
-                            </li>`;
+                    html += `<li><span>👉 <strong>${t.from}</strong> 俾 <strong>${t.to}</strong></span><span class="settlement-amount">¥${t.amount.toFixed(2)}</span></li>`;
                 });
                 settlementList.innerHTML = html;
             }
@@ -839,48 +702,40 @@
 
         function renderBillList() {
             let filtered = [...allBills];
-
             if (currentFilter === 'today') {
                 const today = new Date().toISOString().split('T')[0];
                 filtered = filtered.filter(b => b.date === today);
             } else if (currentFilter !== 'all') {
                 filtered = filtered.filter(b => b.category === currentFilter);
             }
-
             if (filtered.length === 0) {
                 billList.innerHTML = `<div class="empty-state">📭 沒有符合嘅記錄</div>`;
                 return;
             }
-
             let html = '';
             filtered.forEach(bill => {
                 const icon = CATEGORY_ICONS[bill.category] || '📌';
                 const participantsStr = bill.participants.join(', ');
                 const isPending = bill.id && bill.id.startsWith('local_');
                 const pendingBadge = isPending ? `<span class="pending-badge">⏳ 同步中</span>` : '';
-
                 const noteHtml = bill.note ? `<span class="note">📝 ${bill.note}</span>` : '';
-
-                html += `
-                            <div class="bill-item">
-                                <div class="left">
-                                    <div class="top">
-                                        <span class="cat">${icon} ${bill.categoryLabel || bill.category}</span>
-                                        <span class="desc">${bill.date}</span>
-                                        ${pendingBadge}
-                                    </div>
-                                    <div class="meta">👤 ${bill.payer} ｜ 👥 ${participantsStr}</div>
-                                    ${noteHtml}
+                html += `<div class="bill-item">
+                            <div class="left">
+                                <div class="top">
+                                    <span class="cat">${icon} ${bill.categoryLabel || bill.category}</span>
+                                    <span class="desc">${bill.date}</span>
+                                    ${pendingBadge}
                                 </div>
-                                <div class="right">
-                                    <div class="amount">¥${bill.amount.toFixed(2)}</div>
-                                    <button class="delete-btn" data-id="${bill.id}">✕</button>
-                                </div>
+                                <div class="meta">👤 ${bill.payer} ｜ 👥 ${participantsStr}</div>
+                                ${noteHtml}
                             </div>
-                        `;
+                            <div class="right">
+                                <div class="amount">¥${bill.amount.toFixed(2)}</div>
+                                <button class="delete-btn" data-id="${bill.id}">✕</button>
+                            </div>
+                        </div>`;
             });
             billList.innerHTML = html;
-
             billList.querySelectorAll('.delete-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const id = this.dataset.id;
@@ -894,14 +749,9 @@
             totalSpend.textContent = '¥' + total.toFixed(2);
         }
 
-        // ================================================================
-        //  8. 刪除帳單
-        // ================================================================
         function deleteBill(id) {
             if (!confirm('確定刪除呢筆記錄？')) return;
-
             allBills = allBills.filter(b => b.id !== id);
-
             if (!id.startsWith('local_')) {
                 db.ref('trip-bills/' + id).remove().catch(err => console.warn('刪除失敗', err));
             } else {
@@ -909,13 +759,9 @@
                 const updated = pending.filter(b => b.id !== id);
                 localStorage.setItem('pendingBills', JSON.stringify(updated));
             }
-
             renderAll();
         }
 
-        // ================================================================
-        //  9. 連線狀態
-        // ================================================================
         function updateOnlineStatus(online) {
             isOnline = online;
             if (online) {
@@ -936,22 +782,15 @@
             window.addEventListener('offline', () => {
                 updateOnlineStatus(false);
             });
-
             updateOnlineStatus(navigator.onLine);
-
             const connectedRef = db.ref('.info/connected');
             connectedRef.on('value', (snap) => {
                 const connected = snap.val() === true;
                 updateOnlineStatus(connected);
-                if (connected) {
-                    syncPendingBills();
-                }
+                if (connected) syncPendingBills();
             });
         }
 
-        // ================================================================
-        //  10. 篩選事件
-        // ================================================================
         function initFilter() {
             filterBar.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
@@ -963,14 +802,10 @@
             });
         }
 
-        // ================================================================
-        //  11. 倒數
-        // ================================================================
         function initCountdown() {
             const target = new Date('2026-11-11T00:00:00+08:00').getTime();
             const el = document.getElementById('countdown');
             if (!el) return;
-
             function update() {
                 const now = Date.now();
                 let diff = Math.max(0, target - now);
@@ -981,36 +816,25 @@
                 const mins = Math.floor(diff / 60000);
                 diff -= mins * 60000;
                 const secs = Math.floor(diff / 1000);
-                el.innerHTML =
-                    `⏳ 距離出發仲有 <span class="highlight">${days}</span> 日 <span class="highlight">${hours}</span> 小時 <span class="highlight">${mins}</span> 分鐘 <span class="highlight">${secs}</span> 秒`;
+                el.innerHTML = `⏳ 距離出發仲有 <span class="highlight">${days}</span> 日 <span class="highlight">${hours}</span> 小時 <span class="highlight">${mins}</span> 分鐘 <span class="highlight">${secs}</span> 秒`;
             }
             update();
             setInterval(update, 1000);
         }
 
-        // ================================================================
-        //  12. 啟動
-        // ================================================================
         function init() {
             initForm();
             initFilter();
             initNetworkListener();
             initCountdown();
-
             loadFromFirebase();
-
-            if (navigator.onLine) {
-                setTimeout(syncPendingBills, 2000);
-            }
+            if (navigator.onLine) setTimeout(syncPendingBills, 2000);
         }
 
         document.addEventListener('DOMContentLoaded', init);
-    </script>
 
-    <!-- ===== 返回頂部按鈕控制 ===== -->
-    <script>
+        // 返回頂部按鈕控制
         const backToTopBtn = document.getElementById('backToTopBtn');
-
         window.addEventListener('scroll', function() {
             if (window.scrollY > 300) {
                 backToTopBtn.classList.add('show');
@@ -1018,7 +842,6 @@
                 backToTopBtn.classList.remove('show');
             }
         });
-
         backToTopBtn.addEventListener('click', function() {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
