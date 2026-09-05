@@ -353,32 +353,6 @@
             margin-left: 6px;
         }
 
-        /* ===== 返回頂部按鈕 (跟其他頁面一致) ===== */
-        #backToTop {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 99;
-            width: 48px;
-            height: 48px;
-            border: none;
-            border-radius: 50%;
-            background: #007AFF;
-            color: #fff;
-            font-size: 24px;
-            line-height: 1;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0, 122, 255, 0.3);
-            transition: 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        #backToTop:active {
-            transform: scale(0.9);
-            box-shadow: 0 2px 5px rgba(0, 122, 255, 0.2);
-        }
-
         /* 響應式微調 */
         @media (max-width: 480px) {
             .payer-buttons .payer-btn {
@@ -401,7 +375,7 @@
 
 <body>
 
-    <!-- ===== HEADER (完全保留原有風格，只改標題) ===== -->
+    <!-- ===== HEADER ===== -->
     <header class="app-header" id="heroHeader" style="background-image: url('https://raw.githubusercontent.com/pheebssvc-netizen/Yunnan-trip-2026/main/images/Lijiang.jpg');">
         <div class="header-overlay"></div>
         <div class="header-content">
@@ -416,7 +390,7 @@
         </div>
     </header>
 
-    <!-- ===== TAB NAV (留待下一步更新，先照放) ===== -->
+    <!-- ===== TAB NAV ===== -->
     <nav class="tab-nav">
         <a href="index.html">📋 行程總覽</a>
         <a href="daily.html">📅 每日行程</a>
@@ -428,19 +402,17 @@
     <div class="page">
 
         <!-- ============================================================ -->
-        <!-- 區域一：快速入帳卡片 (移到最頂) -->
+        <!-- 區域一：快速入帳 -->
         <!-- ============================================================ -->
         <div class="bill-card">
             <h3>⚡ 快速入帳</h3>
             <form class="bill-form" id="billForm" autocomplete="off">
 
-                <!-- 日期 -->
                 <div class="form-row">
                     <label>📅 日期</label>
                     <input type="date" id="billDate" />
                 </div>
 
-                <!-- 分類 Pills -->
                 <div class="form-row">
                     <label>🏷️ 分類</label>
                     <div class="category-pills" id="categoryPills">
@@ -454,7 +426,6 @@
                     </div>
                 </div>
 
-                <!-- 付款人 (J, C, K, Z) -->
                 <div class="form-row">
                     <label>👤 誰付款？</label>
                     <div class="payer-buttons" id="payerButtons">
@@ -465,13 +436,11 @@
                     </div>
                 </div>
 
-                <!-- 金額 -->
                 <div class="form-row">
                     <label>💰 金額 (¥)</label>
                     <input type="number" id="billAmount" placeholder="0.00" step="0.01" min="0" />
                 </div>
 
-                <!-- 參與人 -->
                 <div class="form-row">
                     <label>👥 參與人 <span class="select-all" id="selectAllToggle">全選</span></label>
                     <div class="participant-group" id="participantGroup">
@@ -482,18 +451,16 @@
                     </div>
                 </div>
 
-                <!-- 記帳按鈕 -->
                 <button type="submit" class="btn-add-bill">➕ 記帳</button>
             </form>
         </div>
 
         <!-- ============================================================ -->
-        <!-- 區域二：歷史消費明細 (移到中間) -->
+        <!-- 區域二：歷史消費 -->
         <!-- ============================================================ -->
         <div class="bill-card">
             <h3>📜 歷史消費</h3>
 
-            <!-- 篩選 -->
             <div class="filter-bar" id="filterBar">
                 <button class="filter-btn active" data-filter="all">全部</button>
                 <button class="filter-btn" data-filter="today">今日</button>
@@ -506,14 +473,13 @@
                 <button class="filter-btn" data-filter="other">🛍️</button>
             </div>
 
-            <!-- 清單 -->
             <div id="billList">
                 <div class="empty-state">📭 未有消費記錄</div>
             </div>
         </div>
 
         <!-- ============================================================ -->
-        <!-- 區域三：結算儀表板 (移到最底) -->
+        <!-- 區域三：結算總覽 -->
         <!-- ============================================================ -->
         <div class="bill-card">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
@@ -524,14 +490,12 @@
                 </div>
             </div>
 
-            <!-- 結算結果 -->
             <div id="settlementResult">
                 <ul class="settlement-list" id="settlementList">
                     <li style="color:#B5A89A; text-align:center; padding:12px 0;">未有帳單，記第一筆數啦！</li>
                 </ul>
             </div>
 
-            <!-- 總支出 -->
             <div class="total-spend">
                 <span>🧾 團隊總支出</span>
                 <span><strong id="totalSpend">¥0.00</strong></span>
@@ -540,8 +504,8 @@
 
     </div>
 
-    <!-- ===== 返回頂部按鈕 (藍色圓形) ===== -->
-    <button id="backToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑</button>
+    <!-- ===== 返回頂部按鈕 (同其他頁面一致) ===== -->
+    <button class="back-to-top" id="backToTopBtn" aria-label="返回頂部">⬆</button>
 
     <script>
         // ================================================================
@@ -604,7 +568,7 @@
         const filterBar = $('filterBar');
 
         // ================================================================
-        //  3. 初始化：日期、表單狀態、監聽
+        //  3. 初始化
         // ================================================================
         function initForm() {
             const today = new Date();
@@ -715,10 +679,6 @@
             return JSON.parse(localStorage.getItem('pendingBills') || '[]');
         }
 
-        function clearPendingBills() {
-            localStorage.removeItem('pendingBills');
-        }
-
         // ================================================================
         //  6. Firebase 同步
         // ================================================================
@@ -728,13 +688,11 @@
             if (pending.length === 0) return;
 
             const billsRef = db.ref('trip-bills');
-            let synced = 0;
 
             pending.forEach((bill, index) => {
                 const { id, ...billData } = bill;
                 billsRef.push(billData, (error) => {
                     if (!error) {
-                        synced++;
                         const current = getPendingBills();
                         const updated = current.filter((_, i) => i !== index);
                         localStorage.setItem('pendingBills', JSON.stringify(updated));
@@ -787,15 +745,12 @@
         }
 
         // ================================================================
-        //  7. 排序
+        //  7. 排序 & 渲染
         // ================================================================
         function sortBills() {
             allBills.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
         }
 
-        // ================================================================
-        //  8. 渲染
-        // ================================================================
         function renderAll() {
             renderSettlement();
             renderBillList();
@@ -804,7 +759,8 @@
 
         function renderSettlement() {
             if (allBills.length === 0) {
-                settlementList.innerHTML = `<li style="color:#B5A89A; text-align:center; padding:12px 0;">未有帳單，記第一筆數啦！</li>`;
+                settlementList.innerHTML =
+                `<li style="color:#B5A89A; text-align:center; padding:12px 0;">未有帳單，記第一筆數啦！</li>`;
                 return;
             }
 
@@ -911,7 +867,7 @@
         }
 
         // ================================================================
-        //  9. 刪除帳單
+        //  8. 刪除帳單
         // ================================================================
         function deleteBill(id) {
             if (!confirm('確定刪除呢筆記錄？')) return;
@@ -930,7 +886,7 @@
         }
 
         // ================================================================
-        //  10. 連線狀態
+        //  9. 連線狀態
         // ================================================================
         function updateOnlineStatus(online) {
             isOnline = online;
@@ -966,7 +922,7 @@
         }
 
         // ================================================================
-        //  11. 篩選事件
+        //  10. 篩選事件
         // ================================================================
         function initFilter() {
             filterBar.querySelectorAll('.filter-btn').forEach(btn => {
@@ -980,7 +936,7 @@
         }
 
         // ================================================================
-        //  12. 倒數
+        //  11. 倒數
         // ================================================================
         function initCountdown() {
             const target = new Date('2026-11-11T00:00:00+08:00').getTime();
@@ -1005,7 +961,7 @@
         }
 
         // ================================================================
-        //  13. 啟動
+        //  12. 啟動
         // ================================================================
         function init() {
             initForm();
