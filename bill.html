@@ -1007,6 +1007,23 @@
 
         document.addEventListener('DOMContentLoaded', init);
     </script>
+<script>
 
+    // 返回頂部按鈕控制
+    const backToTopBtn = document.getElementById('backToTopBtn');
+
+    window.addEventListener('scroll', function() {
+        if (window.scrollY > 300) {
+            backToTopBtn.classList.add('show');
+        } else {
+            backToTopBtn.classList.remove('show');
+        }
+    });
+
+    // 點擊按鈕平滑返回頂部
+    backToTopBtn.addEventListener('click', function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+</script>
 </body>
 </html>
