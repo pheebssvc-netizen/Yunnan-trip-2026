@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <title>公費AA · 雲南滇西12日</title>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js">
+    </script>
+
+    <!-- 共用樣式 -->
+    <link rel="stylesheet" href="style.css" />
+
+    <style>
+        /* ===== 額外樣式 (不影響原有 style.css) ===== */
+
+        /* 記帳專用卡片 */
+        .bill-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 16px 18px;
+            margin-bottom: 14px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        }
+        .bill-card h3 {
+            font-size: 1.0rem;
+            color: #E07A5F;
+            border-left: 5px solid #E9C46A;
+            padding-left: 12px;
+            margin-bottom: 12px;
+        }
+
+        /* 連線狀態燈 */
+        .status-dot {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+        .status-dot.online {
+            background: #2ECC71;
+            box-shadow: 0 0 8px rgba(46, 204, 113, 0.5);
+        }
+        .status-dot.offline {
+            background: #F39C12;
+            box-shadow: 0 0 8px rgba(243, 156, 18, 0.5);
+        }
+        .status-label {
+            font-size: 0.75rem;
+            color: #6B5A4A;
+            vertical-align: middle;
+        }
+
+        /* 結算結果 */
+        .settlement-list {
+            list-style: none;
+            padding: 0;
+            margin: 6px 0 0;
+        }
+        .settlement-list li {
+            padding: 6px 0;
+            font-size: 0.95rem;
+            border-bottom: 1px solid #F5F0EB;
+            display: flex;
+            justify-content: space-between;
+        }
+        .settlement-list li:last-child {
+            border-bottom: none;
+        }
+        .settlement-arrow {
+            color: #E07A5F;
+            font-weight: 600;
+        }
+        .settlement-amount {
+            font-weight: 700;
+            color: #2D241A;
+        }
+        .settlement-clear {
+            text-align: center;
+            color: #2ECC71;
+            font-weight: 600;
+            font-size: 1.05rem;
+            padding: 8px 0;
+        }
+        .total-spend {
+            font-size: 0.85rem;
+            color: #6B5A4A;
+            margin-top: 6px;
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid #EDE7E0;
+            padding-top: 8px;
+        }
+        .total-spend strong {
+            color: #2D241A;
+        }
+
+        /* 表單 */
+        .bill-form .form-row {
+            margin-bottom: 12px;
+        }
+        .bill-form .form-row label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #6B5A4A;
+            margin-bottom: 4px;
+        }
+        .bill-form .form-row input[type="date"],
+        .bill-form .form-row input[type="number"] {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 30px;
+            border: 1.5px solid #EDE7E0;
+            font-size: 0.95rem;
+            background: #FFFBF5;
+            transition: 0.15s;
+            outline: none;
+            font-family: inherit;
+        }
+        .bill-form .form-row input:focus {
+            border-color: #E07A5F;
+            background: #fff;
+        }
+        .bill-form .form-row input[type="number"] {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        /* 分類 Pills */
+        .category-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .category-pills .pill {
+            padding: 6px 14px;
+            border-radius: 30px;
+            border: 2px solid #EDE7E0;
+            background: #fff;
+            font-size: 0.78rem;
+            font-weight: 500;
+            color: #6B5A4A;
+            cursor: pointer;
+            transition: 0.15s;
+            user-select: none;
+        }
+        .category-pills .pill:active {
+            transform: scale(0.94);
+        }
+        .category-pills .pill.active {
+            background: #E07A5F;
+            color: #fff;
+            border-color: #E07A5F;
+        }
+
+        /* 付款人按鈕 (J, C, K, Z) */
+        .payer-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .payer-buttons .payer-btn {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: 2.5px solid #EDE7E0;
+            background: #fff;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #6B5A4A;
+            cursor: pointer;
+            transition: 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .payer-buttons .payer-btn:active {
+            transform: scale(0.92);
+        }
+        .payer-buttons .payer-btn.active {
+            background: #E07A5F;
+            color: #fff;
+            border-color: #E07A5F;
+            box-shadow: 0 0 0 3px rgba(224, 122, 95, 0.25);
+        }
+
+        /* 參與人 Checkbox */
+        .participant-group {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .participant-group label {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #2D241A;
+            cursor: pointer;
+        }
+        .participant-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #E07A5F;
+            cursor: pointer;
+        }
+        .participant-group .select-all {
+            font-size: 0.75rem;
+            color: #E07A5F;
+            cursor: pointer;
+            font-weight: 600;
+            margin-left: 4px;
+        }
+
+        /* 記帳按鈕 */
+        .btn-add-bill {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 30px;
+            background: #E07A5F;
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.15s;
+            letter-spacing: 0.5px;
+        }
+        .btn-add-bill:active {
+            transform: scale(0.96);
+            background: #C96A4F;
+        }
+
+        /* 歷史明細 */
+        .bill-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #F5F0EB;
+        }
+        .bill-item:last-child {
+            border-bottom: none;
+        }
+        .bill-item .left {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            flex: 1;
+        }
+        .bill-item .left .top {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .bill-item .left .top .cat {
+            font-size: 0.7rem;
+            background: #F5F0EB;
+            padding: 2px 10px;
+            border-radius: 30px;
+            color: #6B5A4A;
+        }
+        .bill-item .left .top .desc {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #2D241A;
+        }
+        .bill-item .left .meta {
+            font-size: 0.7rem;
+            color: #8A7A6A;
+        }
+        .bill-item .right {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 2px;
+        }
+        .bill-item .right .amount {
+            font-weight: 700;
+            font-size: 1.0rem;
+            color: #2D241A;
+        }
+        .bill-item .right .payers {
+            font-size: 0.65rem;
+            color: #8A7A6A;
+        }
+        .bill-item .delete-btn {
+            background: none;
+            border: none;
+            color: #D5C8BC;
+            font-size: 1.1rem;
+            cursor: pointer;
+            padding: 4px 6px;
+            transition: 0.15s;
+        }
+        .bill-item .delete-btn:active {
+            color: #E07A5F;
+            transform: scale(0.9);
+        }
+
+        /* 篩選列 */
+        .filter-bar {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+        .filter-bar .filter-btn {
+            padding: 4px 14px;
+            border-radius: 30px;
+            border: 1.5px solid #EDE7E0;
+            background: #fff;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #6B5A4A;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .filter-bar .filter-btn:active {
+            transform: scale(0.94);
+        }
+        .filter-bar .filter-btn.active {
+            background: #E07A5F;
+            color: #fff;
+            border-color: #E07A5F;
+        }
+
+        /* 空狀態 */
+        .empty-state {
+            text-align: center;
+            padding: 24px 0;
+            color: #B5A89A;
+            font-size: 0.9rem;
+        }
+
+        /* 離線提示小標籤 */
+        .pending-badge {
+            font-size: 0.6rem;
+            background: #F39C12;
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: 30px;
+            margin-left: 6px;
+        }
+
+        /* 響應式微調 */
+        @media (max-width: 480px) {
+            .payer-buttons .payer-btn {
+                width: 48px;
+                height: 48px;
+                font-size: 1.0rem;
+            }
+            .participant-group {
+                gap: 10px;
+            }
+            .bill-item .left .top .desc {
+                font-size: 0.82rem;
+            }
+            .bill-item .right .amount {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <header class="app-header" id="heroHeader" style="background-image: url('https://raw.githubusercontent.com/pheebssvc-netizen/Yunnan-trip-2026/main/images/Lijiang.jpg');">
+        <div class="header-overlay"></div>
+        <div class="header-content">
+            <h1>🧾 公費 AA 結帳</h1>
+            <div class="countdown" id="countdown">⏳ 距離出發仲有 <span class="highlight">67</span> 日 <span class="highlight">5</span> 小時 <span class="highlight">5</span> 分鐘 <span class="highlight">8</span> 秒</div>
+            <div class="header-divider">
+                <span class="dot"></span>
+                <span class="line"></span>
+                <span class="dot"></span>
+            </div>
+            <div class="sub">4人同行 ｜ 即時同步 · 離線都用到</div>
+        </div>
+    </header>
+
+    <!-- ===== TAB NAV ===== -->
+    <nav class="tab-nav">
+        <a href="index.html">📋 行程總覽</a>
+        <a href="daily.html">📅 每日行程</a>
+        <a href="info.html">📌 重要資訊</a>
+        <a href="bill.html" class="active">🧾 公費AA</a>
+    </nav>
+
+    <!-- ===== PAGE ===== -->
+    <div class="page">
+
+        <!-- ============================================================ -->
+        <!-- 區域一：結算儀表板 -->
+        <!-- ============================================================ -->
+        <div class="bill-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                <h3 style="margin-bottom:0;">📊 結算總覽</h3>
+                <div>
+                    <span class="status-dot online" id="statusDot"></span>
+                    <span class="status-label" id="statusLabel">連線中...</span>
+                </div>
+            </div>
+
+            <!-- 結算結果 -->
+            <div id="settlementResult">
+                <ul class="settlement-list" id="settlementList">
+                    <li style="color:#B5A89A; text-align:center; padding:12px 0;">未有帳單，記第一筆數啦！</li>
+                </ul>
+            </div>
+
+            <!-- 總支出 -->
+            <div class="total-spend">
+                <span>🧾 團隊總支出</span>
+                <span><strong id="totalSpend">¥0.00</strong></span>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- 區域二：快速入帳表單 -->
+        <!-- ============================================================ -->
+        <div class="bill-card">
+            <h3>⚡ 快速入帳</h3>
+            <form class="bill-form" id="billForm" autocomplete="off">
+
+                <!-- 日期 -->
+                <div class="form-row">
+                    <label>📅 日期</label>
+                    <input type="date" id="billDate" />
+                </div>
+
+                <!-- 分類 Pills -->
+                <div class="form-row">
+                    <label>🏷️ 分類</label>
+                    <div class="category-pills" id="categoryPills">
+                        <span class="pill" data-cat="breakfast">🍞 早餐</span>
+                        <span class="pill" data-cat="lunch">🍱 午餐</span>
+                        <span class="pill" data-cat="dinner">🍷 晚餐</span>
+                        <span class="pill" data-cat="snack">☕ 咖啡小食</span>
+                        <span class="pill" data-cat="ticket">🎟️ 門票</span>
+                        <span class="pill" data-cat="transport">🚗 交通</span>
+                        <span class="pill" data-cat="other">🛍️ 雜項</span>
+                    </div>
+                </div>
+
+                <!-- 付款人 (J, C, K, Z) -->
+                <div class="form-row">
+                    <label>👤 誰付款？</label>
+                    <div class="payer-buttons" id="payerButtons">
+                        <button type="button" class="payer-btn" data-payer="J">J</button>
+                        <button type="button" class="payer-btn" data-payer="C">C</button>
+                        <button type="button" class="payer-btn" data-payer="K">K</button>
+                        <button type="button" class="payer-btn" data-payer="Z">Z</button>
+                    </div>
+                </div>
+
+                <!-- 金額 -->
+                <div class="form-row">
+                    <label>💰 金額 (¥)</label>
+                    <input type="number" id="billAmount" placeholder="0.00" step="0.01" min="0" />
+                </div>
+
+                <!-- 參與人 -->
+                <div class="form-row">
+                    <label>👥 參與人 <span class="select-all" id="selectAllToggle">全選</span></label>
+                    <div class="participant-group" id="participantGroup">
+                        <label><input type="checkbox" value="J" checked /> J</label>
+                        <label><input type="checkbox" value="C" checked /> C</label>
+                        <label><input type="checkbox" value="K" checked /> K</label>
+                        <label><input type="checkbox" value="Z" checked /> Z</label>
+                    </div>
+                </div>
+
+                <!-- 記帳按鈕 -->
+                <button type="submit" class="btn-add-bill">➕ 記帳</button>
+            </form>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- 區域三：歷史消費明細 -->
+        <!-- ============================================================ -->
+        <div class="bill-card">
+            <h3>📜 歷史消費</h3>
+
+            <!-- 篩選 -->
+            <div class="filter-bar" id="filterBar">
+                <button class="filter-btn active" data-filter="all">全部</button>
+                <button class="filter-btn" data-filter="today">今日</button>
+                <button class="filter-btn" data-filter="breakfast">🍞</button>
+                <button class="filter-btn" data-filter="lunch">🍱</button>
+                <button class="filter-btn" data-filter="dinner">🍷</button>
+                <button class="filter-btn" data-filter="snack">☕</button>
+                <button class="filter-btn" data-filter="ticket">🎟️</button>
+                <button class="filter-btn" data-filter="transport">🚗</button>
+                <button class="filter-btn" data-filter="other">🛍️</button>
+            </div>
+
+            <!-- 清單 -->
+            <div id="billList">
+                <div class="empty-state">📭 未有消費記錄</div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // ================================================================
+        //  1. FIREBASE 設定 (請替換成你自己的 config)
+        // ================================================================
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT.firebaseapp.com",
+            databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+            projectId: "YOUR_PROJECT",
+            storageBucket: "YOUR_PROJECT.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // ================================================================
+        //  2. 狀態 & 常量
+        // ================================================================
+        const MEMBERS = ['J', 'C', 'K', 'Z'];
+        const CATEGORY_LABELS = {
+            breakfast: '早餐',
+            lunch: '午餐',
+            dinner: '晚餐',
+            snack: '咖啡小食',
+            ticket: '門票',
+            transport: '交通',
+            other: '雜項'
+        };
+        const CATEGORY_ICONS = {
+            breakfast: '🍞',
+            lunch: '🍱',
+            dinner: '🍷',
+            snack: '☕',
+            ticket: '🎟️',
+            transport: '🚗',
+            other: '🛍️'
+        };
+
+        let allBills = []; // 所有帳單 (已排序)
+        let currentFilter = 'all';
+        let isOnline = navigator.onLine;
+
+        // DOM refs
+        const $ = id => document.getElementById(id);
+        const billForm = $('billForm');
+        const billDate = $('billDate');
+        const categoryPills = $('categoryPills');
+        const payerButtons = $('payerButtons');
+        const billAmount = $('billAmount');
+        const participantGroup = $('participantGroup');
+        const selectAllToggle = $('selectAllToggle');
+        const billList = $('billList');
+        const settlementList = $('settlementList');
+        const totalSpend = $('totalSpend');
+        const statusDot = $('statusDot');
+        const statusLabel = $('statusLabel');
+        const filterBar = $('filterBar');
+
+        // ================================================================
+        //  3. 初始化：日期、表單狀態、監聽
+        // ================================================================
+        function initForm() {
+            // 日期預設今日
+            const today = new Date();
+            billDate.value = today.toISOString().split('T')[0];
+
+            // 預設選中第一個分類
+            const firstPill = categoryPills.querySelector('.pill');
+            if (firstPill) firstPill.classList.add('active');
+
+            // 預設選中第一個付款人
+            const firstPayer = payerButtons.querySelector('.payer-btn');
+            if (firstPayer) firstPayer.classList.add('active');
+
+            // 參與人預設全選
+            updateSelectAllText();
+
+            // 監聽分類點擊
+            categoryPills.querySelectorAll('.pill').forEach(el => {
+                el.addEventListener('click', function() {
+                    categoryPills.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // 監聽付款人點擊
+            payerButtons.querySelectorAll('.payer-btn').forEach(el => {
+                el.addEventListener('click', function() {
+                    payerButtons.querySelectorAll('.payer-btn').forEach(p => p.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // 全選/取消全選
+            selectAllToggle.addEventListener('click', function() {
+                const checks = participantGroup.querySelectorAll('input[type="checkbox"]');
+                const allChecked = Array.from(checks).every(c => c.checked);
+                checks.forEach(c => c.checked = !allChecked);
+                updateSelectAllText();
+            });
+
+            // 監聽 checkbox 變化更新全選文字
+            participantGroup.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                cb.addEventListener('change', updateSelectAllText);
+            });
+
+            // 表單提交
+            billForm.addEventListener('submit', handleAddBill);
+        }
+
+        function updateSelectAllText() {
+            const checks = participantGroup.querySelectorAll('input[type="checkbox"]');
+            const allChecked = Array.from(checks).every(c => c.checked);
+            selectAllToggle.textContent = allChecked ? '全選' : '全部取消';
+        }
+
+        // ================================================================
+        //  4. 新增帳單 (含離線佇列)
+        // ================================================================
+        function handleAddBill(e) {
+            e.preventDefault();
+
+            // 取得日期
+            const date = billDate.value;
+            if (!date) { alert('請揀日期'); return; }
+
+            // 取得分類
+            const activeCat = categoryPills.querySelector('.pill.active');
+            if (!activeCat) { alert('請揀分類'); return; }
+            const category = activeCat.dataset.cat;
+
+            // 取得付款人
+            const activePayer = payerButtons.querySelector('.payer-btn.active');
+            if (!activePayer) { alert('請揀付款人'); return; }
+            const payer = activePayer.dataset.payer;
+
+            // 金額
+            const amount = parseFloat(billAmount.value);
+            if (!amount || amount <= 0) { alert('請輸入有效金額'); return; }
+
+            // 參與人
+            const participants = [];
+            participantGroup.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => {
+                participants.push(cb.value);
+            });
+            if (participants.length === 0) { alert('至少揀一位參與人'); return; }
+
+            // 建立帳單物件
+            const bill = {
+                date: date,
+                category: category,
+                categoryLabel: CATEGORY_LABELS[category] || category,
+                payer: payer,
+                amount: Math.round(amount * 100) / 100,
+                participants: participants,
+                timestamp: Date.now(),
+                id: 'local_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6)
+            };
+
+            // 先存入 localStorage (pending)
+            savePendingBill(bill);
+
+            // 立即顯示
+            allBills.push(bill);
+            sortBills();
+            renderAll();
+
+            // 嘗試同步到 Firebase
+            if (isOnline) {
+                syncPendingBills();
+            }
+
+            // 清空金額，保留其他
+            billAmount.value = '';
+            billAmount.focus();
+        }
+
+        // ================================================================
+        //  5. localStorage 離線佇列
+        // ================================================================
+        function savePendingBill(bill) {
+            const pending = JSON.parse(localStorage.getItem('pendingBills') || '[]');
+            pending.push(bill);
+            localStorage.setItem('pendingBills', JSON.stringify(pending));
+        }
+
+        function getPendingBills() {
+            return JSON.parse(localStorage.getItem('pendingBills') || '[]');
+        }
+
+        function clearPendingBills() {
+            localStorage.removeItem('pendingBills');
+        }
+
+        // ================================================================
+        //  6. Firebase 同步
+        // ================================================================
+        function syncPendingBills() {
+            if (!isOnline) return;
+            const pending = getPendingBills();
+            if (pending.length === 0) return;
+
+            const billsRef = db.ref('trip-bills');
+            let synced = 0;
+
+            pending.forEach((bill, index) => {
+                // 移除本地 id，讓 Firebase 產生新 key
+                const { id, ...billData } = bill;
+                billsRef.push(billData, (error) => {
+                    if (!error) {
+                        synced++;
+                        // 從 pending 移除
+                        const current = getPendingBills();
+                        const updated = current.filter((_, i) => i !== index);
+                        localStorage.setItem('pendingBills', JSON.stringify(updated));
+                    }
+                });
+            });
+        }
+
+        function loadFromFirebase() {
+            const billsRef = db.ref('trip-bills');
+            billsRef.on('value', (snapshot) => {
+                const data = snapshot.val();
+                const firebaseBills = [];
+                if (data) {
+                    Object.keys(data).forEach(key => {
+                        firebaseBills.push({
+                            id: key,
+                            ...data[key]
+                        });
+                    });
+                }
+
+                // 合併本地 pending (尚未同步上去的)
+                const pending = getPendingBills();
+                // 用 timestamp 去重 (pending 可能已有相同記錄)
+                const all = [...firebaseBills, ...pending];
+
+                // 按 timestamp 排序，並去除完全重複 (相同 timestamp + amount + payer)
+                const unique = [];
+                const seen = new Set();
+                all.forEach(b => {
+                    const key = b.timestamp + '_' + b.amount + '_' + b.payer + '_' + b.category;
+                    if (!seen.has(key)) {
+                        seen.add(key);
+                        unique.push(b);
+                    }
+                });
+
+                allBills = unique;
+                sortBills();
+                renderAll();
+                updateOnlineStatus(true);
+            }, (error) => {
+                console.warn('Firebase 讀取失敗，使用本地數據', error);
+                // 仍然用本地數據
+                const pending = getPendingBills();
+                if (pending.length > 0) {
+                    allBills = pending;
+                    sortBills();
+                    renderAll();
+                }
+                updateOnlineStatus(false);
+            });
+        }
+
+        // ================================================================
+        //  7. 排序
+        // ================================================================
+        function sortBills() {
+            allBills.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+        }
+
+        // ================================================================
+        //  8. 渲染：結算 + 清單
+        // ================================================================
+        function renderAll() {
+            renderSettlement();
+            renderBillList();
+            renderTotalSpend();
+        }
+
+        // ----- 8a. 結算 (最少轉帳次數) -----
+        function renderSettlement() {
+            if (allBills.length === 0) {
+                settlementList.innerHTML = `<li style="color:#B5A89A; text-align:center; padding:12px 0;">未有帳單，記第一筆數啦！</li>`;
+                return;
+            }
+
+            const balance = {};
+            MEMBERS.forEach(m => balance[m] = 0);
+
+            allBills.forEach(bill => {
+                const share = bill.amount / bill.participants.length;
+                bill.participants.forEach(p => {
+                    if (balance[p] !== undefined) balance[p] -= share;
+                });
+                if (balance[bill.payer] !== undefined) balance[bill.payer] += bill.amount;
+            });
+
+            // 分離 debtor 同 creditor
+            const debtors = [];
+            const creditors = [];
+            MEMBERS.forEach(m => {
+                if (balance[m] < -0.005) debtors.push({ name: m, amt: -balance[m] });
+                if (balance[m] > 0.005) creditors.push({ name: m, amt: balance[m] });
+            });
+
+            // 貪心配對
+            const transactions = [];
+            let i = 0,
+                j = 0;
+            while (i < debtors.length && j < creditors.length) {
+                const d = debtors[i];
+                const c = creditors[j];
+                const amount = Math.min(d.amt, c.amt);
+                if (amount > 0.005) {
+                    transactions.push({ from: d.name, to: c.name, amount: Math.round(amount * 100) / 100 });
+                }
+                d.amt -= amount;
+                c.amt -= amount;
+                if (d.amt < 0.005) i++;
+                if (c.amt < 0.005) j++;
+            }
+
+            // 顯示
+            if (transactions.length === 0) {
+                settlementList.innerHTML = `<li class="settlement-clear">🎉 數已清，冇拖冇欠！</li>`;
+            } else {
+                let html = '';
+                transactions.forEach(t => {
+                    html += `<li>
+                                <span>👉 <strong>${t.from}</strong> 俾 <strong>${t.to}</strong></span>
+                                <span class="settlement-amount">¥${t.amount.toFixed(2)}</span>
+                            </li>`;
+                });
+                settlementList.innerHTML = html;
+            }
+        }
+
+        // ----- 8b. 歷史清單 (含篩選) -----
+        function renderBillList() {
+            let filtered = [...allBills];
+
+            if (currentFilter === 'today') {
+                const today = new Date().toISOString().split('T')[0];
+                filtered = filtered.filter(b => b.date === today);
+            } else if (currentFilter !== 'all') {
+                filtered = filtered.filter(b => b.category === currentFilter);
+            }
+
+            if (filtered.length === 0) {
+                billList.innerHTML = `<div class="empty-state">📭 沒有符合嘅記錄</div>`;
+                return;
+            }
+
+            let html = '';
+            filtered.forEach(bill => {
+                const icon = CATEGORY_ICONS[bill.category] || '📌';
+                const participantsStr = bill.participants.join(', ');
+                const isPending = bill.id && bill.id.startsWith('local_');
+                const pendingBadge = isPending ? `<span class="pending-badge">⏳ 同步中</span>` : '';
+
+                html += `
+                            <div class="bill-item">
+                                <div class="left">
+                                    <div class="top">
+                                        <span class="cat">${icon} ${bill.categoryLabel || bill.category}</span>
+                                        <span class="desc">${bill.date}</span>
+                                        ${pendingBadge}
+                                    </div>
+                                    <div class="meta">👤 ${bill.payer} ｜ 👥 ${participantsStr}</div>
+                                </div>
+                                <div class="right">
+                                    <div class="amount">¥${bill.amount.toFixed(2)}</div>
+                                    <button class="delete-btn" data-id="${bill.id}">✕</button>
+                                </div>
+                            </div>
+                        `;
+            });
+            billList.innerHTML = html;
+
+            // 刪除事件
+            billList.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = this.dataset.id;
+                    deleteBill(id);
+                });
+            });
+        }
+
+        // ----- 8c. 總支出 -----
+        function renderTotalSpend() {
+            const total = allBills.reduce((sum, b) => sum + b.amount, 0);
+            totalSpend.textContent = '¥' + total.toFixed(2);
+        }
+
+        // ================================================================
+        //  9. 刪除帳單
+        // ================================================================
+        function deleteBill(id) {
+            if (!confirm('確定刪除呢筆記錄？')) return;
+
+            // 從 allBills 移除
+            allBills = allBills.filter(b => b.id !== id);
+
+            // 如果係 Firebase 嘅記錄，從 Firebase 刪除
+            if (!id.startsWith('local_')) {
+                db.ref('trip-bills/' + id).remove().catch(err => console.warn('刪除失敗', err));
+            } else {
+                // 本地 pending 記錄：從 pending 移除
+                const pending = getPendingBills();
+                const updated = pending.filter(b => b.id !== id);
+                localStorage.setItem('pendingBills', JSON.stringify(updated));
+            }
+
+            renderAll();
+        }
+
+        // ================================================================
+        //  10. 連線狀態
+        // ================================================================
+        function updateOnlineStatus(online) {
+            isOnline = online;
+            if (online) {
+                statusDot.className = 'status-dot online';
+                statusLabel.textContent = '🟢 在線同步中';
+            } else {
+                statusDot.className = 'status-dot offline';
+                statusLabel.textContent = '🟠 離線儲存中';
+            }
+        }
+
+        function initNetworkListener() {
+            window.addEventListener('online', () => {
+                updateOnlineStatus(true);
+                syncPendingBills();
+                // 重新從 Firebase 拉取
+                loadFromFirebase();
+            });
+            window.addEventListener('offline', () => {
+                updateOnlineStatus(false);
+            });
+
+            // 初始狀態
+            updateOnlineStatus(navigator.onLine);
+
+            // Firebase 連線狀態
+            const connectedRef = db.ref('.info/connected');
+            connectedRef.on('value', (snap) => {
+                const connected = snap.val() === true;
+                updateOnlineStatus(connected);
+                if (connected) {
+                    syncPendingBills();
+                }
+            });
+        }
+
+        // ================================================================
+        //  11. 篩選事件
+        // ================================================================
+        function initFilter() {
+            filterBar.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    filterBar.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentFilter = this.dataset.filter;
+                    renderBillList();
+                });
+            });
+        }
+
+        // ================================================================
+        //  12. 倒數 (同 info.html 一致)
+        // ================================================================
+        function initCountdown() {
+            const target = new Date('2026-11-11T00:00:00+08:00').getTime();
+            const el = document.getElementById('countdown');
+            if (!el) return;
+            function update() {
+                const now = Date.now();
+                let diff = Math.max(0, target - now);
+                const days = Math.floor(diff / 86400000);
+                diff -= days * 86400000;
+                const hours = Math.floor(diff / 3600000);
+                diff -= hours * 3600000;
+                const mins = Math.floor(diff / 60000);
+                diff -= mins * 60000;
+                const secs = Math.floor(diff / 1000);
+                el.innerHTML = `⏳ 距離出發仲有 <span class="highlight">${days}</span> 日 <span class="highlight">${hours}</span> 小時 <span class="highlight">${mins}</span> 分鐘 <span class="highlight">${secs}</span> 秒`;
+            }
+            update();
+            setInterval(update, 1000);
+        }
+
+        // ================================================================
+        //  13. 啟動
+        // ================================================================
+        function init() {
+            initForm();
+            initFilter();
+            initNetworkListener();
+            initCountdown();
+
+            // 先嘗試從 Firebase 載入
+            loadFromFirebase();
+
+            // 如果有 pending 但未 sync，嘗試 sync
+            if (navigator.onLine) {
+                setTimeout(syncPendingBills, 2000);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+
+</body>
+</html>
