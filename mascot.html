@@ -1,438 +1,168 @@
 <!DOCTYPE html>
 <html lang="zh-HK">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
-  <title>香格里拉 · 互動吉祥物</title>
-  <style>
-    /* ===== 基礎 ===== */
-    * { box-sizing: border-box; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: #f4f6f8;
-      margin: 0;
-      padding: 20px;
-      min-height: 200vh;
-      padding-top: 80px;
-      padding-bottom: 120px;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>金陵小導遊 - 互動吉祥物</title>
+    <style>
+        /* 基本設定，令網頁冇白邊 */
+        body { margin: 0; padding: 0; background-color: #f4f4f4; height: 200vh; }
+        
+        /* 舞台：喺螢幕最頂層，唔阻礙其他內容 */
+        .mascot-stage {
+            position: fixed;
+            width: 100%;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+            top: 0; left: 0;
+        }
+        
+        /* 吉祥物本體 */
+        .mascot {
+            position: absolute;
+            width: 180px;
+            right: -200px;
+            bottom: 20px;
+            transition: all 0.5s ease;
+        }
 
-    /* ===== 吉祥物容器 ===== */
-    #mascot-container {
-      position: fixed;
-      z-index: 99999;
-      display: none;
-      width: 70px;          /* 手機用 70px，夠大又唔阻掟 */
-      height: auto;
-      pointer-events: none;
-      left: 0;
-      top: 0;
-      /* 所有位置由 JS / CSS 動畫控制 */
-    }
+        /* 對話氣泡 */
+        #speech-bubble {
+            position: absolute;
+            background: #fff;
+            border: 2px solid #d9534f;
+            border-radius: 20px;
+            padding: 10px 15px;
+            font-family: sans-serif;
+            font-weight: bold;
+            color: #333;
+            display: none;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+            white-space: nowrap;
+        }
 
-    /* ===== 小女孩圖片 ===== */
-    #mascot-img {
-      width: 100%;
-      height: auto;
-      display: block;
-      pointer-events: auto;
-      cursor: pointer;
-      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
-      transition: transform 0.15s ease;
-      /* 預設顯示全圖 */
-    }
-    #mascot-img:active {
-      transform: scale(0.90);
-    }
+        /* ========== 動畫區 ========== */
+        /* 動作1：左邊行到右邊 */
+        @keyframes walk-across {
+            0% { left: -200px; }
+            100% { left: 100vw; }
+        }
 
-    /* 內層 wrapper，用嚟獨立控制旋轉／縮放，唔影響容器位置 */
-    .mascot-img-inner {
-      display: block;
-      width: 100%;
-      height: auto;
-      transform-origin: bottom center;
-    }
+        /* 動作2：右邊Say Hi */
+        @keyframes say-hi {
+            0% { right: -200px; }
+            60% { right: 20px; transform: rotate(-5deg); }
+            75% { right: 30px; transform: rotate(5deg); }
+            100% { right: 20px; transform: rotate(0deg); }
+        }
 
-    /* ===== 對話泡泡 ===== */
-    #mascot-speech {
-      position: absolute;
-      top: -44px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #ffffff;
-      color: #2c3e50;
-      padding: 6px 14px;
-      border-radius: 18px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      white-space: nowrap;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.13);
-      border: 2px solid #8e2a2a;
-      display: none;
-      pointer-events: auto;
-      animation: speechPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-      max-width: 90vw;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    /* 泡泡尖角 */
-    #mascot-speech::after {
-      content: '';
-      position: absolute;
-      bottom: -7px;
-      left: 50%;
-      transform: translateX(-50%);
-      border-width: 7px 7px 0;
-      border-style: solid;
-      border-color: #8e2a2a transparent;
-      display: block;
-      width: 0;
-    }
+        /* 動作3：中間跳出擺Pose */
+        @keyframes pop-out {
+            0% { transform: scale(0) translateY(50px); opacity: 0; }
+            70% { transform: scale(1.2) translateY(-20px); opacity: 1; }
+            100% { transform: scale(1) translateY(0); opacity: 1; }
+        }
 
-    @keyframes speechPop {
-      0% { transform: translateX(-50%) scale(0.4); opacity: 0; }
-      100% { transform: translateX(-50%) scale(1); opacity: 1; }
-    }
+        /* 動作4：Header爬出嚟 */
+        @keyframes climb-header {
+            0% { top: -150px; opacity: 0; }
+            100% { top: 10px; opacity: 1; }
+        }
 
-    /* ================================================================
-       四種動作嘅 Keyframes（手機優化版）
-       ================================================================ */
-
-    /* ----- ① 散步：由左行到右，帶上下晃動 ----- */
-    @keyframes actionWalk {
-      0%   { left: -80px; bottom: 18px; }
-      100% { left: 110vw; bottom: 18px; }
-    }
-    @keyframes walkBounce {
-      0%, 100% { transform: translateY(0); }
-      25%      { transform: translateY(-7px); }
-      75%      { transform: translateY(-3px); }
-    }
-    .anim-walk {
-      animation: actionWalk 7.5s linear forwards;
-    }
-    .anim-walk .mascot-img-inner {
-      animation: walkBounce 0.55s infinite alternate;
-    }
-
-    /* ----- ② Say Hi：由右邊伸出上半身，輕微搖擺 ----- */
-    @keyframes actionSayHi {
-      0%   { right: -90px; bottom: 180px; opacity: 0; }
-      18%  { right: 0px; bottom: 180px; opacity: 1; }
-      82%  { right: 0px; bottom: 180px; opacity: 1; }
-      100% { right: -90px; bottom: 180px; opacity: 0; }
-    }
-    @keyframes sayHiSway {
-      0%, 100% { transform: rotate(0deg); }
-      30%      { transform: rotate(-6deg); }
-      70%      { transform: rotate(6deg); }
-    }
-    .anim-sayhi {
-      animation: actionSayHi 5.5s ease-in-out forwards;
-    }
-    .anim-sayhi .mascot-img-inner {
-      animation: sayHiSway 0.7s infinite alternate;
-    }
-
-    /* ----- ③ 跳起擺 Pose：由底跳出，旋轉落地 ----- */
-    @keyframes actionJumpPose {
-      0%   { left: 50%; bottom: -120px; transform: translateX(-50%) scale(0.3); opacity: 0; }
-      28%  { left: 50%; bottom: 48%; transform: translateX(-50%) scale(1.15); opacity: 1; }
-      55%  { left: 50%; bottom: 52%; transform: translateX(-50%) scale(0.92); opacity: 1; }
-      78%  { left: 50%; bottom: 50%; transform: translateX(-50%) scale(1.02); opacity: 1; }
-      100% { left: 50%; bottom: -120px; transform: translateX(-50%) scale(0.4); opacity: 0; }
-    }
-    @keyframes poseSpin {
-      0%, 100% { transform: rotate(0deg) scale(1); }
-      50%      { transform: rotate(10deg) scale(1.06); }
-    }
-    .anim-jumppose {
-      animation: actionJumpPose 4.8s ease forwards;
-    }
-    .anim-jumppose .mascot-img-inner {
-      animation: poseSpin 1.0s infinite alternate;
-    }
-
-    /* ----- ④ 爬出踢腳：由頂部爬出，坐低踢腳 ----- */
-    @keyframes actionClimbSit {
-      0%   { left: 25%; top: -100px; transform: rotate(12deg); opacity: 0; }
-      22%  { left: 25%; top: 8px; transform: rotate(0deg); opacity: 1; }
-      50%  { left: 25%; top: 8px; transform: rotate(0deg); }
-      72%  { left: 25%; top: 8px; transform: rotate(-4deg); }
-      100% { left: 25%; top: 8px; transform: rotate(0deg); opacity: 1; }
-    }
-    @keyframes kickLegs {
-      0%, 100% { transform: rotate(0deg); }
-      30%      { transform: rotate(-14deg); }
-      70%      { transform: rotate(14deg); }
-    }
-    .anim-climbsit {
-      animation: actionClimbSit 6.5s ease forwards;
-    }
-    .anim-climbsit .mascot-img-inner {
-      animation: kickLegs 0.7s infinite alternate;
-    }
-
-    /* ===== 控制按鈕（測試用） ===== */
-    .controls {
-      position: fixed;
-      bottom: 12px;
-      left: 0;
-      right: 0;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 8px;
-      padding: 12px 10px;
-      background: rgba(255,255,255,0.92);
-      backdrop-filter: blur(8px);
-      border-top: 1px solid #ddd;
-      z-index: 100000;
-    }
-    .controls button {
-      padding: 8px 14px;
-      border: none;
-      border-radius: 30px;
-      background: #8e2a2a;
-      color: #fff;
-      font-weight: 600;
-      font-size: 0.75rem;
-      cursor: pointer;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-      transition: 0.15s;
-      flex: 1 0 auto;
-      min-width: 60px;
-    }
-    .controls button:active {
-      transform: scale(0.94);
-    }
-    .controls button:nth-child(2) { background: #2a6f8e; }
-    .controls button:nth-child(3) { background: #6f8e2a; }
-    .controls button:nth-child(4) { background: #8e6f2a; }
-
-    /* ===== 提示文字 ===== */
-    .info {
-      text-align: center;
-      color: #6a5a4a;
-      font-size: 0.9rem;
-      margin-bottom: 30px;
-    }
-    .info small {
-      display: block;
-      color: #999;
-      font-size: 0.75rem;
-      margin-top: 6px;
-    }
-  </style>
+        /* 動作4：坐底踢踢腳 (用CSS模擬左右搖擺) */
+        @keyframes kick-feet {
+            0% { transform: rotate(-10deg); }
+            25% { transform: rotate(10deg); }
+            50% { transform: rotate(-10deg); }
+            75% { transform: rotate(10deg); }
+            100% { transform: rotate(0deg); }
+        }
+    </style>
 </head>
 <body>
 
-  <h1>🏔️ 香格里拉 · 互動吉祥物</h1>
-  <div class="info">
-    小女孩會隨機出現，做唔同動作。<br />
-    㩒佢一下會講嘢。<br />
-    <small>👇 下面啲掣可以手動觸發每種動作</small>
-  </div>
-
-  <!-- ===== 吉祥物 ===== -->
-  <div id="mascot-container">
-    <div id="mascot-speech">扎西德勒！👋</div>
-    <div class="mascot-img-inner">
-      <img id="mascot-img" src="girl-walk.png" alt="藏族小女孩" onclick="onMascotClick()" />
+    <!-- 舞台結構 -->
+    <div class="mascot-stage">
+        <div id="speech-bubble">嗨！準備好出發未？</div>
+        <img id="girl" src="girl-walk.png" class="mascot">
     </div>
-  </div>
 
-  <!-- ===== 控制按鈕 ===== -->
-  <div class="controls">
-    <button onclick="triggerAction('walk')">🚶 散步</button>
-    <button onclick="triggerAction('sayhi')">👋 Say Hi</button>
-    <button onclick="triggerAction('jumppose')">📸 擺 Pose</button>
-    <button onclick="triggerAction('climbsit')">🧗 踢腳</button>
-  </div>
+    <script>
+        const girl = document.getElementById('girl');
+        const bubble = document.getElementById('speech-bubble');
 
-  <script>
-    // ================================================================
-    //  1. 對話庫
-    // ================================================================
-    const GREETINGS = [
-      "扎西德勒！歡迎嚟到香格里拉～ 🏔️",
-      "獨克宗古城嘅轉經筒好大呀！✨",
-      "記住飲多啲水，防高山症！💧",
-      "今晚食藏式火鍋好唔好？🍲",
-      "記帳未呀？記得 mark 低洗費～ 💰",
-      "呢度嘅星空超靚，抬頭望吓！🌟",
-      "著多件衫呀，夜晚好凍㗎！🧥",
-      "行慢啲，享受吓寧靜嘅時光～ 🍃",
-      "你有冇見到氂牛呀？🐮",
-      "祝旅途愉快！扎西德勒！🙏"
-    ];
-
-    // ================================================================
-    //  2. DOM 元素
-    // ================================================================
-    const container = document.getElementById('mascot-container');
-    const img = document.getElementById('mascot-img');
-    const speech = document.getElementById('mascot-speech');
-    const imgInner = document.querySelector('.mascot-img-inner');
-
-    let hideTimer = null;
-    let isVisible = false;
-
-    // ================================================================
-    //  3. 觸發動作
-    // ================================================================
-    function triggerAction(actionType) {
-      // 清除之前嘅 timer 同狀態
-      clearTimeout(hideTimer);
-      container.style.display = 'block';
-      container.style.animation = 'none';
-      container.style.left = 'auto';
-      container.style.right = 'auto';
-      container.style.top = 'auto';
-      container.style.bottom = 'auto';
-      container.style.transform = 'none';
-
-      // 移除所有動作 class
-      container.classList.remove('anim-walk', 'anim-sayhi', 'anim-jumppose', 'anim-climbsit');
-      imgInner.style.animation = 'none';
-      speech.style.display = 'none';
-
-      // 重置圖片
-      img.style.clipPath = 'none';
-      img.style.transform = 'none';
-      img.style.opacity = '1';
-
-      // 強制 reflow
-      void container.offsetWidth;
-
-      // 根據動作類型設定
-      let duration = 0;
-
-      switch (actionType) {
-        case 'walk':
-          container.style.left = '-80px';
-          container.style.bottom = '18px';
-          container.style.top = 'auto';
-          container.style.right = 'auto';
-          img.style.transform = 'scaleX(-1)'; // 面向右
-          container.classList.add('anim-walk');
-          duration = 7500;
-          break;
-
-        case 'sayhi':
-          container.style.right = '-90px';
-          container.style.bottom = '180px';
-          container.style.left = 'auto';
-          container.style.top = 'auto';
-          img.style.clipPath = 'inset(0 0 42% 0)'; // 切走下半身
-          img.style.transform = 'none';
-          container.classList.add('anim-sayhi');
-          duration = 5500;
-          break;
-
-        case 'jumppose':
-          container.style.left = '50%';
-          container.style.bottom = '-120px';
-          container.style.top = 'auto';
-          container.style.right = 'auto';
-          container.style.transform = 'translateX(-50%)';
-          img.style.transform = 'none';
-          container.classList.add('anim-jumppose');
-          duration = 4800;
-          break;
-
-        case 'climbsit':
-          container.style.left = '25%';
-          container.style.top = '-100px';
-          container.style.bottom = 'auto';
-          container.style.right = 'auto';
-          img.style.transform = 'none';
-          container.classList.add('anim-climbsit');
-          duration = 6500;
-          break;
-
-        default:
-          container.style.display = 'none';
-          return;
-      }
-
-      isVisible = true;
-
-      // 動作中途彈對話框
-      setTimeout(() => {
-        if (container.style.display !== 'none') {
-          showRandomSpeech();
+        // 動作 1：由左邊行到右邊
+        function walkAcross() {
+            // 重置狀態
+            girl.style.right = 'auto';
+            girl.style.top = 'auto';
+            girl.style.left = '-200px';
+            girl.style.bottom = '20px';
+            girl.src = "girl-walk.png"; // 使用行路圖
+            girl.style.animation = "walk-across 5s linear forwards";
+            setTimeout(() => { girl.style.animation = ''; }, 5000);
         }
-      }, Math.min(duration * 0.25, 1500));
 
-      // 動作完結後隱藏
-      hideTimer = setTimeout(() => {
-        container.style.display = 'none';
-        isVisible = false;
-      }, duration + 400);
-    }
+        // 動作 2：右邊邊框伸出嚟Say Hi
+        function sayHi() {
+            girl.src = "girl-pose.png"; // 如果未準備呢張圖，可以改返做 "girl-walk.png"
+            girl.style.left = 'auto';
+            girl.style.top = '40%';
+            girl.style.bottom = 'auto';
+            girl.style.right = '-180px';
+            girl.style.animation = "say-hi 1.5s ease-out forwards";
+            
+            // 顯示氣泡講嘢
+            bubble.style.display = 'block';
+            bubble.style.right = '210px';
+            bubble.style.top = '35%';
+            bubble.innerHTML = "嗨！歡迎嚟到南京！";
 
-    // ================================================================
-    //  4. 對話框
-    // ================================================================
-    function showRandomSpeech() {
-      const text = GREETINGS[Math.floor(Math.random() * GREETINGS.length)];
-      speech.innerText = text;
-      speech.style.display = 'block';
-      setTimeout(() => {
-        speech.style.display = 'none';
-      }, 2800);
-    }
-
-    function onMascotClick() {
-      // 如果已經有對話框顯示，就換一句
-      if (speech.style.display === 'block') {
-        speech.style.display = 'none';
-        setTimeout(showRandomSpeech, 200);
-      } else {
-        showRandomSpeech();
-      }
-    }
-
-    // ================================================================
-    //  5. 自動隨機觸發（手機版：間隔較短，增加趣味）
-    // ================================================================
-    const ACTIONS = ['walk', 'sayhi', 'jumppose', 'climbsit'];
-
-    function autoTrigger() {
-      // 如果已經顯示緊，就唔好重疊
-      if (isVisible) return;
-      const randomAction = ACTIONS[Math.floor(Math.random() * ACTIONS.length)];
-      triggerAction(randomAction);
-    }
-
-    // 頁面載入後 2.5 秒首次登場
-    document.addEventListener('DOMContentLoaded', () => {
-      setTimeout(autoTrigger, 2500);
-
-      // 之後每隔 18~35 秒隨機觸發一次（手機版密啲）
-      setInterval(() => {
-        // 70% 機率觸發，等佢唔會太 predictable
-        if (Math.random() > 0.3 && !isVisible) {
-          autoTrigger();
+            // 3秒後收起氣泡
+            setTimeout(() => { bubble.style.display = 'none'; }, 3000);
         }
-      }, 22000);
-    });
 
-    // ================================================================
-    //  6. 㩒背景可強制隱藏（可選）
-    // ================================================================
-    // 如果㩒空白地方想佢消失，可以 uncomment 下面
-    // document.addEventListener('click', function(e) {
-    //   if (!container.contains(e.target) && isVisible) {
-    //     container.style.display = 'none';
-    //     isVisible = false;
-    //     clearTimeout(hideTimer);
-    //   }
-    // });
+        // 動作 3：中間跳出嚟擺Pose影相
+        function popPose() {
+            girl.src = "girl-pose.png"; 
+            girl.style.left = "50%";
+            girl.style.top = "30%";
+            girl.style.right = "auto";
+            girl.style.bottom = "auto";
+            girl.style.animation = "pop-out 1.2s ease-out forwards";
+            
+            // 停留3秒後消失
+            setTimeout(() => { girl.style.opacity = "0"; }, 3000);
+            setTimeout(() => { girl.style.opacity = "1"; }, 3500);
+        }
 
-    console.log('🏔️ 吉祥物已啟動！手機版四種動作 ready～');
-  </script>
+        // 動作 4：Header位置爬出嚟，坐底踢踢腳
+        function climbAndKick() {
+            girl.src = "girl-pose.png"; 
+            girl.style.left = "50px";
+            girl.style.top = "10px"; // 喺頂部
+            girl.style.right = "auto";
+            girl.style.bottom = "auto";
+            girl.style.opacity = "1";
+            
+            // 先爬出嚟
+            girl.style.animation = "climb-header 2s ease-out forwards";
+            
+            // 爬完之後，開始坐底踢腳（左右搖擺）
+            setTimeout(() => {
+               girl.style.animation = "kick-feet 0.6s ease-in-out infinite";
+               // 踢5秒之後停低
+               setTimeout(() => { girl.style.animation = ''; }, 5000);
+            }, 2000);
+        }
 
+        // 自動演示（你可以將呢幾行刪除，改為喺網頁其他位置用按鈕控制）
+        // 網頁載入1秒後行路，7秒後Say Hi，12秒後跳出Pose，18秒後爬出踢腳
+        setTimeout(walkAcross, 1000);
+        setTimeout(sayHi, 7000);
+        setTimeout(popPose, 12000);
+        setTimeout(climbAndKick, 17000);
+    </script>
 </body>
 </html>
