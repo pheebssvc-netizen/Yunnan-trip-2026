@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
-    <title>公費AA · 雲南滇西12日</title>
+    <title>神算醒 · 雲南滇西12日</title>
 
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js">
@@ -353,6 +353,32 @@
             margin-left: 6px;
         }
 
+        /* ===== 返回頂部按鈕 (跟其他頁面一致) ===== */
+        #backToTop {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 99;
+            width: 48px;
+            height: 48px;
+            border: none;
+            border-radius: 50%;
+            background: #007AFF;
+            color: #fff;
+            font-size: 24px;
+            line-height: 1;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 122, 255, 0.3);
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #backToTop:active {
+            transform: scale(0.9);
+            box-shadow: 0 2px 5px rgba(0, 122, 255, 0.2);
+        }
+
         /* 響應式微調 */
         @media (max-width: 480px) {
             .payer-buttons .payer-btn {
@@ -375,11 +401,11 @@
 
 <body>
 
-    <!-- ===== HEADER ===== -->
+    <!-- ===== HEADER (完全保留原有風格，只改標題) ===== -->
     <header class="app-header" id="heroHeader" style="background-image: url('https://raw.githubusercontent.com/pheebssvc-netizen/Yunnan-trip-2026/main/images/Lijiang.jpg');">
         <div class="header-overlay"></div>
         <div class="header-content">
-            <h1>🧾 公費 AA 結帳</h1>
+            <h1>🧾 神算醒</h1>
             <div class="countdown" id="countdown">⏳ 距離出發仲有 <span class="highlight">67</span> 日 <span class="highlight">5</span> 小時 <span class="highlight">5</span> 分鐘 <span class="highlight">8</span> 秒</div>
             <div class="header-divider">
                 <span class="dot"></span>
@@ -390,45 +416,19 @@
         </div>
     </header>
 
-    <!-- ===== TAB NAV ===== -->
+    <!-- ===== TAB NAV (留待下一步更新，先照放) ===== -->
     <nav class="tab-nav">
         <a href="index.html">📋 行程總覽</a>
         <a href="daily.html">📅 每日行程</a>
         <a href="info.html">📌 重要資訊</a>
-        <a href="bill.html" class="active">🧾 公費AA</a>
+        <a href="bill.html" class="active">🧾 神算醒</a>
     </nav>
 
     <!-- ===== PAGE ===== -->
     <div class="page">
 
         <!-- ============================================================ -->
-        <!-- 區域一：結算儀表板 -->
-        <!-- ============================================================ -->
-        <div class="bill-card">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-                <h3 style="margin-bottom:0;">📊 結算總覽</h3>
-                <div>
-                    <span class="status-dot online" id="statusDot"></span>
-                    <span class="status-label" id="statusLabel">連線中...</span>
-                </div>
-            </div>
-
-            <!-- 結算結果 -->
-            <div id="settlementResult">
-                <ul class="settlement-list" id="settlementList">
-                    <li style="color:#B5A89A; text-align:center; padding:12px 0;">未有帳單，記第一筆數啦！</li>
-                </ul>
-            </div>
-
-            <!-- 總支出 -->
-            <div class="total-spend">
-                <span>🧾 團隊總支出</span>
-                <span><strong id="totalSpend">¥0.00</strong></span>
-            </div>
-        </div>
-
-        <!-- ============================================================ -->
-        <!-- 區域二：快速入帳表單 -->
+        <!-- 區域一：快速入帳卡片 (移到最頂) -->
         <!-- ============================================================ -->
         <div class="bill-card">
             <h3>⚡ 快速入帳</h3>
@@ -488,7 +488,7 @@
         </div>
 
         <!-- ============================================================ -->
-        <!-- 區域三：歷史消費明細 -->
+        <!-- 區域二：歷史消費明細 (移到中間) -->
         <!-- ============================================================ -->
         <div class="bill-card">
             <h3>📜 歷史消費</h3>
@@ -512,21 +512,50 @@
             </div>
         </div>
 
+        <!-- ============================================================ -->
+        <!-- 區域三：結算儀表板 (移到最底) -->
+        <!-- ============================================================ -->
+        <div class="bill-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                <h3 style="margin-bottom:0;">📊 結算總覽</h3>
+                <div>
+                    <span class="status-dot online" id="statusDot"></span>
+                    <span class="status-label" id="statusLabel">連線中...</span>
+                </div>
+            </div>
+
+            <!-- 結算結果 -->
+            <div id="settlementResult">
+                <ul class="settlement-list" id="settlementList">
+                    <li style="color:#B5A89A; text-align:center; padding:12px 0;">未有帳單，記第一筆數啦！</li>
+                </ul>
+            </div>
+
+            <!-- 總支出 -->
+            <div class="total-spend">
+                <span>🧾 團隊總支出</span>
+                <span><strong id="totalSpend">¥0.00</strong></span>
+            </div>
+        </div>
+
     </div>
+
+    <!-- ===== 返回頂部按鈕 (藍色圓形) ===== -->
+    <button id="backToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑</button>
 
     <script>
         // ================================================================
-        //  1. FIREBASE 設定 (請替換成你自己的 config)
+        //  1. FIREBASE 設定 (已填好你提供嘅 config)
         // ================================================================
         const firebaseConfig = {
-    apiKey: "AIzaSyAtthBBNoHJkN6B_e8DVjzDpK_eB0wfExo",
-    authDomain: "yunnan-trip-d5626.firebaseapp.com",
-    databaseURL: "https://yunnan-trip-d5626-default-rtdb.asia-southeast1.firebasedatabase.app/",
-    projectId: "yunnan-trip-d5626",
-    storageBucket: "yunnan-trip-d5626.firebasestorage.app",
-    messagingSenderId: "956753515518",
-    appId: "1:956753515518:web:ef19ac8a7b45bdf83426af"
-};
+            apiKey: "AIzaSyAtthBBNoHJkN6B_e8DVjzDpK_eB0wfExo",
+            authDomain: "yunnan-trip-d5626.firebaseapp.com",
+            databaseURL: "https://yunnan-trip-d5626-default-rtdb.asia-southeast1.firebasedatabase.app/",
+            projectId: "yunnan-trip-d5626",
+            storageBucket: "yunnan-trip-d5626.firebasestorage.app",
+            messagingSenderId: "956753515518",
+            appId: "1:956753515518:web:ef19ac8a7b45bdf83426af"
+        };
 
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
@@ -554,7 +583,7 @@
             other: '🛍️'
         };
 
-        let allBills = []; // 所有帳單 (已排序)
+        let allBills = [];
         let currentFilter = 'all';
         let isOnline = navigator.onLine;
 
@@ -578,22 +607,17 @@
         //  3. 初始化：日期、表單狀態、監聽
         // ================================================================
         function initForm() {
-            // 日期預設今日
             const today = new Date();
             billDate.value = today.toISOString().split('T')[0];
 
-            // 預設選中第一個分類
             const firstPill = categoryPills.querySelector('.pill');
             if (firstPill) firstPill.classList.add('active');
 
-            // 預設選中第一個付款人
             const firstPayer = payerButtons.querySelector('.payer-btn');
             if (firstPayer) firstPayer.classList.add('active');
 
-            // 參與人預設全選
             updateSelectAllText();
 
-            // 監聽分類點擊
             categoryPills.querySelectorAll('.pill').forEach(el => {
                 el.addEventListener('click', function() {
                     categoryPills.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
@@ -601,7 +625,6 @@
                 });
             });
 
-            // 監聽付款人點擊
             payerButtons.querySelectorAll('.payer-btn').forEach(el => {
                 el.addEventListener('click', function() {
                     payerButtons.querySelectorAll('.payer-btn').forEach(p => p.classList.remove('active'));
@@ -609,7 +632,6 @@
                 });
             });
 
-            // 全選/取消全選
             selectAllToggle.addEventListener('click', function() {
                 const checks = participantGroup.querySelectorAll('input[type="checkbox"]');
                 const allChecked = Array.from(checks).every(c => c.checked);
@@ -617,12 +639,10 @@
                 updateSelectAllText();
             });
 
-            // 監聽 checkbox 變化更新全選文字
             participantGroup.querySelectorAll('input[type="checkbox"]').forEach(cb => {
                 cb.addEventListener('change', updateSelectAllText);
             });
 
-            // 表單提交
             billForm.addEventListener('submit', handleAddBill);
         }
 
@@ -633,37 +653,31 @@
         }
 
         // ================================================================
-        //  4. 新增帳單 (含離線佇列)
+        //  4. 新增帳單
         // ================================================================
         function handleAddBill(e) {
             e.preventDefault();
 
-            // 取得日期
             const date = billDate.value;
             if (!date) { alert('請揀日期'); return; }
 
-            // 取得分類
             const activeCat = categoryPills.querySelector('.pill.active');
             if (!activeCat) { alert('請揀分類'); return; }
             const category = activeCat.dataset.cat;
 
-            // 取得付款人
             const activePayer = payerButtons.querySelector('.payer-btn.active');
             if (!activePayer) { alert('請揀付款人'); return; }
             const payer = activePayer.dataset.payer;
 
-            // 金額
             const amount = parseFloat(billAmount.value);
             if (!amount || amount <= 0) { alert('請輸入有效金額'); return; }
 
-            // 參與人
             const participants = [];
             participantGroup.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => {
                 participants.push(cb.value);
             });
             if (participants.length === 0) { alert('至少揀一位參與人'); return; }
 
-            // 建立帳單物件
             const bill = {
                 date: date,
                 category: category,
@@ -675,20 +689,15 @@
                 id: 'local_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6)
             };
 
-            // 先存入 localStorage (pending)
             savePendingBill(bill);
-
-            // 立即顯示
             allBills.push(bill);
             sortBills();
             renderAll();
 
-            // 嘗試同步到 Firebase
             if (isOnline) {
                 syncPendingBills();
             }
 
-            // 清空金額，保留其他
             billAmount.value = '';
             billAmount.focus();
         }
@@ -722,12 +731,10 @@
             let synced = 0;
 
             pending.forEach((bill, index) => {
-                // 移除本地 id，讓 Firebase 產生新 key
                 const { id, ...billData } = bill;
                 billsRef.push(billData, (error) => {
                     if (!error) {
                         synced++;
-                        // 從 pending 移除
                         const current = getPendingBills();
                         const updated = current.filter((_, i) => i !== index);
                         localStorage.setItem('pendingBills', JSON.stringify(updated));
@@ -750,12 +757,9 @@
                     });
                 }
 
-                // 合併本地 pending (尚未同步上去的)
                 const pending = getPendingBills();
-                // 用 timestamp 去重 (pending 可能已有相同記錄)
                 const all = [...firebaseBills, ...pending];
 
-                // 按 timestamp 排序，並去除完全重複 (相同 timestamp + amount + payer)
                 const unique = [];
                 const seen = new Set();
                 all.forEach(b => {
@@ -772,7 +776,6 @@
                 updateOnlineStatus(true);
             }, (error) => {
                 console.warn('Firebase 讀取失敗，使用本地數據', error);
-                // 仍然用本地數據
                 const pending = getPendingBills();
                 if (pending.length > 0) {
                     allBills = pending;
@@ -791,7 +794,7 @@
         }
 
         // ================================================================
-        //  8. 渲染：結算 + 清單
+        //  8. 渲染
         // ================================================================
         function renderAll() {
             renderSettlement();
@@ -799,7 +802,6 @@
             renderTotalSpend();
         }
 
-        // ----- 8a. 結算 (最少轉帳次數) -----
         function renderSettlement() {
             if (allBills.length === 0) {
                 settlementList.innerHTML = `<li style="color:#B5A89A; text-align:center; padding:12px 0;">未有帳單，記第一筆數啦！</li>`;
@@ -817,7 +819,6 @@
                 if (balance[bill.payer] !== undefined) balance[bill.payer] += bill.amount;
             });
 
-            // 分離 debtor 同 creditor
             const debtors = [];
             const creditors = [];
             MEMBERS.forEach(m => {
@@ -825,7 +826,6 @@
                 if (balance[m] > 0.005) creditors.push({ name: m, amt: balance[m] });
             });
 
-            // 貪心配對
             const transactions = [];
             let i = 0,
                 j = 0;
@@ -842,7 +842,6 @@
                 if (c.amt < 0.005) j++;
             }
 
-            // 顯示
             if (transactions.length === 0) {
                 settlementList.innerHTML = `<li class="settlement-clear">🎉 數已清，冇拖冇欠！</li>`;
             } else {
@@ -857,7 +856,6 @@
             }
         }
 
-        // ----- 8b. 歷史清單 (含篩選) -----
         function renderBillList() {
             let filtered = [...allBills];
 
@@ -899,7 +897,6 @@
             });
             billList.innerHTML = html;
 
-            // 刪除事件
             billList.querySelectorAll('.delete-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const id = this.dataset.id;
@@ -908,7 +905,6 @@
             });
         }
 
-        // ----- 8c. 總支出 -----
         function renderTotalSpend() {
             const total = allBills.reduce((sum, b) => sum + b.amount, 0);
             totalSpend.textContent = '¥' + total.toFixed(2);
@@ -920,14 +916,11 @@
         function deleteBill(id) {
             if (!confirm('確定刪除呢筆記錄？')) return;
 
-            // 從 allBills 移除
             allBills = allBills.filter(b => b.id !== id);
 
-            // 如果係 Firebase 嘅記錄，從 Firebase 刪除
             if (!id.startsWith('local_')) {
                 db.ref('trip-bills/' + id).remove().catch(err => console.warn('刪除失敗', err));
             } else {
-                // 本地 pending 記錄：從 pending 移除
                 const pending = getPendingBills();
                 const updated = pending.filter(b => b.id !== id);
                 localStorage.setItem('pendingBills', JSON.stringify(updated));
@@ -954,17 +947,14 @@
             window.addEventListener('online', () => {
                 updateOnlineStatus(true);
                 syncPendingBills();
-                // 重新從 Firebase 拉取
                 loadFromFirebase();
             });
             window.addEventListener('offline', () => {
                 updateOnlineStatus(false);
             });
 
-            // 初始狀態
             updateOnlineStatus(navigator.onLine);
 
-            // Firebase 連線狀態
             const connectedRef = db.ref('.info/connected');
             connectedRef.on('value', (snap) => {
                 const connected = snap.val() === true;
@@ -990,12 +980,13 @@
         }
 
         // ================================================================
-        //  12. 倒數 (同 info.html 一致)
+        //  12. 倒數
         // ================================================================
         function initCountdown() {
             const target = new Date('2026-11-11T00:00:00+08:00').getTime();
             const el = document.getElementById('countdown');
             if (!el) return;
+
             function update() {
                 const now = Date.now();
                 let diff = Math.max(0, target - now);
@@ -1006,7 +997,8 @@
                 const mins = Math.floor(diff / 60000);
                 diff -= mins * 60000;
                 const secs = Math.floor(diff / 1000);
-                el.innerHTML = `⏳ 距離出發仲有 <span class="highlight">${days}</span> 日 <span class="highlight">${hours}</span> 小時 <span class="highlight">${mins}</span> 分鐘 <span class="highlight">${secs}</span> 秒`;
+                el.innerHTML =
+                    `⏳ 距離出發仲有 <span class="highlight">${days}</span> 日 <span class="highlight">${hours}</span> 小時 <span class="highlight">${mins}</span> 分鐘 <span class="highlight">${secs}</span> 秒`;
             }
             update();
             setInterval(update, 1000);
@@ -1021,10 +1013,8 @@
             initNetworkListener();
             initCountdown();
 
-            // 先嘗試從 Firebase 載入
             loadFromFirebase();
 
-            // 如果有 pending 但未 sync，嘗試 sync
             if (navigator.onLine) {
                 setTimeout(syncPendingBills, 2000);
             }
