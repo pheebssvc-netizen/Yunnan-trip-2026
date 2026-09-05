@@ -399,6 +399,7 @@
                 <span class="line"></span>
                 <span class="dot"></span>
             </div>
+            <!-- ✅ 修正：由「4人同步」改為「4人同行」 -->
             <div class="sub">4人同行 ｜ 即時同步 · 離線都用到</div>
         </div>
     </header>
@@ -464,7 +465,7 @@
                     </div>
                 </div>
 
-                <!-- ===== 🆕 備註欄位 ===== -->
+                <!-- 📝 備註欄位 -->
                 <div class="form-row">
                     <label>📝 備註 (選擇性)</label>
                     <input type="text" id="billNote" placeholder="e.g. 古城餐廳 / 玉龍雪山門票" />
@@ -662,7 +663,6 @@
             });
             if (participants.length === 0) { alert('至少揀一位參與人'); return; }
 
-            // 取得備註 (可選)
             const note = billNote.value.trim();
 
             const bill = {
@@ -672,7 +672,7 @@
                 payer: payer,
                 amount: Math.round(amount * 100) / 100,
                 participants: participants,
-                note: note, // 🆕 備註欄位
+                note: note,
                 timestamp: Date.now(),
                 id: 'local_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6)
             };
@@ -859,7 +859,6 @@
                 const isPending = bill.id && bill.id.startsWith('local_');
                 const pendingBadge = isPending ? `<span class="pending-badge">⏳ 同步中</span>` : '';
 
-                // 🆕 如果有備註就顯示
                 const noteHtml = bill.note ? `<span class="note">📝 ${bill.note}</span>` : '';
 
                 html += `
@@ -1007,23 +1006,23 @@
 
         document.addEventListener('DOMContentLoaded', init);
     </script>
-<script>
 
-    // 返回頂部按鈕控制
-    const backToTopBtn = document.getElementById('backToTopBtn');
+    <!-- ===== 返回頂部按鈕控制 ===== -->
+    <script>
+        const backToTopBtn = document.getElementById('backToTopBtn');
 
-    window.addEventListener('scroll', function() {
-        if (window.scrollY > 300) {
-            backToTopBtn.classList.add('show');
-        } else {
-            backToTopBtn.classList.remove('show');
-        }
-    });
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 300) {
+                backToTopBtn.classList.add('show');
+            } else {
+                backToTopBtn.classList.remove('show');
+            }
+        });
 
-    // 點擊按鈕平滑返回頂部
-    backToTopBtn.addEventListener('click', function() {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-</script>
+        backToTopBtn.addEventListener('click', function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+
 </body>
 </html>
