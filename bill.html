@@ -14,6 +14,9 @@
     <!-- 共用樣式 -->
     <link rel="stylesheet" href="style.css" />
 
+    <!-- ===== 共用 JavaScript (控制倒數、海拔線等) ===== -->
+    <script src="app.js"></script>
+
     <style>
         .bill-card {
             background: #fff;
@@ -352,7 +355,7 @@
 </head>
 <body>
 
-    <!-- ===== HEADER (加入內聯背景圖，同 index.html 一致) ===== -->
+    <!-- ===== HEADER (內聯背景圖，同 index.html 一致) ===== -->
     <header class="app-header" id="heroHeader" style="background-image: url('https://raw.githubusercontent.com/pheebssvc-netizen/Yunnan-trip-2026/main/images/Pudacuo.jpg');">
         <div class="header-overlay"></div>
         <div class="header-content">
@@ -469,7 +472,7 @@
 
     </div>
 
-    <!-- ===== 固定地圖按鈕 (同其他頁面一致) ===== -->
+    <!-- ===== 固定地圖按鈕 ===== -->
     <a href="map.html" class="map-fab" id="mapFab" aria-label="查看地圖">
         🗺️
         <span class="tooltip">查看地圖</span>
@@ -479,6 +482,9 @@
     <button class="back-to-top" id="backToTopBtn" aria-label="返回頂部">⬆</button>
 
     <script>
+        // ================================================================
+        //  Firebase 設定
+        // ================================================================
         const firebaseConfig = {
             apiKey: "AIzaSyAtthBBNoHJkN6B_e8DVjzDpK_eB0wfExo",
             authDomain: "yunnan-trip-d5626.firebaseapp.com",
@@ -491,6 +497,9 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
+        // ================================================================
+        //  記帳邏輯
+        // ================================================================
         const MEMBERS = ['J', 'C', 'K', 'Z'];
         const CATEGORY_LABELS = { breakfast: '早餐', lunch: '午餐', dinner: '晚餐', snack: '咖啡小食', ticket: '門票', transport: '交通', other: '雜項' };
         const CATEGORY_ICONS = { breakfast: '🍞', lunch: '🍱', dinner: '🍷', snack: '☕', ticket: '🎟️', transport: '🚗', other: '🛍️' };
@@ -808,38 +817,22 @@
             });
         }
 
-        function initCountdown() {
-            const target = new Date('2026-11-11T00:00:00+08:00').getTime();
-            const el = document.getElementById('countdown');
-            if (!el) return;
-            function update() {
-                const now = Date.now();
-                let diff = Math.max(0, target - now);
-                const days = Math.floor(diff / 86400000);
-                diff -= days * 86400000;
-                const hours = Math.floor(diff / 3600000);
-                diff -= hours * 3600000;
-                const mins = Math.floor(diff / 60000);
-                diff -= mins * 60000;
-                const secs = Math.floor(diff / 1000);
-                el.innerHTML = `⏳ 距離出發仲有 <span class="highlight">${days}</span> 日 <span class="highlight">${hours}</span> 小時 <span class="highlight">${mins}</span> 分鐘 <span class="highlight">${secs}</span> 秒`;
-            }
-            update();
-            setInterval(update, 1000);
-        }
-
+        // ================================================================
+        //  初始化 (倒數由 app.js 控制，呢度唔再重複)
+        // ================================================================
         function init() {
             initForm();
             initFilter();
             initNetworkListener();
-            initCountdown();
             loadFromFirebase();
             if (navigator.onLine) setTimeout(syncPendingBills, 2000);
         }
 
         document.addEventListener('DOMContentLoaded', init);
 
-        // 返回頂部按鈕控制
+        // ================================================================
+        //  返回頂部按鈕控制
+        // ================================================================
         const backToTopBtn = document.getElementById('backToTopBtn');
         window.addEventListener('scroll', function() {
             if (window.scrollY > 300) {
