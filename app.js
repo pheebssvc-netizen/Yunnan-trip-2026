@@ -1330,3 +1330,53 @@ if (eggImage && eggStatusIcon) {
     if (!db) console.warn('⚠️ Firebase 未連線');
     else console.log('✅ Firebase 已連線');
 });
+// ================================================================
+//  🌄 雲南小導遊 V1.1
+//  開頁面後自動播放 say hi，完成後回復靜止角色
+// ================================================================
+
+(function initYunnanMascot() {
+
+    const mascot = document.getElementById('yunnanMascot');
+    const idle = document.getElementById('mascotIdle');
+    const video = document.getElementById('mascotVideo');
+
+    // 如果目前頁面沒有吉祥物，就直接離開
+    if (!mascot || !idle || !video) return;
+
+    const mascotPath = 'mascot/';
+
+    function playSayHi() {
+
+        video.src = mascotPath + 'girl-sayhi.webm';
+        video.load();
+
+        mascot.classList.add('playing');
+
+        const playPromise = video.play();
+
+        if (playPromise !== undefined) {
+            playPromise.catch(function(error) {
+                console.warn('🌄 小導遊動畫無法自動播放：', error);
+                mascot.classList.remove('playing');
+            });
+        }
+    }
+
+    // 動畫完成後，回復靜止 PNG
+    video.addEventListener('ended', function() {
+
+        mascot.classList.remove('playing');
+
+        video.pause();
+        video.removeAttribute('src');
+        video.load();
+
+    });
+
+    // 開頁面後等待 1.5 秒，再向大家打招呼
+    setTimeout(function() {
+        playSayHi();
+    }, 1500);
+
+})();
