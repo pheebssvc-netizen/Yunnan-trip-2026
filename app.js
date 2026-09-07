@@ -1331,30 +1331,39 @@ if (eggImage && eggStatusIcon) {
     else console.log('✅ Firebase 已連線');
 });
 // ================================================================
-//  🌄 雲南小導遊 V1.2
-//  Say Hi → Walk → Idle
+//  🌄 雲南小導遊 V1.3
+//  Walk Across Screen
+//
+//  左邊畫面外 → 進入 → 穿過整個畫面 → 右邊畫面外 → 停止
 // ================================================================
 
-(function initYunnanMascot() {
+(function initYunnanMascotV13() {
 
     const mascot = document.getElementById('yunnanMascot');
-    const idle = document.getElementById('mascotIdle');
     const video = document.getElementById('mascotVideo');
 
-    if (!mascot || !idle || !video) return;
+    if (!mascot || !video) return;
 
     const mascotPath = 'mascot/';
+    const walkFile = 'girl-walk.webm';
 
     // ------------------------------------------------------------
-    // 播放指定動畫
+    // 播放 Walk
     // ------------------------------------------------------------
 
-    function playMascot(file) {
+    function startWalk() {
 
-        video.src = mascotPath + file;
+        // 確保由最左邊畫面外開始
+        mascot.classList.remove('walking');
+
+        // 重新觸發 CSS animation
+        void mascot.offsetWidth;
+
+        mascot.classList.add('walking');
+
+        // 載入 Walk WebM
+        video.src = mascotPath + walkFile;
         video.load();
-
-        mascot.classList.add('playing');
 
         const playPromise = video.play();
 
@@ -1363,85 +1372,72 @@ if (eggImage && eggStatusIcon) {
             playPromise.catch(function(error) {
 
                 console.warn(
-                    '🌄 小導遊動畫無法播放：',
+                    '🌄 小導遊 Walk 無法播放：',
                     error
                 );
-
-                mascot.classList.remove('playing');
 
             });
         }
     }
 
     // ------------------------------------------------------------
-    // 動畫完成
+    // Walk 動畫播放完
+    //
+    // 注意：
+    // WebM 完成 ≠ 女孩已經離開畫面
+    //
+    // 所以真正停止由 CSS animationend 控制。
     // ------------------------------------------------------------
 
-    video.addEventListener('ended', function() {
+    mascot.addEventListener('animationend', function(event) {
 
-        // 先停止影片
+        if (event.animationName !== 'mascotWalkAcross') {
+            return;
+        }
+
+        // 停止影片
         video.pause();
 
-        // 清除影片
+        // 清除影片來源
         video.removeAttribute('src');
         video.load();
 
-        // 回復透明 PNG
-        mascot.classList.remove('playing');
+        // 保持女孩在畫面右邊之外
+        mascot.classList.remove('walking');
+
+        mascot.style.transform =
+            'translateX(100vw)';
+
+        console.log(
+            '🌄 小導遊：Walk 完成，已離開畫面'
+        );
 
     });
 
     // ------------------------------------------------------------
-    // 第一步：開頁面後 1.5 秒 Say Hi
+    // 網頁載入後開始 Walk
     // ------------------------------------------------------------
 
     setTimeout(function() {
 
-        playMascot('girl-sayhi.webm');
+        startWalk();
 
-    }, 1500);
-
-
-    // ------------------------------------------------------------
-    // 第二步：Say Hi 後再播放 Walk
-    //
-    // 暫定 6 秒後開始。
-    // 這個時間之後可以按實際動畫長度調整。
-    // ------------------------------------------------------------
-
-    setTimeout(function() {
-
-        playMascot('girl-walk.webm');
-
-    }, 6000);
+    }, 1200);
 
 
     // ------------------------------------------------------------
-    // 測試用控制
-    // 以後可以喺其他功能叫小導遊出場
+    // 預留控制接口
+    // 之後可以再加入其他動作
     // ------------------------------------------------------------
 
     window.yunnanMascot = {
 
-        sayHi: function() {
-            playMascot('girl-sayhi.webm');
-        },
-
         walk: function() {
-            playMascot('girl-walk.webm');
-        },
 
-        idle: function() {
-
-            video.pause();
-            video.removeAttribute('src');
-            video.load();
-
-            mascot.classList.remove('playing');
+            startWalk();
 
         }
 
     };
 
 })();
-
