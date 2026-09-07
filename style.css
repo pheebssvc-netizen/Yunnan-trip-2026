@@ -1280,57 +1280,88 @@ body {
     }
 }
 /* ================================================================
-   🌄 雲南小導遊 · 吉祥物 V1
+   🌄 雲南小導遊 V1.3
+   純 Walk：由畫面左邊進入 → 穿過整個畫面 → 右邊離開
    ================================================================ */
 
 .yunnan-mascot {
     position: fixed;
+
+    /* 初始位置：完全藏在螢幕左邊 */
     left: 0;
     bottom: 108px;
+
     width: 145px;
     height: 210px;
+
     z-index: 70;
     pointer-events: none;
     overflow: visible;
+
+    /* 用 transform 控制整個女孩移動 */
+    transform: translateX(-100%);
 }
 
-/* 靜止角色 */
+/* 靜止 PNG：V1.3 暫時完全唔顯示 */
 .yunnan-mascot .mascot-idle {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    height: auto;
-    display: block;
-    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.12));
+    display: none;
 }
 
-/* 動畫影片 */
+/* Walk 動畫 */
 .yunnan-mascot .mascot-video {
     position: absolute;
     left: 0;
     bottom: 0;
+
     width: 100%;
     height: auto;
-    display: none;
-    object-fit: contain;
-}
 
-/* 播放動畫時 */
-.yunnan-mascot.playing .mascot-idle {
-    display: none;
-}
-
-.yunnan-mascot.playing .mascot-video {
     display: block;
+
+    object-fit: contain;
+
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.12));
 }
 
-/* 手機版 */
+/* ------------------------------------------------
+   Walk 狀態
+   ------------------------------------------------ */
+
+.yunnan-mascot.walking {
+    animation: mascotWalkAcross 9s linear forwards;
+}
+
+/*
+   從完全離開左邊
+   → 完全離開右邊
+*/
+@keyframes mascotWalkAcross {
+
+    from {
+        transform: translateX(-100%);
+    }
+
+    to {
+        transform: translateX(calc(100vw));
+    }
+}
+
+
+/* ------------------------------------------------
+   手機
+   ------------------------------------------------ */
+
 @media (max-width: 480px) {
+
     .yunnan-mascot {
+
         width: 115px;
         height: 170px;
+
         bottom: 108px;
-        left: 2px;
+    }
+
+    .yunnan-mascot.walking {
+        animation-duration: 8s;
     }
 }
