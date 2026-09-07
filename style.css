@@ -1279,3 +1279,58 @@ body {
         padding: 6px 12px;
     }
 }
+/* ================================================================
+   🌄 雲南小導遊 · 吉祥物 V1
+   ================================================================ */
+
+.yunnan-mascot {
+    position: fixed;
+    left: 0;
+    bottom: 108px;
+    width: 145px;
+    height: 210px;
+    z-index: 70;
+    pointer-events: none;
+    overflow: visible;
+}
+
+/* 靜止角色 */
+.yunnan-mascot .mascot-idle {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.12));
+}
+
+/* 動畫影片 */
+.yunnan-mascot .mascot-video {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: auto;
+    display: none;
+    object-fit: contain;
+}
+
+/* 播放動畫時 */
+.yunnan-mascot.playing .mascot-idle {
+    display: none;
+}
+
+.yunnan-mascot.playing .mascot-video {
+    display: block;
+}
+
+/* 手機版 */
+@media (max-width: 480px) {
+    .yunnan-mascot {
+        width: 115px;
+        height: 170px;
+        bottom: 108px;
+        left: 2px;
+    }
+}
