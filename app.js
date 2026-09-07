@@ -1444,3 +1444,4 @@ if (eggImage && eggStatusIcon) {
     };
 
 })();
+
