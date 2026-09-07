@@ -1331,14 +1331,13 @@ if (eggImage && eggStatusIcon) {
     else console.log('✅ Firebase 已連線');
 });
 // ================================================================
-//  🌄 雲南小導遊 V1.4
+//  🌄 雲南小導遊 V1.3
 //  Walk Across Screen
 //
-//  左邊畫面外 → 進入 → 穿過整個畫面
-//  → WebM 播完後繼續行 → 完全離開右邊 → 停止
+//  左邊畫面外 → 進入 → 穿過整個畫面 → 右邊畫面外 → 停止
 // ================================================================
 
-(function initYunnanMascotV14() {
+(function initYunnanMascotV13() {
 
     const mascot = document.getElementById('yunnanMascot');
     const video = document.getElementById('mascotVideo');
@@ -1348,36 +1347,24 @@ if (eggImage && eggStatusIcon) {
     const mascotPath = 'mascot/';
     const walkFile = 'girl-walk.webm';
 
-    // WebM 播完後，額外繼續行走的時間
-    const EXTRA_WALK_TIME = 2000;
-
     // ------------------------------------------------------------
-    // 開始 Walk
+    // 播放 Walk
     // ------------------------------------------------------------
 
     function startWalk() {
 
-        // 清除舊狀態
+        // 確保由最左邊畫面外開始
         mascot.classList.remove('walking');
 
-        // 確保 CSS animation 重新開始
+        // 重新觸發 CSS animation
         void mascot.offsetWidth;
 
-        // 從最左邊畫面外開始
-        mascot.style.transform = 'translateX(-100%)';
+        mascot.classList.add('walking');
 
         // 載入 Walk WebM
         video.src = mascotPath + walkFile;
-
-        // WebM 播完後自動重新播放
-        video.loop = true;
-
         video.load();
 
-        // 開始 CSS 移動
-        mascot.classList.add('walking');
-
-        // 開始播放影片
         const playPromise = video.play();
 
         if (playPromise !== undefined) {
@@ -1394,9 +1381,12 @@ if (eggImage && eggStatusIcon) {
     }
 
     // ------------------------------------------------------------
-    // CSS 動畫完成
+    // Walk 動畫播放完
     //
-    // 代表女孩已經完全離開右邊畫面
+    // 注意：
+    // WebM 完成 ≠ 女孩已經離開畫面
+    //
+    // 所以真正停止由 CSS animationend 控制。
     // ------------------------------------------------------------
 
     mascot.addEventListener('animationend', function(event) {
@@ -1408,21 +1398,18 @@ if (eggImage && eggStatusIcon) {
         // 停止影片
         video.pause();
 
-        // 關閉循環
-        video.loop = false;
-
-        // 清除影片
+        // 清除影片來源
         video.removeAttribute('src');
         video.load();
 
-        // 保持女孩在右邊畫面之外
+        // 保持女孩在畫面右邊之外
         mascot.classList.remove('walking');
 
         mascot.style.transform =
             'translateX(100vw)';
 
         console.log(
-            '🌄 小導遊：Walk 完成，已完全離開畫面'
+            '🌄 小導遊：Walk 完成，已離開畫面'
         );
 
     });
@@ -1440,6 +1427,7 @@ if (eggImage && eggStatusIcon) {
 
     // ------------------------------------------------------------
     // 預留控制接口
+    // 之後可以再加入其他動作
     // ------------------------------------------------------------
 
     window.yunnanMascot = {
