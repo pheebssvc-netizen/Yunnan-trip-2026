@@ -1331,8 +1331,8 @@ if (eggImage && eggStatusIcon) {
     else console.log('✅ Firebase 已連線');
 });
 // ================================================================
-//  🌄 雲南小導遊 V1.1
-//  開頁面後自動播放 say hi，完成後回復靜止角色
+//  🌄 雲南小導遊 V1.2
+//  Say Hi → Walk → Idle
 // ================================================================
 
 (function initYunnanMascot() {
@@ -1341,14 +1341,17 @@ if (eggImage && eggStatusIcon) {
     const idle = document.getElementById('mascotIdle');
     const video = document.getElementById('mascotVideo');
 
-    // 如果目前頁面沒有吉祥物，就直接離開
     if (!mascot || !idle || !video) return;
 
     const mascotPath = 'mascot/';
 
-    function playSayHi() {
+    // ------------------------------------------------------------
+    // 播放指定動畫
+    // ------------------------------------------------------------
 
-        video.src = mascotPath + 'girl-sayhi.webm';
+    function playMascot(file) {
+
+        video.src = mascotPath + file;
         video.load();
 
         mascot.classList.add('playing');
@@ -1356,27 +1359,88 @@ if (eggImage && eggStatusIcon) {
         const playPromise = video.play();
 
         if (playPromise !== undefined) {
+
             playPromise.catch(function(error) {
-                console.warn('🌄 小導遊動畫無法自動播放：', error);
+
+                console.warn(
+                    '🌄 小導遊動畫無法播放：',
+                    error
+                );
+
                 mascot.classList.remove('playing');
+
             });
         }
     }
 
-    // 動畫完成後，回復靜止 PNG
+    // ------------------------------------------------------------
+    // 動畫完成
+    // ------------------------------------------------------------
+
     video.addEventListener('ended', function() {
 
-        mascot.classList.remove('playing');
-
+        // 先停止影片
         video.pause();
+
+        // 清除影片
         video.removeAttribute('src');
         video.load();
 
+        // 回復透明 PNG
+        mascot.classList.remove('playing');
+
     });
 
-    // 開頁面後等待 1.5 秒，再向大家打招呼
+    // ------------------------------------------------------------
+    // 第一步：開頁面後 1.5 秒 Say Hi
+    // ------------------------------------------------------------
+
     setTimeout(function() {
-        playSayHi();
+
+        playMascot('girl-sayhi.webm');
+
     }, 1500);
+
+
+    // ------------------------------------------------------------
+    // 第二步：Say Hi 後再播放 Walk
+    //
+    // 暫定 6 秒後開始。
+    // 這個時間之後可以按實際動畫長度調整。
+    // ------------------------------------------------------------
+
+    setTimeout(function() {
+
+        playMascot('girl-walk.webm');
+
+    }, 6000);
+
+
+    // ------------------------------------------------------------
+    // 測試用控制
+    // 以後可以喺其他功能叫小導遊出場
+    // ------------------------------------------------------------
+
+    window.yunnanMascot = {
+
+        sayHi: function() {
+            playMascot('girl-sayhi.webm');
+        },
+
+        walk: function() {
+            playMascot('girl-walk.webm');
+        },
+
+        idle: function() {
+
+            video.pause();
+            video.removeAttribute('src');
+            video.load();
+
+            mascot.classList.remove('playing');
+
+        }
+
+    };
 
 })();
