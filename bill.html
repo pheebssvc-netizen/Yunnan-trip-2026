@@ -6,145 +6,31 @@
     <title>神算醒 · 雲南滇西12日</title>
 
     <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js">
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js">
     </script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js">
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js">
     </script>
+
+    <!-- 共用樣式 -->
+    <link rel="stylesheet" href="style.css" />
+
+    <!-- ===== 共用 JavaScript (控制倒數、海拔線等) ===== -->
+    <script src="app.js"></script>
 
     <style>
-        /* reset & base */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: #F9F6F0;
-            color: #2D241A;
-            padding-bottom: 80px;
-        }
-        .app-header {
-            position: relative;
-            background-size: cover;
-            background-position: center 20%;
-            min-height: 200px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 20px 16px 30px;
-        }
-        .header-overlay {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(30, 20, 15, 0.5) 0%, rgba(0, 0, 0, 0.25) 100%);
-            border-radius: 0 0 30px 30px;
-        }
-        .header-content {
-            position: relative;
-            z-index: 2;
-            color: #fff;
-            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
-            width: 100%;
-        }
-        .header-content h1 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-        }
-        .countdown {
-            font-size: 1.1rem;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(4px);
-            padding: 8px 18px;
-            border-radius: 40px;
-            display: inline-block;
-            margin: 10px 0 6px;
-            font-weight: 500;
-        }
-        .header-divider {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            margin: 10px 0 4px;
-        }
-        .header-divider .line {
-            width: 60px;
-            height: 2px;
-            background: #E9C46A;
-            border-radius: 2px;
-        }
-        .header-divider .dot {
-            width: 8px;
-            height: 8px;
-            background: #E9C46A;
-            border-radius: 50%;
-        }
-        .sub {
-            font-size: 0.95rem;
-            opacity: 0.9;
-            letter-spacing: 1px;
-        }
-
-        /* tab nav */
-        .tab-nav {
-            display: flex;
-            background: #fff;
-            border-bottom: 1px solid #E8E0D8;
-            padding: 6px 12px;
-            gap: 4px;
-            flex-wrap: wrap;
-            justify-content: center;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
-            position: sticky;
-            top: 0;
-            z-index: 20;
-            backdrop-filter: blur(6px);
-        }
-        .tab-nav a {
-            padding: 8px 16px;
-            border-radius: 30px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            color: #6B5A4A;
-            text-decoration: none;
-            transition: 0.15s;
-            background: transparent;
-        }
-        .tab-nav a.active {
-            background: #E07A5F;
-            color: #fff;
-        }
-        .tab-nav a:active {
-            transform: scale(0.94);
-        }
-
-        .page {
-            max-width: 640px;
-            margin: 0 auto;
-            padding: 16px 14px 30px;
-        }
-
-        /* card */
         .bill-card {
             background: #fff;
-            border-radius: 24px;
+            border-radius: 16px;
             padding: 16px 18px;
-            margin-bottom: 18px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
-            border: 1px solid #F0EAE2;
+            margin-bottom: 14px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
         }
         .bill-card h3 {
             font-size: 1.0rem;
             color: #E07A5F;
             border-left: 5px solid #E9C46A;
             padding-left: 12px;
-            margin-bottom: 14px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            margin-bottom: 12px;
         }
         .status-dot {
             display: inline-block;
@@ -156,11 +42,11 @@
         }
         .status-dot.online {
             background: #2ECC71;
-            box-shadow: 0 0 8px rgba(46, 204, 113, 0.4);
+            box-shadow: 0 0 8px rgba(46, 204, 113, 0.5);
         }
         .status-dot.offline {
             background: #F39C12;
-            box-shadow: 0 0 8px rgba(243, 156, 18, 0.4);
+            box-shadow: 0 0 8px rgba(243, 156, 18, 0.5);
         }
         .status-label {
             font-size: 0.75rem;
@@ -196,24 +82,24 @@
         .total-spend {
             font-size: 0.85rem;
             color: #6B5A4A;
-            margin-top: 10px;
+            margin-top: 6px;
             display: flex;
             justify-content: space-between;
             border-top: 1px solid #EDE7E0;
-            padding-top: 10px;
+            padding-top: 8px;
         }
         .total-spend strong {
             color: #2D241A;
         }
         .bill-form .form-row {
-            margin-bottom: 14px;
+            margin-bottom: 12px;
         }
         .bill-form .form-row label {
             display: block;
             font-size: 0.8rem;
             font-weight: 600;
             color: #6B5A4A;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
         }
         .bill-form .form-row input[type="date"],
         .bill-form .form-row input[type="number"],
@@ -233,7 +119,7 @@
             background: #fff;
         }
         .bill-form .form-row input[type="number"] {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             font-weight: 600;
         }
         .category-pills {
@@ -250,7 +136,7 @@
             font-weight: 500;
             color: #6B5A4A;
             cursor: pointer;
-            transition: 0.1s;
+            transition: 0.15s;
             user-select: none;
         }
         .category-pills .pill:active {
@@ -412,20 +298,20 @@
         }
         .filter-bar {
             display: flex;
-            gap: 6px;
+            gap: 8px;
             flex-wrap: wrap;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
         .filter-bar .filter-btn {
-            padding: 4px 12px;
+            padding: 4px 14px;
             border-radius: 30px;
             border: 1.5px solid #EDE7E0;
             background: #fff;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             font-weight: 500;
             color: #6B5A4A;
             cursor: pointer;
-            transition: 0.1s;
+            transition: 0.15s;
         }
         .filter-bar .filter-btn:active {
             transform: scale(0.94);
@@ -449,75 +335,6 @@
             border-radius: 30px;
             margin-left: 6px;
         }
-        .map-fab {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            background: #E07A5F;
-            color: #fff;
-            width: 60px;
-            height: 60px;
-            border-radius: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            box-shadow: 0 4px 16px rgba(224, 122, 95, 0.4);
-            text-decoration: none;
-            transition: 0.2s;
-            z-index: 30;
-        }
-        .map-fab:active {
-            transform: scale(0.9);
-        }
-        .back-to-top {
-            position: fixed;
-            bottom: 100px;
-            right: 24px;
-            background: rgba(45, 36, 26, 0.7);
-            color: #fff;
-            border: none;
-            width: 44px;
-            height: 44px;
-            border-radius: 30px;
-            font-size: 20px;
-            backdrop-filter: blur(4px);
-            cursor: pointer;
-            opacity: 0;
-            transition: 0.2s;
-            z-index: 25;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-        .back-to-top.show {
-            opacity: 1;
-        }
-        .back-to-top:active {
-            transform: scale(0.9);
-        }
-        .sync-status {
-            text-align: center;
-            font-size: 0.7rem;
-            color: #8A7A6A;
-            padding: 6px 0 2px;
-        }
-        .sync-status .synced {
-            color: #2ECC71;
-        }
-        /* 人均開支行 */
-        .per-person-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.9rem;
-            color: #6B5A4A;
-            padding: 4px 0 8px;
-            border-bottom: 1px solid #EDE7E0;
-            margin-bottom: 6px;
-        }
-        .per-person-row strong {
-            color: #2D241A;
-            font-size: 1.0rem;
-        }
-
         @media (max-width: 480px) {
             .payer-buttons .payer-btn {
                 width: 48px;
@@ -538,7 +355,7 @@
 </head>
 <body>
 
-    <!-- ===== HEADER ===== -->
+    <!-- ===== HEADER (內聯背景圖，同 index.html 一致) ===== -->
     <header class="app-header" id="heroHeader" style="background-image: url('https://raw.githubusercontent.com/pheebssvc-netizen/Yunnan-trip-2026/main/images/Pudacuo.jpg');">
         <div class="header-overlay"></div>
         <div class="header-content">
@@ -642,11 +459,6 @@
                     <span class="status-label" id="statusLabel">連線中...</span>
                 </div>
             </div>
-            <!-- ✅ 人均開支 -->
-            <div class="per-person-row">
-                <span>👤 每人平均開支</span>
-                <span><strong id="perPersonAmount">¥0.00</strong></span>
-            </div>
             <div id="settlementResult">
                 <ul class="settlement-list" id="settlementList">
                     <li style="color:#B5A89A; text-align:center; padding:12px 0;">未有帳單，記第一筆數啦！</li>
@@ -656,7 +468,6 @@
                 <span>🧾 團隊總支出</span>
                 <span><strong id="totalSpend">¥0.00</strong></span>
             </div>
-            <div class="sync-status" id="syncStatus">⏳ 同步中...</div>
         </div>
 
     </div>
@@ -672,7 +483,7 @@
 
     <script>
         // ================================================================
-        //  Firebase 設定 (修正)
+        //  Firebase 設定
         // ================================================================
         const firebaseConfig = {
             apiKey: "AIzaSyAtthBBNoHJkN6B_e8DVjzDpK_eB0wfExo",
@@ -687,7 +498,7 @@
         const db = firebase.database();
 
         // ================================================================
-        //  記帳邏輯 (保留原有設計)
+        //  記帳邏輯
         // ================================================================
         const MEMBERS = ['J', 'C', 'K', 'Z'];
         const CATEGORY_LABELS = { breakfast: '早餐', lunch: '午餐', dinner: '晚餐', snack: '咖啡小食', ticket: '門票', transport: '交通', other: '雜項' };
@@ -709,60 +520,24 @@
         const billList = $('billList');
         const settlementList = $('settlementList');
         const totalSpend = $('totalSpend');
-        const perPersonAmount = $('perPersonAmount');
         const statusDot = $('statusDot');
         const statusLabel = $('statusLabel');
-        const syncStatus = $('syncStatus');
         const filterBar = $('filterBar');
 
-        // 倒數
-        function updateCountdown() {
-            const target = new Date('2026-11-11T00:00:00+08:00');
-            const now = new Date();
-            const diff = target - now;
-            if (diff <= 0) {
-                document.getElementById('countdown').textContent = '🎉 旅程進行中！';
-                return;
-            }
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-            const mins = Math.floor((diff / (1000 * 60)) % 60);
-            document.getElementById('countdown').textContent = `⏳ ${days}天 ${hours}小時 ${mins}分`;
-        }
-        updateCountdown();
-        setInterval(updateCountdown, 60000);
-
-        // ✅ 1. 日期預設為今天
-        function setDefaultDate() {
+        function initForm() {
             const today = new Date();
             billDate.value = today.toISOString().split('T')[0];
-        }
-
-        // ✅ 2. 分類點擊自動填入備註
-        function setupCategoryPills() {
-            categoryPills.querySelectorAll('.pill').forEach(el => {
-                el.addEventListener('click', function() {
-                    categoryPills.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
-                    this.classList.add('active');
-                    // 如果備註欄為空，自動填入分類名稱
-                    const cat = this.dataset.cat;
-                    const label = CATEGORY_LABELS[cat] || cat;
-                    if (billNote.value.trim() === '') {
-                        billNote.value = label;
-                    }
-                });
-            });
-        }
-
-        function initForm() {
-            setDefaultDate();
             const firstPill = categoryPills.querySelector('.pill');
             if (firstPill) firstPill.classList.add('active');
             const firstPayer = payerButtons.querySelector('.payer-btn');
             if (firstPayer) firstPayer.classList.add('active');
             updateSelectAllText();
-            setupCategoryPills();
-
+            categoryPills.querySelectorAll('.pill').forEach(el => {
+                el.addEventListener('click', function() {
+                    categoryPills.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
             payerButtons.querySelectorAll('.payer-btn').forEach(el => {
                 el.addEventListener('click', function() {
                     payerButtons.querySelectorAll('.payer-btn').forEach(p => p.classList.remove('active'));
@@ -805,7 +580,6 @@
             });
             if (participants.length === 0) { alert('至少揀一位參與人'); return; }
             const note = billNote.value.trim();
-
             const bill = {
                 date, category, categoryLabel: CATEGORY_LABELS[category] || category,
                 payer, amount: Math.round(amount * 100) / 100,
@@ -819,12 +593,7 @@
             renderAll();
             if (isOnline) syncPendingBills();
             billAmount.value = '';
-            // 不清空備註，保留分類名稱
             billNote.value = '';
-            // 重置分類高亮（保留第一個 active）
-            categoryPills.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
-            const firstPill = categoryPills.querySelector('.pill');
-            if (firstPill) firstPill.classList.add('active');
             billAmount.focus();
         }
 
@@ -843,22 +612,16 @@
             const pending = getPendingBills();
             if (pending.length === 0) return;
             const billsRef = db.ref('trip-bills');
-            const toRemove = [];
             pending.forEach((bill, index) => {
                 const { id, ...billData } = bill;
                 billsRef.push(billData, (error) => {
                     if (!error) {
-                        toRemove.push(index);
+                        const current = getPendingBills();
+                        const updated = current.filter((_, i) => i !== index);
+                        localStorage.setItem('pendingBills', JSON.stringify(updated));
                     }
                 });
             });
-            setTimeout(() => {
-                if (toRemove.length > 0) {
-                    const current = getPendingBills();
-                    const updated = current.filter((_, i) => !toRemove.includes(i));
-                    localStorage.setItem('pendingBills', JSON.stringify(updated));
-                }
-            }, 1500);
         }
 
         function loadFromFirebase() {
@@ -886,7 +649,6 @@
                 sortBills();
                 renderAll();
                 updateOnlineStatus(true);
-                syncStatus.innerHTML = '✅ 已同步 (' + allBills.length + ' 筆)';
             }, (error) => {
                 console.warn('Firebase 讀取失敗，使用本地數據', error);
                 const pending = getPendingBills();
@@ -896,7 +658,6 @@
                     renderAll();
                 }
                 updateOnlineStatus(false);
-                syncStatus.innerHTML = '⚠️ 離線模式 (' + allBills.length + ' 筆)';
             });
         }
 
@@ -910,16 +671,180 @@
             renderTotalSpend();
         }
 
-        // ✅ 3. 結算總覽加入人均開支
         function renderSettlement() {
             if (allBills.length === 0) {
                 settlementList.innerHTML = `<li style="color:#B5A89A; text-align:center; padding:12px 0;">未有帳單，記第一筆數啦！</li>`;
-                perPersonAmount.textContent = '¥0.00';
                 return;
             }
             const balance = {};
             MEMBERS.forEach(m => balance[m] = 0);
-            let totalAmount = 0;
-            // 計算每人分攤總額
-            const personTotal = {};
-            MEMBERS.forEach(m =>
+            allBills.forEach(bill => {
+                const share = bill.amount / bill.participants.length;
+                bill.participants.forEach(p => { if (balance[p] !== undefined) balance[p] -= share; });
+                if (balance[bill.payer] !== undefined) balance[bill.payer] += bill.amount;
+            });
+            const debtors = [];
+            const creditors = [];
+            MEMBERS.forEach(m => {
+                if (balance[m] < -0.005) debtors.push({ name: m, amt: -balance[m] });
+                if (balance[m] > 0.005) creditors.push({ name: m, amt: balance[m] });
+            });
+            const transactions = [];
+            let i = 0,
+                j = 0;
+            while (i < debtors.length && j < creditors.length) {
+                const d = debtors[i];
+                const c = creditors[j];
+                const amount = Math.min(d.amt, c.amt);
+                if (amount > 0.005) {
+                    transactions.push({ from: d.name, to: c.name, amount: Math.round(amount * 100) / 100 });
+                }
+                d.amt -= amount;
+                c.amt -= amount;
+                if (d.amt < 0.005) i++;
+                if (c.amt < 0.005) j++;
+            }
+            if (transactions.length === 0) {
+                settlementList.innerHTML = `<li class="settlement-clear">🎉 數已清，冇拖冇欠！</li>`;
+            } else {
+                let html = '';
+                transactions.forEach(t => {
+                    html += `<li><span>👉 <strong>${t.from}</strong> 俾 <strong>${t.to}</strong></span><span class="settlement-amount">¥${t.amount.toFixed(2)}</span></li>`;
+                });
+                settlementList.innerHTML = html;
+            }
+        }
+
+        function renderBillList() {
+            let filtered = [...allBills];
+            if (currentFilter === 'today') {
+                const today = new Date().toISOString().split('T')[0];
+                filtered = filtered.filter(b => b.date === today);
+            } else if (currentFilter !== 'all') {
+                filtered = filtered.filter(b => b.category === currentFilter);
+            }
+            if (filtered.length === 0) {
+                billList.innerHTML = `<div class="empty-state">📭 沒有符合嘅記錄</div>`;
+                return;
+            }
+            let html = '';
+            filtered.forEach(bill => {
+                const icon = CATEGORY_ICONS[bill.category] || '📌';
+                const participantsStr = bill.participants.join(', ');
+                const isPending = bill.id && bill.id.startsWith('local_');
+                const pendingBadge = isPending ? `<span class="pending-badge">⏳ 同步中</span>` : '';
+                const noteHtml = bill.note ? `<span class="note">📝 ${bill.note}</span>` : '';
+                html += `<div class="bill-item">
+                            <div class="left">
+                                <div class="top">
+                                    <span class="cat">${icon} ${bill.categoryLabel || bill.category}</span>
+                                    <span class="desc">${bill.date}</span>
+                                    ${pendingBadge}
+                                </div>
+                                <div class="meta">👤 ${bill.payer} ｜ 👥 ${participantsStr}</div>
+                                ${noteHtml}
+                            </div>
+                            <div class="right">
+                                <div class="amount">¥${bill.amount.toFixed(2)}</div>
+                                <button class="delete-btn" data-id="${bill.id}">✕</button>
+                            </div>
+                        </div>`;
+            });
+            billList.innerHTML = html;
+            billList.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = this.dataset.id;
+                    deleteBill(id);
+                });
+            });
+        }
+
+        function renderTotalSpend() {
+            const total = allBills.reduce((sum, b) => sum + b.amount, 0);
+            totalSpend.textContent = '¥' + total.toFixed(2);
+        }
+
+        function deleteBill(id) {
+            if (!confirm('確定刪除呢筆記錄？')) return;
+            allBills = allBills.filter(b => b.id !== id);
+            if (!id.startsWith('local_')) {
+                db.ref('trip-bills/' + id).remove().catch(err => console.warn('刪除失敗', err));
+            } else {
+                const pending = getPendingBills();
+                const updated = pending.filter(b => b.id !== id);
+                localStorage.setItem('pendingBills', JSON.stringify(updated));
+            }
+            renderAll();
+        }
+
+        function updateOnlineStatus(online) {
+            isOnline = online;
+            if (online) {
+                statusDot.className = 'status-dot online';
+                statusLabel.textContent = '🟢 在線同步中';
+            } else {
+                statusDot.className = 'status-dot offline';
+                statusLabel.textContent = '🟠 離線儲存中';
+            }
+        }
+
+        function initNetworkListener() {
+            window.addEventListener('online', () => {
+                updateOnlineStatus(true);
+                syncPendingBills();
+                loadFromFirebase();
+            });
+            window.addEventListener('offline', () => {
+                updateOnlineStatus(false);
+            });
+            updateOnlineStatus(navigator.onLine);
+            const connectedRef = db.ref('.info/connected');
+            connectedRef.on('value', (snap) => {
+                const connected = snap.val() === true;
+                updateOnlineStatus(connected);
+                if (connected) syncPendingBills();
+            });
+        }
+
+        function initFilter() {
+            filterBar.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    filterBar.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentFilter = this.dataset.filter;
+                    renderBillList();
+                });
+            });
+        }
+
+        // ================================================================
+        //  初始化 (倒數由 app.js 控制，呢度唔再重複)
+        // ================================================================
+        function init() {
+            initForm();
+            initFilter();
+            initNetworkListener();
+            loadFromFirebase();
+            if (navigator.onLine) setTimeout(syncPendingBills, 2000);
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+
+        // ================================================================
+        //  返回頂部按鈕控制
+        // ================================================================
+        const backToTopBtn = document.getElementById('backToTopBtn');
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 300) {
+                backToTopBtn.classList.add('show');
+            } else {
+                backToTopBtn.classList.remove('show');
+            }
+        });
+        backToTopBtn.addEventListener('click', function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+
+</body>
+</html>
