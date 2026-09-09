@@ -424,21 +424,16 @@ function fetchWeather() {
             const sunsetStr = sunset ? sunset.toLocaleTimeString('zh-HK', { hour: '2-digit', minute: '2-digit' }) : '--:--';
 
 container.innerHTML = `
-    <div class="weather-card" style="padding: 16px 18px;">
+    <div class="weather-card">
         <div class="weather-compact">
-            <!-- 主資訊：地區 ｜ 溫度 + 濕度（並排）｜ 天氣圖像 -->
             <div class="weather-main">
                 <div class="city">📍 ${cityName}</div>
                 <div class="main-center">
                     <span class="main-temp">${tempDay}°C</span>
                     <span class="main-humidity">💧 ${humidity}%</span>
                 </div>
-                <div class="main-right">
-                    <div class="main-icon">${icon}</div>
-                </div>
+                <div class="main-icon">${icon}</div>
             </div>
-
-            <!-- 日間 / 夜間 對比 -->
             <div class="weather-periods">
                 <div class="period-card day">
                     <div class="period-label">日間</div>
@@ -453,8 +448,6 @@ container.innerHTML = `
                     <div class="period-desc">${desc}</div>
                 </div>
             </div>
-
-            <!-- 日出日落 -->
             <div class="sun-info">
                 <span class="sun-item"><span class="sun-emoji">🌅</span> 日出 ${sunriseStr}</span>
                 <span class="sun-item"><span class="sun-emoji">🌇</span> 日落 ${sunsetStr}</span>
