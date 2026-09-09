@@ -118,25 +118,24 @@
             z-index: 10;
         }
 
-        /* ===== 新增：底部固定圖片 ===== */
+        /* ===== 底部中央固定圖片（透明度 = 0 → 即完全不透明） ===== */
         #bottom-fixed-image {
             position: fixed;
             bottom: 20px;
-            right: 20px;
+            left: 50%;
+            transform: translateX(-50%);
             z-index: 999;
             max-width: 140px;
-            opacity: 0.55;
-            pointer-events: none;  /* 等佢唔會阻礙地圖操作 */
+            opacity: 1;                /* 完全唔透明 */
+            pointer-events: none;      /* 唔會阻礙地圖操作 */
             border-radius: 12px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-            transition: opacity 0.2s;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.10);
         }
         /* 手機細屏幕縮細少少 */
         @media (max-width: 480px) {
             #bottom-fixed-image {
                 max-width: 100px;
                 bottom: 14px;
-                right: 14px;
             }
         }
 
