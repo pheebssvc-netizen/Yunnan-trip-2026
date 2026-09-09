@@ -118,27 +118,6 @@
             z-index: 10;
         }
 
-        /* ===== 底部中央固定圖片（透明度 = 0 → 即完全不透明） ===== */
-        #bottom-fixed-image {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 999;
-            max-width: 140px;
-            opacity: 1;                /* 完全唔透明 */
-            pointer-events: none;      /* 唔會阻礙地圖操作 */
-            border-radius: 12px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.10);
-        }
-        /* 手機細屏幕縮細少少 */
-        @media (max-width: 480px) {
-            #bottom-fixed-image {
-                max-width: 100px;
-                bottom: 14px;
-            }
-        }
-
         @media (max-width: 480px) {
             .map-header h1 {
                 font-size: 0.9rem;
@@ -159,6 +138,32 @@
                 height: 12px;
             }
         }
+        /* ===== 地圖懸浮吉祥物 ===== */
+        .map-mascot-container {
+            position: absolute;
+            bottom: 30px; /* 與圖例對齊 */
+            left: 20px;
+            z-index: 1000;
+            pointer-events: none; /* 避免阻擋地圖拖拽與點擊 */
+        }
+        .map-mascot-img {
+            width: 120px;
+            height: auto;
+            filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.25));
+            transition: transform 0.3s ease;
+        }
+
+        /* 手機端自動縮小，避免遮擋太多地圖區域 */
+        @media (max-width: 480px) {
+            .map-mascot-container {
+                bottom: 24px;
+                left: 10px;
+            }
+            .map-mascot-img {
+                width: 85px;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -171,14 +176,6 @@
     <div id="map"></div>
 
     <div class="map-footer">📍 藍色 = 住宿 ｜ 紅色 = 景點 ｜ 撳 Marker 睇詳情</div>
-
-    <!-- ===== 底部固定圖片（請將圖片放喺 images/yunnan-welcome.png） ===== -->
-    <img 
-        id="bottom-fixed-image" 
-        src="images/yunnan-welcome.png" 
-        alt="雲南的風景 等著我們~" 
-        title="雲南的風景 等著我們~"
-    />
 
     <script>
         // ================================================================
@@ -570,6 +567,11 @@
 
         console.log('🗺️ 雲南地圖已載入！（共 ' + locations.length + ' 個地點）');
     </script>
+
+    <!-- ===== 地圖懸浮吉祥物 ===== -->
+    <div class="map-mascot-container">
+        <img src="yunnan-welcome.png.png" alt="雲南風景等著我們" class="map-mascot-img" />
+    </div>
 
 </body>
 </html>
