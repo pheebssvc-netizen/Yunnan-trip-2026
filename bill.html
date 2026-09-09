@@ -283,18 +283,30 @@
             font-size: 1.0rem;
             color: #2D241A;
         }
-        .bill-item .delete-btn {
+        .bill-item .action-buttons {
+            display: flex;
+            gap: 6px;
+            margin-top: 2px;
+        }
+        .bill-item .action-buttons button {
             background: none;
             border: none;
-            color: #D5C8BC;
-            font-size: 1.1rem;
+            font-size: 0.8rem;
             cursor: pointer;
-            padding: 4px 6px;
+            padding: 2px 6px;
+            border-radius: 4px;
             transition: 0.15s;
+            color: #B5A89A;
         }
-        .bill-item .delete-btn:active {
-            color: #E07A5F;
+        .bill-item .action-buttons .edit-btn:active,
+        .bill-item .action-buttons .delete-btn:active {
             transform: scale(0.9);
+        }
+        .bill-item .action-buttons .edit-btn:hover {
+            color: #E07A5F;
+        }
+        .bill-item .action-buttons .delete-btn:hover {
+            color: #E07A5F;
         }
         .filter-bar {
             display: flex;
@@ -335,6 +347,40 @@
             border-radius: 30px;
             margin-left: 6px;
         }
+        /* Toast 提示 */
+        #toast {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2D241A;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 0.95rem;
+            z-index: 9999;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        #toast.show {
+            opacity: 1;
+        }
+        /* 人均支出 */
+        .per-person {
+            font-size: 0.85rem;
+            color: #6B5A4A;
+            margin-top: 2px;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px dashed #EDE7E0;
+            padding-bottom: 6px;
+        }
+        .per-person strong {
+            color: #2D241A;
+        }
         @media (max-width: 480px) {
             .payer-buttons .payer-btn {
                 width: 48px;
@@ -349,6 +395,11 @@
             }
             .bill-item .right .amount {
                 font-size: 0.9rem;
+            }
+            #toast {
+                font-size: 0.85rem;
+                padding: 10px 20px;
+                bottom: 70px;
             }
         }
     </style>
@@ -401,6 +452,11 @@
                         <span class="pill" data-cat="other">🛍️ 雜項</span>
                     </div>
                 </div>
+                <!-- 新增：具體項目輸入 -->
+                <div class="form-row">
+                    <label>📝 具體項目（選擇性）</label>
+                    <input type="text" id="billDetail" placeholder="例如：大排檔、的士、手信" />
+                </div>
                 <div class="form-row">
                     <label>👤 誰付款？</label>
                     <div class="payer-buttons" id="payerButtons">
@@ -427,7 +483,7 @@
                     <label>📝 備註 (選擇性)</label>
                     <input type="text" id="billNote" placeholder="e.g. 古城餐廳 / 玉龍雪山門票" />
                 </div>
-                <button type="submit" class="btn-add-bill">➕ 記帳</button>
+                <button type="submit" class="btn-add-bill" id="submitBtn">➕ 記帳</button>
             </form>
         </div>
 
@@ -464,6 +520,11 @@
                     <li style="color:#B5A89A; text-align:center; padding:12px 0;">未有帳單，記第一筆數啦！</li>
                 </ul>
             </div>
+            <!-- 人均支出 -->
+            <div class="per-person" id="perPersonRow">
+                <span>👤 人均支出 (4人)</span>
+                <span><strong id="perPersonAmount">¥0.00</strong></span>
+            </div>
             <div class="total-spend">
                 <span>🧾 團隊總支出</span>
                 <span><strong id="totalSpend">¥0.00</strong></span>
@@ -471,6 +532,9 @@
         </div>
 
     </div>
+
+    <!-- ===== Toast 提示 ===== -->
+    <div id="toast"></div>
 
     <!-- ===== 固定地圖按鈕 ===== -->
     <a href="map.html" class="map-fab" id="mapFab" aria-label="查看地圖">
@@ -493,6 +557,7 @@
         let allBills = [];
         let currentFilter = 'all';
         let isOnline = navigator.onLine;
+        let editingId = null; // 編輯中的 bill id
 
         const $ = id => document.getElementById(id);
         const billForm = $('billForm');
@@ -500,15 +565,27 @@
         const categoryPills = $('categoryPills');
         const payerButtons = $('payerButtons');
         const billAmount = $('billAmount');
+        const billDetail = $('billDetail');    // 新增具體項目
         const billNote = $('billNote');
         const participantGroup = $('participantGroup');
         const selectAllToggle = $('selectAllToggle');
         const billList = $('billList');
         const settlementList = $('settlementList');
         const totalSpend = $('totalSpend');
+        const perPersonAmount = $('perPersonAmount');
         const statusDot = $('statusDot');
         const statusLabel = $('statusLabel');
         const filterBar = $('filterBar');
+        const submitBtn = $('submitBtn');
+
+        // Toast 顯示
+        function showToast(msg, duration = 2000) {
+            const toast = $('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toast._timer);
+            toast._timer = setTimeout(() => toast.classList.remove('show'), duration);
+        }
 
         function initForm() {
             const today = new Date();
@@ -539,7 +616,7 @@
             participantGroup.querySelectorAll('input[type="checkbox"]').forEach(cb => {
                 cb.addEventListener('change', updateSelectAllText);
             });
-            billForm.addEventListener('submit', handleAddBill);
+            billForm.addEventListener('submit', handleAddOrUpdateBill);
         }
 
         function updateSelectAllText() {
@@ -548,7 +625,40 @@
             selectAllToggle.textContent = allChecked ? '全選' : '全部取消';
         }
 
-        function handleAddBill(e) {
+        // 清空表單（保留日期、分類、付款人預設）
+        function clearForm() {
+            billAmount.value = '';
+            billDetail.value = '';
+            billNote.value = '';
+            editingId = null;
+            submitBtn.textContent = '➕ 記帳';
+            // 唔重置日期同分類/付款人，保持方便連續記帳
+        }
+
+        // 填表單用於編輯
+        function fillFormForEdit(bill) {
+            billDate.value = bill.date;
+            // 設定分類
+            categoryPills.querySelectorAll('.pill').forEach(p => {
+                p.classList.toggle('active', p.dataset.cat === bill.category);
+            });
+            // 設定付款人
+            payerButtons.querySelectorAll('.payer-btn').forEach(b => {
+                b.classList.toggle('active', b.dataset.payer === bill.payer);
+            });
+            billAmount.value = bill.amount;
+            billDetail.value = bill.detail || '';
+            billNote.value = bill.note || '';
+            // 參與人
+            participantGroup.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                cb.checked = bill.participants.includes(cb.value);
+            });
+            updateSelectAllText();
+            editingId = bill.id;
+            submitBtn.textContent = '💾 更新';
+        }
+
+        function handleAddOrUpdateBill(e) {
             e.preventDefault();
             const date = billDate.value;
             if (!date) { alert('請揀日期'); return; }
@@ -565,22 +675,68 @@
                 participants.push(cb.value);
             });
             if (participants.length === 0) { alert('至少揀一位參與人'); return; }
+            const detail = billDetail.value.trim();
             const note = billNote.value.trim();
-            const bill = {
-                date, category, categoryLabel: CATEGORY_LABELS[category] || category,
-                payer, amount: Math.round(amount * 100) / 100,
-                participants, note,
+
+            const billData = {
+                date,
+                category,
+                categoryLabel: CATEGORY_LABELS[category] || category,
+                detail: detail,
+                payer,
+                amount: Math.round(amount * 100) / 100,
+                participants,
+                note,
                 timestamp: Date.now(),
-                id: 'local_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6)
             };
-            savePendingBill(bill);
-            allBills.push(bill);
-            sortBills();
-            renderAll();
-            if (isOnline) syncPendingBills();
-            billAmount.value = '';
-            billNote.value = '';
+
+            if (editingId) {
+                // 更新模式
+                updateBill(editingId, billData);
+            } else {
+                // 新增模式
+                const newBill = {
+                    ...billData,
+                    id: 'local_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6)
+                };
+                savePendingBill(newBill);
+                allBills.push(newBill);
+                sortBills();
+                renderAll();
+                if (isOnline) syncPendingBills();
+                showToast('✅ 記帳成功！');
+            }
+            clearForm();
             billAmount.focus();
+        }
+
+        // 更新帳單
+        function updateBill(id, newData) {
+            // 搵本地記錄
+            let index = allBills.findIndex(b => b.id === id);
+            if (index !== -1) {
+                // 保留 id 同 timestamp（可以保留原有 timestamp）
+                const old = allBills[index];
+                const updated = { ...old, ...newData, timestamp: old.timestamp };
+                allBills[index] = updated;
+                // 更新 Firebase
+                if (!id.startsWith('local_')) {
+                    db.ref('trip-bills/' + id).update(newData).catch(err => console.warn('更新 Firebase 失敗', err));
+                } else {
+                    // 更新 localStorage 中的 pending
+                    const pending = getPendingBills();
+                    const pIndex = pending.findIndex(b => b.id === id);
+                    if (pIndex !== -1) {
+                        pending[pIndex] = { ...pending[pIndex], ...newData };
+                        localStorage.setItem('pendingBills', JSON.stringify(pending));
+                    }
+                }
+                sortBills();
+                renderAll();
+                showToast('✅ 更新成功！');
+            } else {
+                alert('搵唔到要更新嘅帳單');
+            }
         }
 
         function savePendingBill(bill) {
@@ -654,7 +810,17 @@
         function renderAll() {
             renderSettlement();
             renderBillList();
-            renderTotalSpend();
+            renderTotalAndPerPerson();
+        }
+
+        // 合併顯示分類+具體項目
+        function getDisplayCategory(bill) {
+            const icon = CATEGORY_ICONS[bill.category] || '📌';
+            const label = bill.categoryLabel || bill.category;
+            if (bill.detail) {
+                return `${icon} ${label} - ${bill.detail}`;
+            }
+            return `${icon} ${label}`;
         }
 
         function renderSettlement() {
@@ -715,7 +881,7 @@
             }
             let html = '';
             filtered.forEach(bill => {
-                const icon = CATEGORY_ICONS[bill.category] || '📌';
+                const displayCat = getDisplayCategory(bill);
                 const participantsStr = bill.participants.join(', ');
                 const isPending = bill.id && bill.id.startsWith('local_');
                 const pendingBadge = isPending ? `<span class="pending-badge">⏳ 同步中</span>` : '';
@@ -723,7 +889,7 @@
                 html += `<div class="bill-item">
                             <div class="left">
                                 <div class="top">
-                                    <span class="cat">${icon} ${bill.categoryLabel || bill.category}</span>
+                                    <span class="cat">${displayCat}</span>
                                     <span class="desc">${bill.date}</span>
                                     ${pendingBadge}
                                 </div>
@@ -732,22 +898,43 @@
                             </div>
                             <div class="right">
                                 <div class="amount">¥${bill.amount.toFixed(2)}</div>
-                                <button class="delete-btn" data-id="${bill.id}">✕</button>
+                                <div class="action-buttons">
+                                    <button class="edit-btn" data-id="${bill.id}">✎ 編輯</button>
+                                    <button class="delete-btn" data-id="${bill.id}">✕</button>
+                                </div>
                             </div>
                         </div>`;
             });
             billList.innerHTML = html;
+            // 刪除事件
             billList.querySelectorAll('.delete-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const id = this.dataset.id;
                     deleteBill(id);
                 });
             });
+            // 編輯事件
+            billList.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = this.dataset.id;
+                    const bill = allBills.find(b => b.id === id);
+                    if (bill) {
+                        fillFormForEdit(bill);
+                        // 滾動到表單
+                        document.querySelector('.bill-card').scrollIntoView({ behavior: 'smooth' });
+                    } else {
+                        alert('搵唔到呢筆記錄');
+                    }
+                });
+            });
         }
 
-        function renderTotalSpend() {
+        function renderTotalAndPerPerson() {
             const total = allBills.reduce((sum, b) => sum + b.amount, 0);
             totalSpend.textContent = '¥' + total.toFixed(2);
+            // 人均：假設 4 人，亦可動態計 unique participants，但固定 4 人
+            const perPerson = total / MEMBERS.length;
+            perPersonAmount.textContent = '¥' + perPerson.toFixed(2);
         }
 
         function deleteBill(id) {
@@ -761,6 +948,7 @@
                 localStorage.setItem('pendingBills', JSON.stringify(updated));
             }
             renderAll();
+            showToast('🗑️ 已刪除');
         }
 
         function updateOnlineStatus(online) {
@@ -804,7 +992,7 @@
         }
 
         // ================================================================
-        //  初始化 (倒數由 app.js 控制，呢度唔再重複)
+        //  初始化
         // ================================================================
         function init() {
             initForm();
