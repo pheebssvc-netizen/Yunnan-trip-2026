@@ -1373,6 +1373,8 @@ body {
     margin-top: 4px;
     width: 100%;
 }
+
+/* 頂部：地區 | 溫度+濕度 | 圖像 */
 .weather-compact .weather-main {
     width: 100%;
     display: flex;
@@ -1380,33 +1382,43 @@ body {
     justify-content: space-between;
     padding: 4px 0 8px;
     border-bottom: 1px solid rgba(255,255,255,0.08);
+    flex-wrap: wrap;
+    gap: 6px 12px;
 }
 .weather-compact .weather-main .city {
     font-size: 1.2rem;
     font-weight: 600;
     letter-spacing: 0.5px;
+    white-space: nowrap;
 }
 .weather-compact .weather-main .main-icon {
     font-size: 2.2rem;
+    line-height: 1;
 }
 .weather-compact .weather-main .main-temp {
     font-size: 1.3rem;
     font-weight: 700;
+    white-space: nowrap;
 }
 .weather-compact .weather-main .main-humidity {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     opacity: 0.7;
+    white-space: nowrap;
 }
 .weather-compact .weather-main .main-center {
     display: flex;
     align-items: center;
     gap: 12px;
+    flex-wrap: wrap;
 }
 .weather-compact .weather-main .main-right {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 8px;
+    flex-shrink: 0;
 }
+
+/* 日間 / 夜間 卡片 */
 .weather-compact .weather-periods {
     display: flex;
     gap: 12px;
@@ -1447,6 +1459,8 @@ body {
     opacity: 0.8;
     margin-top: 2px;
 }
+
+/* 日出日落 */
 .weather-compact .sun-info {
     display: flex;
     justify-content: center;
@@ -1455,6 +1469,7 @@ body {
     border-top: 1px solid rgba(255,255,255,0.06);
     margin-top: 4px;
     width: 100%;
+    flex-wrap: wrap;
 }
 .weather-compact .sun-info .sun-item {
     display: flex;
@@ -1463,6 +1478,7 @@ body {
     font-size: 0.85rem;
     font-weight: 500;
     opacity: 0.9;
+    white-space: nowrap;
 }
 .weather-compact .sun-info .sun-item .sun-emoji {
     font-size: 1.1rem;
@@ -1478,6 +1494,9 @@ body {
     }
     .weather-compact .weather-main .main-icon {
         font-size: 1.8rem;
+    }
+    .weather-compact .weather-main .main-humidity {
+        font-size: 0.75rem;
     }
     .weather-compact .period-card {
         padding: 8px 8px;
