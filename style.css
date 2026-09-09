@@ -1370,7 +1370,8 @@ body {
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
-    margin-top: 6px;
+    margin-top: 4px;
+    width: 100%;
 }
 .weather-compact .weather-main {
     width: 100%;
@@ -1388,6 +1389,24 @@ body {
 .weather-compact .weather-main .main-icon {
     font-size: 2.2rem;
 }
+.weather-compact .weather-main .main-temp {
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+.weather-compact .weather-main .main-humidity {
+    font-size: 0.8rem;
+    opacity: 0.7;
+}
+.weather-compact .weather-main .main-center {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.weather-compact .weather-main .main-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
 .weather-compact .weather-periods {
     display: flex;
     gap: 12px;
@@ -1395,11 +1414,18 @@ body {
 }
 .weather-compact .period-card {
     flex: 1;
-    background: rgba(255,255,255,0.06);
     border-radius: 12px;
     padding: 10px 12px;
     text-align: center;
     min-width: 80px;
+}
+.weather-compact .period-card.day {
+    background: rgba(233, 196, 106, 0.15);
+    border-left: 3px solid #E9C46A;
+}
+.weather-compact .period-card.night {
+    background: rgba(107, 142, 170, 0.15);
+    border-left: 3px solid #6B8EAA;
 }
 .weather-compact .period-card .period-icon {
     font-size: 1.6rem;
@@ -1407,8 +1433,8 @@ body {
     margin-bottom: 2px;
 }
 .weather-compact .period-card .period-label {
-    font-size: 0.65rem;
-    opacity: 0.7;
+    font-size: 0.75rem;
+    opacity: 0.8;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -1421,31 +1447,38 @@ body {
     opacity: 0.8;
     margin-top: 2px;
 }
-.weather-compact .period-card.day {
-    border-left: 3px solid #E9C46A;
-}
-.weather-compact .period-card.night {
-    border-left: 3px solid #6B8EAA;
-}
 .weather-compact .sun-info {
     display: flex;
     justify-content: center;
-    gap: 20px;
-    font-size: 0.75rem;
-    opacity: 0.8;
-    padding-top: 6px;
+    gap: 30px;
+    padding-top: 8px;
     border-top: 1px solid rgba(255,255,255,0.06);
-    margin-top: 6px;
+    margin-top: 4px;
     width: 100%;
 }
-.weather-compact .sun-info span {
+.weather-compact .sun-info .sun-item {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    opacity: 0.9;
+}
+.weather-compact .sun-info .sun-item .sun-emoji {
+    font-size: 1.1rem;
 }
 
 /* 手機微調 */
 @media (max-width: 480px) {
+    .weather-compact .weather-main .city {
+        font-size: 1.0rem;
+    }
+    .weather-compact .weather-main .main-temp {
+        font-size: 1.1rem;
+    }
+    .weather-compact .weather-main .main-icon {
+        font-size: 1.8rem;
+    }
     .weather-compact .period-card {
         padding: 8px 8px;
         min-width: 60px;
@@ -1456,11 +1489,16 @@ body {
     .weather-compact .period-card .period-icon {
         font-size: 1.3rem;
     }
-    .weather-compact .weather-main .city {
-        font-size: 1.0rem;
+    .weather-compact .period-card .period-label {
+        font-size: 0.65rem;
+    }
+    .weather-compact .period-card .period-desc {
+        font-size: 0.6rem;
     }
     .weather-compact .sun-info {
-        font-size: 0.65rem;
-        gap: 12px;
+        gap: 16px;
+    }
+    .weather-compact .sun-info .sun-item {
+        font-size: 0.75rem;
     }
 }
