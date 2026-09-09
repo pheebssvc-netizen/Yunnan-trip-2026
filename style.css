@@ -1365,3 +1365,102 @@ body {
         animation-duration: 8s;
     }
 }
+/* ===== 天氣日間/夜間對比卡片 ===== */
+.weather-compact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 6px;
+}
+.weather-compact .weather-main {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 0 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.weather-compact .weather-main .city {
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+.weather-compact .weather-main .main-icon {
+    font-size: 2.2rem;
+}
+.weather-compact .weather-periods {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+}
+.weather-compact .period-card {
+    flex: 1;
+    background: rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 10px 12px;
+    text-align: center;
+    min-width: 80px;
+}
+.weather-compact .period-card .period-icon {
+    font-size: 1.6rem;
+    display: block;
+    margin-bottom: 2px;
+}
+.weather-compact .period-card .period-label {
+    font-size: 0.65rem;
+    opacity: 0.7;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.weather-compact .period-card .period-temp {
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+.weather-compact .period-card .period-desc {
+    font-size: 0.7rem;
+    opacity: 0.8;
+    margin-top: 2px;
+}
+.weather-compact .period-card.day {
+    border-left: 3px solid #E9C46A;
+}
+.weather-compact .period-card.night {
+    border-left: 3px solid #6B8EAA;
+}
+.weather-compact .sun-info {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    font-size: 0.75rem;
+    opacity: 0.8;
+    padding-top: 6px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    margin-top: 6px;
+    width: 100%;
+}
+.weather-compact .sun-info span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* 手機微調 */
+@media (max-width: 480px) {
+    .weather-compact .period-card {
+        padding: 8px 8px;
+        min-width: 60px;
+    }
+    .weather-compact .period-card .period-temp {
+        font-size: 1.2rem;
+    }
+    .weather-compact .period-card .period-icon {
+        font-size: 1.3rem;
+    }
+    .weather-compact .weather-main .city {
+        font-size: 1.0rem;
+    }
+    .weather-compact .sun-info {
+        font-size: 0.65rem;
+        gap: 12px;
+    }
+}
