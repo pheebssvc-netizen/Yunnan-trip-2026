@@ -122,13 +122,15 @@
             font-size: 1.3rem;
             font-weight: 600;
         }
+
+        /* ===== 修改點 1：分類按鈕改為兩欄網格 ===== */
         .category-pills {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
         }
         .category-pills .pill {
-            padding: 6px 14px;
+            padding: 8px 12px;
             border-radius: 30px;
             border: 2px solid #EDE7E0;
             background: #fff;
@@ -138,6 +140,7 @@
             cursor: pointer;
             transition: 0.15s;
             user-select: none;
+            text-align: center;
         }
         .category-pills .pill:active {
             transform: scale(0.94);
@@ -147,6 +150,7 @@
             color: #fff;
             border-color: #E07A5F;
         }
+
         .payer-buttons {
             display: flex;
             gap: 10px;
@@ -368,15 +372,15 @@
         #toast.show {
             opacity: 1;
         }
-        /* 人均支出 */
+        /* 人均支出 - 移咗去團隊總支出下面，樣式保持不變 */
         .per-person {
             font-size: 0.85rem;
             color: #6B5A4A;
-            margin-top: 2px;
+            margin-top: 4px;
             display: flex;
             justify-content: space-between;
-            border-bottom: 1px dashed #EDE7E0;
-            padding-bottom: 6px;
+            border-top: 1px dashed #EDE7E0;
+            padding-top: 6px;
         }
         .per-person strong {
             color: #2D241A;
@@ -401,12 +405,16 @@
                 padding: 10px 20px;
                 bottom: 70px;
             }
+            /* 細屏幕兩欄分類仍然適用 */
+            .category-pills {
+                gap: 6px;
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- ===== HEADER (內聯背景圖，同 index.html 一致) ===== -->
+    <!-- ===== HEADER ===== -->
     <header class="app-header" id="heroHeader" style="background-image: url('https://raw.githubusercontent.com/pheebssvc-netizen/Yunnan-trip-2026/main/images/Pudacuo.jpg');">
         <div class="header-overlay"></div>
         <div class="header-content">
@@ -452,7 +460,6 @@
                         <span class="pill" data-cat="other">🛍️ 雜項</span>
                     </div>
                 </div>
-                <!-- 新增：具體項目輸入 -->
                 <div class="form-row">
                     <label>📝 具體項目（選擇性）</label>
                     <input type="text" id="billDetail" placeholder="例如：大排檔、的士、手信" />
@@ -487,9 +494,9 @@
             </form>
         </div>
 
-        <!-- 歷史消費 -->
+        <!-- ===== 修改點 3：「歷史消費」改為「消費清單」 ===== -->
         <div class="bill-card">
-            <h3>📜 歷史消費</h3>
+            <h3>📜 消費清單</h3>
             <div class="filter-bar" id="filterBar">
                 <button class="filter-btn active" data-filter="all">全部</button>
                 <button class="filter-btn" data-filter="today">今日</button>
@@ -520,14 +527,14 @@
                     <li style="color:#B5A89A; text-align:center; padding:12px 0;">未有帳單，記第一筆數啦！</li>
                 </ul>
             </div>
-            <!-- 人均支出 -->
-            <div class="per-person" id="perPersonRow">
-                <span>👤 人均支出 (4人)</span>
-                <span><strong id="perPersonAmount">¥0.00</strong></span>
-            </div>
+            <!-- ===== 修改點 2：團隊總支出先顯示，人均支出放下面 ===== -->
             <div class="total-spend">
                 <span>🧾 團隊總支出</span>
                 <span><strong id="totalSpend">¥0.00</strong></span>
+            </div>
+            <div class="per-person" id="perPersonRow">
+                <span>👤 人均支出 (4人)</span>
+                <span><strong id="perPersonAmount">¥0.00</strong></span>
             </div>
         </div>
 
@@ -548,7 +555,7 @@
     <script>
 
         // ================================================================
-        //  記帳邏輯
+        //  記帳邏輯（完全保留原有功能）
         // ================================================================
         const MEMBERS = ['J', 'C', 'K', 'Z'];
         const CATEGORY_LABELS = { breakfast: '早餐', lunch: '午餐', dinner: '晚餐', snack: '咖啡小食', ticket: '門票', transport: '交通', other: '雜項' };
@@ -557,7 +564,7 @@
         let allBills = [];
         let currentFilter = 'all';
         let isOnline = navigator.onLine;
-        let editingId = null; // 編輯中的 bill id
+        let editingId = null;
 
         const $ = id => document.getElementById(id);
         const billForm = $('billForm');
@@ -565,7 +572,7 @@
         const categoryPills = $('categoryPills');
         const payerButtons = $('payerButtons');
         const billAmount = $('billAmount');
-        const billDetail = $('billDetail');    // 新增具體項目
+        const billDetail = $('billDetail');
         const billNote = $('billNote');
         const participantGroup = $('participantGroup');
         const selectAllToggle = $('selectAllToggle');
@@ -578,7 +585,6 @@
         const filterBar = $('filterBar');
         const submitBtn = $('submitBtn');
 
-        // Toast 顯示
         function showToast(msg, duration = 2000) {
             const toast = $('toast');
             toast.textContent = msg;
@@ -625,31 +631,25 @@
             selectAllToggle.textContent = allChecked ? '全選' : '全部取消';
         }
 
-        // 清空表單（保留日期、分類、付款人預設）
         function clearForm() {
             billAmount.value = '';
             billDetail.value = '';
             billNote.value = '';
             editingId = null;
             submitBtn.textContent = '➕ 記帳';
-            // 唔重置日期同分類/付款人，保持方便連續記帳
         }
 
-        // 填表單用於編輯
         function fillFormForEdit(bill) {
             billDate.value = bill.date;
-            // 設定分類
             categoryPills.querySelectorAll('.pill').forEach(p => {
                 p.classList.toggle('active', p.dataset.cat === bill.category);
             });
-            // 設定付款人
             payerButtons.querySelectorAll('.payer-btn').forEach(b => {
                 b.classList.toggle('active', b.dataset.payer === bill.payer);
             });
             billAmount.value = bill.amount;
             billDetail.value = bill.detail || '';
             billNote.value = bill.note || '';
-            // 參與人
             participantGroup.querySelectorAll('input[type="checkbox"]').forEach(cb => {
                 cb.checked = bill.participants.includes(cb.value);
             });
@@ -691,10 +691,8 @@
             };
 
             if (editingId) {
-                // 更新模式
                 updateBill(editingId, billData);
             } else {
-                // 新增模式
                 const newBill = {
                     ...billData,
                     id: 'local_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6)
@@ -710,20 +708,15 @@
             billAmount.focus();
         }
 
-        // 更新帳單
         function updateBill(id, newData) {
-            // 搵本地記錄
             let index = allBills.findIndex(b => b.id === id);
             if (index !== -1) {
-                // 保留 id 同 timestamp（可以保留原有 timestamp）
                 const old = allBills[index];
                 const updated = { ...old, ...newData, timestamp: old.timestamp };
                 allBills[index] = updated;
-                // 更新 Firebase
                 if (!id.startsWith('local_')) {
                     db.ref('trip-bills/' + id).update(newData).catch(err => console.warn('更新 Firebase 失敗', err));
                 } else {
-                    // 更新 localStorage 中的 pending
                     const pending = getPendingBills();
                     const pIndex = pending.findIndex(b => b.id === id);
                     if (pIndex !== -1) {
@@ -813,7 +806,6 @@
             renderTotalAndPerPerson();
         }
 
-        // 合併顯示分類+具體項目
         function getDisplayCategory(bill) {
             const icon = CATEGORY_ICONS[bill.category] || '📌';
             const label = bill.categoryLabel || bill.category;
@@ -842,8 +834,7 @@
                 if (balance[m] > 0.005) creditors.push({ name: m, amt: balance[m] });
             });
             const transactions = [];
-            let i = 0,
-                j = 0;
+            let i = 0, j = 0;
             while (i < debtors.length && j < creditors.length) {
                 const d = debtors[i];
                 const c = creditors[j];
@@ -906,21 +897,18 @@
                         </div>`;
             });
             billList.innerHTML = html;
-            // 刪除事件
             billList.querySelectorAll('.delete-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const id = this.dataset.id;
                     deleteBill(id);
                 });
             });
-            // 編輯事件
             billList.querySelectorAll('.edit-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const id = this.dataset.id;
                     const bill = allBills.find(b => b.id === id);
                     if (bill) {
                         fillFormForEdit(bill);
-                        // 滾動到表單
                         document.querySelector('.bill-card').scrollIntoView({ behavior: 'smooth' });
                     } else {
                         alert('搵唔到呢筆記錄');
@@ -932,7 +920,6 @@
         function renderTotalAndPerPerson() {
             const total = allBills.reduce((sum, b) => sum + b.amount, 0);
             totalSpend.textContent = '¥' + total.toFixed(2);
-            // 人均：假設 4 人，亦可動態計 unique participants，但固定 4 人
             const perPerson = total / MEMBERS.length;
             perPersonAmount.textContent = '¥' + perPerson.toFixed(2);
         }
@@ -991,9 +978,6 @@
             });
         }
 
-        // ================================================================
-        //  初始化
-        // ================================================================
         function init() {
             initForm();
             initFilter();
@@ -1004,9 +988,7 @@
 
         document.addEventListener('DOMContentLoaded', init);
 
-        // ================================================================
-        //  返回頂部按鈕控制
-        // ================================================================
+        // 返回頂部
         const backToTopBtn = document.getElementById('backToTopBtn');
         window.addEventListener('scroll', function() {
             if (window.scrollY > 300) {
