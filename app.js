@@ -399,7 +399,6 @@ function fetchWeather() {
         return;
     }
 
-    // 用城市名查天氣，加多一個 `&cnt=5` 參數攞埋日出日落同溫度範圍
     const url =
         `https://api.openweathermap.org/data/2.5/weather?q=${cityKey}&appid=${WEATHER_API_KEY}&units=metric&lang=zh_tw`;
 
@@ -409,13 +408,8 @@ function fetchWeather() {
             return res.json();
         })
         .then(data => {
-            // 日間溫度 = 當前溫度 (temp)
-            // 夜間溫度 = 最低溫 (temp_min) 或 當前溫度減 10-14 度（模擬高原日夜溫差）
-            // 實際上 OpenWeatherMap 嘅 temp_min 同 temp_max 係一日預測範圍
             const tempDay = Math.round(data.main.temp);
-            // 用 temp_min 當夜間溫度，如果冇就用 temp - 14（高原日夜溫差大）
             let tempNight = data.main.temp_min ? Math.round(data.main.temp_min) : Math.round(data.main.temp - 14);
-            // 如果夜間溫度比日間高（數據問題），就強制調低
             if (tempNight >= tempDay) {
                 tempNight = Math.round(tempDay - 12);
             }
@@ -424,7 +418,6 @@ function fetchWeather() {
             const desc = data.weather[0].description || '';
             const humidity = data.main.humidity || 0;
 
-            // 日出日落時間（timestamp 轉換）
             const sunrise = data.sys.sunrise ? new Date(data.sys.sunrise * 1000) : null;
             const sunset = data.sys.sunset ? new Date(data.sys.sunset * 1000) : null;
             const sunriseStr = sunrise ? sunrise.toLocaleTimeString('zh-HK', { hour: '2-digit', minute: '2-digit' }) : '--:--';
@@ -432,14 +425,17 @@ function fetchWeather() {
 
             container.innerHTML = `
                 <div class="weather-card" style="flex-wrap:wrap; padding:16px 18px;">
-                    <div class="weather-compact" style="width:100%;">
-                        <!-- 主資訊 -->
+                    <div class="weather-compact">
+                        <!-- 主資訊：地區 ＋ 溫度 ＋ 濕度 ＋ 天氣圖像 -->
                         <div class="weather-main">
-                            <div>
-                                <div class="city">📍 ${cityName}</div>
-                                <div style="font-size:0.75rem; opacity:0.7;">💧 ${humidity}%</div>
+                            <div class="city">📍 ${cityName}</div>
+                            <div class="main-center">
+                                <span class="main-temp">${tempDay}°C</span>
+                                <span class="main-humidity">💧 ${humidity}%</span>
                             </div>
-                            <div class="main-icon">${icon}</div>
+                            <div class="main-right">
+                                <span class="main-icon">${icon}</span>
+                            </div>
                         </div>
                         <!-- 日間 / 夜間 對比 -->
                         <div class="weather-periods">
@@ -458,8 +454,8 @@ function fetchWeather() {
                         </div>
                         <!-- 日出日落 -->
                         <div class="sun-info">
-                            <span>🌅 日出 ${sunriseStr}</span>
-                            <span>🌇 日落 ${sunsetStr}</span>
+                            <span class="sun-item"><span class="sun-emoji">🌅</span> 日出 ${sunriseStr}</span>
+                            <span class="sun-item"><span class="sun-emoji">🌇</span> 日落 ${sunsetStr}</span>
                         </div>
                     </div>
                 </div>
