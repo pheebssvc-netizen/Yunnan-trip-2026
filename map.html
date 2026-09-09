@@ -118,6 +118,28 @@
             z-index: 10;
         }
 
+        /* ===== 新增：底部固定圖片 ===== */
+        #bottom-fixed-image {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 999;
+            max-width: 140px;
+            opacity: 0.55;
+            pointer-events: none;  /* 等佢唔會阻礙地圖操作 */
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            transition: opacity 0.2s;
+        }
+        /* 手機細屏幕縮細少少 */
+        @media (max-width: 480px) {
+            #bottom-fixed-image {
+                max-width: 100px;
+                bottom: 14px;
+                right: 14px;
+            }
+        }
+
         @media (max-width: 480px) {
             .map-header h1 {
                 font-size: 0.9rem;
@@ -150,6 +172,14 @@
     <div id="map"></div>
 
     <div class="map-footer">📍 藍色 = 住宿 ｜ 紅色 = 景點 ｜ 撳 Marker 睇詳情</div>
+
+    <!-- ===== 底部固定圖片（請將圖片放喺 images/yunnan-welcome.png） ===== -->
+    <img 
+        id="bottom-fixed-image" 
+        src="images/yunnan-welcome.png" 
+        alt="雲南的風景 等著我們~" 
+        title="雲南的風景 等著我們~"
+    />
 
     <script>
         // ================================================================
