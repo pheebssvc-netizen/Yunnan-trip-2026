@@ -423,8 +423,8 @@ function fetchWeather() {
             const sunriseStr = sunrise ? sunrise.toLocaleTimeString('zh-HK', { hour: '2-digit', minute: '2-digit' }) : '--:--';
             const sunsetStr = sunset ? sunset.toLocaleTimeString('zh-HK', { hour: '2-digit', minute: '2-digit' }) : '--:--';
 
- container.innerHTML = `
-    <div class="weather-card" style="flex-wrap:wrap; padding:16px 18px;">
+container.innerHTML = `
+    <div class="weather-card" style="padding: 16px 18px;">
         <div class="weather-compact">
             <!-- 主資訊：地區 ｜ 溫度 + 濕度（並排）｜ 天氣圖像 -->
             <div class="weather-main">
@@ -433,23 +433,27 @@ function fetchWeather() {
                     <span class="main-temp">${tempDay}°C</span>
                     <span class="main-humidity">💧 ${humidity}%</span>
                 </div>
-                <div class="main-icon">${icon}</div>
+                <div class="main-right">
+                    <div class="main-icon">${icon}</div>
+                </div>
             </div>
+
             <!-- 日間 / 夜間 對比 -->
             <div class="weather-periods">
                 <div class="period-card day">
-                    <span class="period-icon">☀️</span>
                     <div class="period-label">日間</div>
+                    <span class="period-icon">☀️</span>
                     <div class="period-temp">${tempDay}°C</div>
                     <div class="period-desc">${desc}</div>
                 </div>
                 <div class="period-card night">
-                    <span class="period-icon">🌙</span>
                     <div class="period-label">夜間</div>
+                    <span class="period-icon">🌙</span>
                     <div class="period-temp">${tempNight}°C</div>
                     <div class="period-desc">${desc}</div>
                 </div>
             </div>
+
             <!-- 日出日落 -->
             <div class="sun-info">
                 <span class="sun-item"><span class="sun-emoji">🌅</span> 日出 ${sunriseStr}</span>
@@ -458,6 +462,7 @@ function fetchWeather() {
         </div>
     </div>
 `;
+
         })
         .catch(err => {
             console.warn('天氣載入失敗:', err);
