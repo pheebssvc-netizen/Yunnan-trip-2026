@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
     <title>神算醒 · 雲南滇西12日</title>
 
-    <!-- Firebase SDK v9 compat -->
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js">
     </script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js">
@@ -496,23 +496,26 @@
         }
         .sync-status {
             text-align: center;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #8A7A6A;
             padding: 6px 0 2px;
         }
         .sync-status .synced {
             color: #2ECC71;
         }
+        /* 人均開支行 */
         .per-person-row {
             display: flex;
             justify-content: space-between;
             font-size: 0.9rem;
             color: #6B5A4A;
-            padding: 6px 0 2px;
+            padding: 4px 0 8px;
             border-bottom: 1px solid #EDE7E0;
+            margin-bottom: 6px;
         }
         .per-person-row strong {
             color: #2D241A;
+            font-size: 1.0rem;
         }
 
         @media (max-width: 480px) {
@@ -639,7 +642,7 @@
                     <span class="status-label" id="statusLabel">連線中...</span>
                 </div>
             </div>
-            <!-- 人均開支 -->
+            <!-- ✅ 人均開支 -->
             <div class="per-person-row">
                 <span>👤 每人平均開支</span>
                 <span><strong id="perPersonAmount">¥0.00</strong></span>
@@ -684,7 +687,7 @@
         const db = firebase.database();
 
         // ================================================================
-        //  記帳邏輯 (保留原有風格，合併參考頁面優化)
+        //  記帳邏輯 (保留原有設計)
         // ================================================================
         const MEMBERS = ['J', 'C', 'K', 'Z'];
         const CATEGORY_LABELS = { breakfast: '早餐', lunch: '午餐', dinner: '晚餐', snack: '咖啡小食', ticket: '門票', transport: '交通', other: '雜項' };
@@ -729,13 +732,13 @@
         updateCountdown();
         setInterval(updateCountdown, 60000);
 
-        // 初始化日期為今天
+        // ✅ 1. 日期預設為今天
         function setDefaultDate() {
             const today = new Date();
             billDate.value = today.toISOString().split('T')[0];
         }
 
-        // 分類點擊：自動填入備註（分類名稱）
+        // ✅ 2. 分類點擊自動填入備註
         function setupCategoryPills() {
             categoryPills.querySelectorAll('.pill').forEach(el => {
                 el.addEventListener('click', function() {
@@ -816,8 +819,9 @@
             renderAll();
             if (isOnline) syncPendingBills();
             billAmount.value = '';
+            // 不清空備註，保留分類名稱
             billNote.value = '';
-            // 重置分類高亮，但保留第一個為active
+            // 重置分類高亮（保留第一個 active）
             categoryPills.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
             const firstPill = categoryPills.querySelector('.pill');
             if (firstPill) firstPill.classList.add('active');
@@ -839,7 +843,6 @@
             const pending = getPendingBills();
             if (pending.length === 0) return;
             const billsRef = db.ref('trip-bills');
-            // 逐筆上傳，並移除已同步的本地記錄
             const toRemove = [];
             pending.forEach((bill, index) => {
                 const { id, ...billData } = bill;
@@ -849,7 +852,6 @@
                     }
                 });
             });
-            // 延遲移除已同步的記錄
             setTimeout(() => {
                 if (toRemove.length > 0) {
                     const current = getPendingBills();
@@ -871,7 +873,6 @@
                 }
                 const pending = getPendingBills();
                 const all = [...firebaseBills, ...pending];
-                // 去重（基於 timestamp + amount + payer + category）
                 const unique = [];
                 const seen = new Set();
                 all.forEach(b => {
@@ -909,6 +910,7 @@
             renderTotalSpend();
         }
 
+        // ✅ 3. 結算總覽加入人均開支
         function renderSettlement() {
             if (allBills.length === 0) {
                 settlementList.innerHTML = `<li style="color:#B5A89A; text-align:center; padding:12px 0;">未有帳單，記第一筆數啦！</li>`;
@@ -918,6 +920,6 @@
             const balance = {};
             MEMBERS.forEach(m => balance[m] = 0);
             let totalAmount = 0;
-            allBills.forEach(bill => {
-                const share = bill.amount / bill.participants.length;
-                bill.participants.forEach(p => { if (balance[p] !== undefined)
+            // 計算每人分攤總額
+            const personTotal = {};
+            MEMBERS.forEach(m =>
