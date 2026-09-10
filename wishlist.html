@@ -73,15 +73,15 @@
             padding: 16px 16px 20px;
         }
 
-        /* ===== 進度卡片與吉祥物坐姿區域 ===== */
+        /* ===== 進度卡片與坐姿區域 ===== */
         .progress-section {
             background: #fff;
             border-radius: 16px;
-            padding: 20px 20px 12px;
-            margin-bottom: 28px; /* 預留底部讓腳步伸出 */
+            padding: 20px 20px 0px; /* 底部 padding 改為 0，方便圖片壓邊 */
+            margin-bottom: 55px;   /* 預留底部空間比突出去嘅木牌同腳 */
             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
             position: relative;
-            overflow: visible; /* 允許吉祥物隻腳突出方塊外部 */
+            overflow: visible;    /* 關鍵：允許吉祥物超出一邊 */
         }
 
         .progress-section .progress-label {
@@ -99,7 +99,7 @@
             background: #EDE7E0;
             border-radius: 30px;
             overflow: hidden;
-            margin-bottom: 14px;
+            margin-bottom: 12px;
         }
 
         .progress-section .progress-bar-fill {
@@ -110,26 +110,71 @@
             width: 0%;
         }
 
-        /* 吉祥物容器：擺放於進度條下方 */
-        .mascot-container {
+        /* 吉祥物整體容器 */
+        .mascot-wrapper {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            margin-top: 6px;
-            margin-bottom: -22px; /* 將底部位移向邊界，塑造坐喺方塊邊緣嘅感覺 */
             position: relative;
-            z-index: 2;
+            margin-top: 10px;
+            margin-bottom: -50px; /* 將橫木向下托，精準壓喺卡片底邊 */
+            z-index: 10;
         }
 
+        /* 頭頂對白氣泡 */
+        .mascot-status-bubble {
+            position: relative;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #8A5A3B;
+            background: #FFF9F2;
+            padding: 5px 14px;
+            border-radius: 18px;
+            border: 1.5px solid #F0D2B8;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+            margin-bottom: 6px;
+            animation: floatBubble 3s ease-in-out infinite;
+        }
+        /* 氣泡向下小尖角 */
+        .mascot-status-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 6px 6px 0;
+            border-style: solid;
+            border-color: #FFF9F2 transparent;
+            display: block;
+            width: 0;
+        }
+        .mascot-status-bubble::before {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 7px 7px 0;
+            border-style: solid;
+            border-color: #F0D2B8 transparent;
+            display: block;
+            width: 0;
+        }
+
+        @keyframes floatBubble {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+
+        /* 吉祥物圖片 */
         .mascot-img {
             width: 100%;
-            max-width: 220px;
+            max-width: 240px;
             height: auto;
             object-fit: contain;
             display: block;
-            /* 下方陰影增加立體懸坐感 */
-            filter: drop-shadow(0px 6px 8px rgba(0, 0, 0, 0.12));
+            filter: drop-shadow(0px 6px 6px rgba(0, 0, 0, 0.1));
             transition: transform 0.3s ease;
         }
 
@@ -141,18 +186,6 @@
             0% { transform: scale(1); }
             50% { transform: scale(1.06); }
             100% { transform: scale(1); }
-        }
-
-        .mascot-status-text {
-            font-size: 0.82rem;
-            font-weight: 600;
-            color: #8A5A3B;
-            margin-top: 2px;
-            background: #FDF6EE;
-            padding: 3px 12px;
-            border-radius: 20px;
-            border: 1px solid #F3E5D8;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
         }
 
         /* ===== 完成慶祝 ===== */
@@ -280,10 +313,13 @@
                 padding: 3px 10px;
             }
             .mascot-img {
-                max-width: 180px;
+                max-width: 200px;
             }
-            .mascot-container {
-                margin-bottom: -20px;
+            .mascot-wrapper {
+                margin-bottom: -42px; /* 手機螢幕微調壓邊高度 */
+            }
+            .progress-section {
+                margin-bottom: 48px;
             }
             .task-card {
                 padding: 14px 14px;
@@ -324,10 +360,12 @@
                 <div class="progress-bar-fill" id="progressFill"></div>
             </div>
 
-            <!-- 吉祥物坐喺進度條下方，隻腳微微超出方塊 -->
-            <div class="mascot-container">
+            <!-- 吉祥物包裝層 -->
+            <div class="mascot-wrapper">
+                <!-- 頭頂對白框 -->
+                <div id="mascotStatusText" class="mascot-status-bubble">期待大家解鎖更多任務～✨</div>
+                <!-- 吉祥物圖（木條剛好卡喺白色方塊底部線） -->
                 <img id="mascotImg" class="mascot-img" src="mascot/girl-expect-1.png" alt="雲南慢遊吉祥物" />
-                <div id="mascotStatusText" class="mascot-status-text">期待大家解鎖更多任務～✨</div>
             </div>
         </div>
 
