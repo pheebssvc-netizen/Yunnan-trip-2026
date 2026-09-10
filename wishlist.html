@@ -23,6 +23,7 @@
             min-height: 100vh;
         }
 
+        /* ===== HEADER ===== */
         .wishlist-header {
             background: linear-gradient(145deg, #2D241A 0%, #3D2E22 100%);
             position: sticky;
@@ -73,15 +74,15 @@
             padding: 16px 16px 20px;
         }
 
-        /* ===== 進度卡片與坐姿區域 ===== */
+        /* ===== 進度卡片與坐姿懸空區域 ===== */
         .progress-section {
             background: #fff;
             border-radius: 16px;
-            padding: 20px 20px 0px; /* 底部 padding 改為 0，方便圖片壓邊 */
-            margin-bottom: 75px;   /* 預留底部空間比突出去嘅木牌同腳 */
+            padding: 20px 20px 180px; /* 底部 padding 增加，預留吉祥物與懸空腳部位置 */
+            margin-bottom: 24px;       /* 與第一個任務卡片（喜洲古鎮）保持適當間距 */
             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
             position: relative;
-            overflow: visible;    /* 關鍵：允許吉祥物超出一邊 */
+            overflow: visible;         /* 允許圖片隻腳懸空跨出卡片 */
         }
 
         .progress-section .progress-label {
@@ -99,7 +100,6 @@
             background: #EDE7E0;
             border-radius: 30px;
             overflow: hidden;
-            margin-bottom: 12px;
         }
 
         .progress-section .progress-bar-fill {
@@ -110,31 +110,36 @@
             width: 0%;
         }
 
-        /* 吉祥物整體容器 */
+        /* ===== 吉祥物絕對定位容器 ===== */
         .mascot-wrapper {
+            position: absolute;
+            bottom: -35px;  /* 精準將木條同女孩隻腳推落白色卡片底邊之外 */
+            left: 50%;
+            transform: translateX(-50%);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            position: relative;
-            margin-top: 10px;
-            margin-bottom: -70px; /* 將橫木向下托，精準壓喺卡片底邊 */
             z-index: 10;
+            width: 100%;
+            pointer-events: none;
         }
 
         /* 頭頂對白氣泡 */
         .mascot-status-bubble {
+            pointer-events: auto;
             position: relative;
             font-size: 0.82rem;
             font-weight: 600;
             color: #8A5A3B;
             background: #FFF9F2;
-            padding: 5px 14px;
+            padding: 6px 16px;
             border-radius: 18px;
             border: 1.5px solid #F0D2B8;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
             margin-bottom: 6px;
             animation: floatBubble 3s ease-in-out infinite;
+            white-space: nowrap;
         }
         /* 氣泡向下小尖角 */
         .mascot-status-bubble::after {
@@ -164,17 +169,18 @@
 
         @keyframes floatBubble {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-3px); }
+            50% { transform: translateY(-4px); }
         }
 
         /* 吉祥物圖片 */
         .mascot-img {
+            pointer-events: auto;
             width: 100%;
-            max-width: 240px;
+            max-width: 210px;
             height: auto;
             object-fit: contain;
             display: block;
-            filter: drop-shadow(0px 6px 6px rgba(0, 0, 0, 0.1));
+            filter: drop-shadow(0px 8px 10px rgba(0, 0, 0, 0.12));
             transition: transform 0.3s ease;
         }
 
@@ -304,6 +310,7 @@
             margin-top: 2px;
         }
 
+        /* 手機螢幕適應 */
         @media (max-width: 480px) {
             .wishlist-header h1 {
                 font-size: 0.9rem;
@@ -313,17 +320,15 @@
                 padding: 3px 10px;
             }
             .progress-section {
-                margin-bottom: 65px;
+                padding-bottom: 160px; /* 手機微調懸空高度 */
+                margin-bottom: 20px;
             }
             .mascot-wrapper {
-                margin-bottom: -60px;
+                bottom: -30px;
             }
             .mascot-img {
-                max-width: 190px;
+                max-width: 185px;
             }
-            /* ...其餘保持原樣... */
-        }
-
             .task-card {
                 padding: 14px 14px;
             }
@@ -363,11 +368,11 @@
                 <div class="progress-bar-fill" id="progressFill"></div>
             </div>
 
-            <!-- 吉祥物包裝層 -->
+            <!-- 吉祥物包裝層（絕對定位懸空） -->
             <div class="mascot-wrapper">
                 <!-- 頭頂對白框 -->
                 <div id="mascotStatusText" class="mascot-status-bubble">期待大家解鎖更多任務～✨</div>
-                <!-- 吉祥物圖（木條剛好卡喺白色方塊底部線） -->
+                <!-- 吉祥物圖（懸空坐喺卡片邊框上） -->
                 <img id="mascotImg" class="mascot-img" src="mascot/girl-expect-1.png" alt="雲南慢遊吉祥物" />
             </div>
         </div>
@@ -405,7 +410,7 @@
         const db = firebaseInitialized ? firebase.database() : null;
 
         // ================================================================
-        //  任務數據（按行程順序）
+        //  任務數據
         // ================================================================
         const TASKS = [{
             id: "task-1",
@@ -562,12 +567,10 @@
             const count = ids.length;
             const total = TASKS.length;
 
-            // 更新數字標籤與進度條
             document.getElementById('progressText').textContent = `${count} / ${total}`;
             document.getElementById('progressBadge').textContent = `${count}/${total}`;
             document.getElementById('progressFill').style.width = `${(count / total) * 100}%`;
 
-            // ===== 吉祥物圖片與文字邏輯 =====
             const mascotImg = document.getElementById('mascotImg');
             const mascotStatusText = document.getElementById('mascotStatusText');
             let targetSrc = '';
@@ -584,7 +587,6 @@
                 targetText = '期待大家解鎖更多任務～✨';
             }
 
-            // 觸發切換動畫
             if (!mascotImg.src.endsWith(targetSrc)) {
                 mascotImg.src = targetSrc;
                 mascotImg.classList.remove('pop-animation');
@@ -593,7 +595,6 @@
             }
             mascotStatusText.textContent = targetText;
 
-            // 慶祝區
             const celebration = document.getElementById('celebration');
             if (count === total) {
                 celebration.classList.add('show');
@@ -601,10 +602,7 @@
                 celebration.classList.remove('show');
             }
 
-            // 渲染任務列表
             renderTasks(ids);
-
-            // 更新彩蛋入口
             updateEggEntry(count, total);
         }
 
@@ -613,7 +611,6 @@
                 currentCompletedIds.filter(id => id !== taskId) :
                 [...currentCompletedIds, taskId];
 
-            // 輕微彈跳動畫
             const mascotImg = document.getElementById('mascotImg');
             mascotImg.classList.remove('pop-animation');
             void mascotImg.offsetWidth;
@@ -626,9 +623,6 @@
             });
         }
 
-        // ================================================================
-        //  更新首頁彩蛋入口
-        // ================================================================
         function updateEggEntry(count, total) {
             localStorage.setItem('wishlist-progress', JSON.stringify({ count, total }));
             if (count === total) {
@@ -638,14 +632,7 @@
             }
         }
 
-        // ================================================================
-        //  啟動
-        // ================================================================
         listenTasks();
-
-        console.log('🎯 團友任務已啟動！');
-        if (!db) console.warn('⚠️ Firebase 未連線，使用 LocalStorage 備份');
     </script>
-
 </body>
 </html>
