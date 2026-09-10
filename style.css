@@ -8,7 +8,7 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     background: #F8F4F0;
     color: #2D241A;
-    padding: 0 0 110px 0;
+    padding: 0 0 190px 0;
     min-height: 100vh;
 }
 
@@ -116,39 +116,54 @@ body {
     }
 }
 
-/* ===== TAB NAV ===== */
+/* ===== TAB NAV（固定底部） ===== */
 .tab-nav {
     display: flex;
     background: #fff;
-    border-bottom: 2px solid #EDE7E0;
-    position: sticky;
-    top: 0;
-    z-index: 45;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    border-top: 2px solid #EDE7E0;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 55;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
+    padding-bottom: env(safe-area-inset-bottom);
+    height: 70px;
 }
 .tab-nav a {
     flex: 1;
-    padding: 14px 6px;
-    border: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2px;
+    padding: 6px 4px;
     background: transparent;
-    font-size: 0.88rem;
+    font-size: 0.75rem;
     font-weight: 500;
     color: #6B5A4A;
     cursor: pointer;
     transition: 0.2s;
-    border-bottom: 3px solid transparent;
-    letter-spacing: 0.3px;
     text-decoration: none;
     text-align: center;
-    display: block;
+    -webkit-tap-highlight-color: transparent;
+}
+.tab-nav a .tab-icon {
+    font-size: 1.4rem;
+    line-height: 1;
+}
+.tab-nav a .tab-label {
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.3px;
 }
 .tab-nav a.active {
     color: #E07A5F;
-    border-bottom-color: #E07A5F;
-    font-weight: 600;
+    font-weight: 700;
 }
 .tab-nav a:active {
     background: #FFF5F0;
+    transform: scale(0.95);
 }
 
 /* ===== PAGES ===== */
@@ -225,7 +240,7 @@ body {
 /* ===== 固定地圖按鈕 ===== */
 .map-fab {
     position: fixed;
-    bottom: 120px;
+    bottom: 195px;
     right: 16px;
     z-index: 60;
     width: 56px;
@@ -273,7 +288,7 @@ body {
 }
 @media (max-width: 480px) {
     .map-fab {
-        bottom: 105px;
+        bottom: 175px;
         right: 12px;
         width: 48px;
         height: 48px;
@@ -537,7 +552,7 @@ body {
 /* ===== 每日行程 ===== */
 .day-tabs-wrapper {
     position: sticky;
-    top: 100px;
+    top: 0;
     z-index: 40;
     background: rgba(255, 251, 245, 0.92);
     backdrop-filter: blur(4px);
@@ -589,7 +604,7 @@ body {
 }
 .day-detail .day-head {
     position: sticky;
-    top: 160px;
+    top: 60px;
     z-index: 35;
     background: #fff;
     padding: 4px 0 8px 0;
@@ -841,10 +856,10 @@ body {
     gap: 8px;
 }
 
-/* ===== 底部海拔線 ===== */
+/* ===== 底部海拔線（喺 Tab Bar 之上） ===== */
 .altitude-footer {
     position: fixed;
-    bottom: 0;
+    bottom: 70px;
     left: 0;
     width: 100%;
     background: rgba(255, 251, 245, 0.92);
@@ -934,86 +949,10 @@ body {
     margin-top: 10px;
 }
 
-@media (max-width: 480px) {
-    .app-header h1 {
-        font-size: 1.0rem;
-        letter-spacing: 1px;
-    }
-    .app-header .sub {
-        font-size: 0.7rem;
-    }
-    .header-divider {
-        max-width: 140px;
-    }
-    .countdown {
-        font-size: 0.7rem;
-    }
-    .tab-nav a {
-        font-size: 0.75rem;
-        padding: 12px 4px;
-    }
-    .day-tabs-wrapper {
-        top: 90px;
-        padding: 2px 8px 10px;
-    }
-    .day-tabs button {
-        font-size: 0.7rem;
-        padding: 6px 12px;
-    }
-    .day-detail .day-head {
-        top: 150px;
-    }
-    .day-detail .day-head .day-label {
-        font-size: 1.0rem;
-    }
-    .packing-grid {
-        grid-template-columns: 1fr;
-    }
-    .add-note-form input[type="text"] {
-        flex: 1 1 100px;
-        font-size: 0.82rem;
-    }
-    .altitude-footer {
-        height: 95px;
-        padding: 4px 6px 6px;
-    }
-    .altitude-footer canvas {
-        height: 68px;
-    }
-    body {
-        padding-bottom: 100px;
-    }
-    .day-item-meal {
-        padding: 8px 10px;
-    }
-    .train-input-area .train-row input {
-        font-size: 0.7rem;
-        padding: 3px 8px;
-        min-width: 60px;
-        flex: 1 1 80px;
-    }
-    .toast-container {
-        padding: 14px 20px;
-        max-width: 280px;
-    }
-    .toast-container .toast-title {
-        font-size: 0.95rem;
-    }
-    .map-fab {
-        bottom: 105px;
-        right: 12px;
-        width: 48px;
-        height: 48px;
-        font-size: 1.2rem;
-    }
-    .map-fab .tooltip {
-        display: none;
-    }
-}
-/* ===== 返回頂部按鈕（同 guide.html 一致） ===== */
+/* ===== 返回頂部按鈕 ===== */
 .back-to-top {
     position: fixed;
-    bottom: 30px;
+    bottom: 105px;
     right: 20px;
     z-index: 60;
     width: 56px;
@@ -1040,15 +979,7 @@ body {
     transform: scale(0.90);
     box-shadow: 0 2px 12px rgba(43, 58, 103, 0.25);
 }
-@media (max-width: 480px) {
-    .back-to-top {
-        bottom: 20px;
-        right: 14px;
-        width: 48px;
-        height: 48px;
-        font-size: 1.3rem;
-    }
-}
+
 /* ===== 緊急求助 Modal ===== */
 .emergency-overlay {
     position: fixed;
@@ -1183,6 +1114,7 @@ body {
     border-top: 1px solid #EDE7E0;
     padding-top: 14px;
 }
+
 /* ===== 彩蛋彈跳動畫 ===== */
 @keyframes eggBounce {
     0%, 100% { transform: translateY(0) rotate(0deg); }
@@ -1191,118 +1123,51 @@ body {
     70% { transform: translateY(-5px) rotate(6deg); }
     85% { transform: translateY(0) rotate(0deg); }
 }
-/* ===== 手機微調 ===== */
-@media (max-width: 480px) {
-    .emergency-modal {
-        padding: 18px 14px 24px;
-        max-height: 85vh;
-    }
-    .emergency-modal .modal-title {
-        font-size: 1.2rem;
-    }
-    .emergency-modal .section-title {
-        font-size: 0.82rem;
-    }
-    .emergency-modal .section-content {
-        font-size: 0.82rem;
-    }
-    .emergency-modal .level-box {
-        padding: 6px 12px;
-    }
-}
-/* ================================================================
-   🌄 雲南小導遊 V1.3
-   純 Walk：由畫面左邊進入 → 穿過整個畫面 → 右邊離開
-   ================================================================ */
 
+/* ===== 雲南小導遊 ===== */
 .yunnan-mascot {
     position: fixed;
-
-    /* 初始位置：完全藏在螢幕左邊 */
     left: 0;
-    bottom: 108px;
-
+    bottom: 178px;
     width: 145px;
     height: 210px;
-
     z-index: 70;
     pointer-events: none;
     overflow: visible;
-
-    /* 用 transform 控制整個女孩移動 */
     transform: translateX(-100%);
 }
-
-/* 靜止 PNG：V1.3 暫時完全唔顯示 */
 .yunnan-mascot .mascot-idle {
     display: none;
 }
-
-/* Walk 動畫 */
 .yunnan-mascot .mascot-video {
     position: absolute;
     left: 0;
     bottom: 0;
-
     width: 100%;
     height: auto;
-
     display: block;
-
     object-fit: contain;
-
     filter: drop-shadow(0 4px 8px rgba(0,0,0,0.12));
 }
-
-/* ------------------------------------------------
-   Walk 狀態
-   ------------------------------------------------ */
-
 .yunnan-mascot.walking {
     animation: mascotWalkAcross 9s linear forwards;
 }
-
-/*
-   從完全離開左邊
-   → 完全離開右邊
-*/
 @keyframes mascotWalkAcross {
-
     from {
         transform: translateX(-100%);
     }
-
     to {
         transform: translateX(calc(100vw));
     }
 }
 
-
-/* ------------------------------------------------
-   手機
-   ------------------------------------------------ */
-
-@media (max-width: 480px) {
-
-    .yunnan-mascot {
-
-        width: 115px;
-        height: 170px;
-
-        bottom: 108px;
-    }
-
-    .yunnan-mascot.walking {
-        animation-duration: 8s;
-    }
-}
 /* ===== 天氣小工具主卡片 ===== */
 .weather-card {
     background: linear-gradient(145deg, rgba(30, 58, 90, 0.85), rgba(15, 32, 54, 0.95));
     border-radius: 18px;
     padding: 18px;
     color: #fff;
-    display: block; /* 關鍵：從 flex 改為 block，讓內部 weather-compact 自由展開 */
+    display: block;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
     border: 1px solid rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(12px);
@@ -1326,8 +1191,6 @@ body {
     gap: 12px;
     width: 100%;
 }
-
-/* 頂部：地區與即時天氣概覽 */
 .weather-compact .weather-main {
     width: 100%;
     display: flex;
@@ -1336,46 +1199,38 @@ body {
     padding-bottom: 10px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
-
 .weather-compact .weather-main .city {
     font-size: 1.15rem;
     font-weight: 700;
     letter-spacing: 0.5px;
     color: #ffffff;
 }
-
 .weather-compact .weather-main .main-center {
     display: flex;
     align-items: baseline;
     gap: 8px;
 }
-
 .weather-compact .weather-main .main-temp {
     font-size: 1.4rem;
     font-weight: 800;
     color: #ffffff;
 }
-
 .weather-compact .weather-main .main-humidity {
     font-size: 0.8rem;
     color: rgba(255, 255, 255, 0.65);
     font-weight: 400;
 }
-
 .weather-compact .weather-main .main-icon {
     font-size: 2.0rem;
     line-height: 1;
     filter: drop-shadow(0 2px 8px rgba(0,0,0,0.2));
 }
-
-/* 日間 / 夜間 微透雙卡片 */
 .weather-compact .weather-periods {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
     width: 100%;
 }
-
 .weather-compact .period-card {
     border-radius: 12px;
     padding: 10px;
@@ -1384,19 +1239,14 @@ body {
     -webkit-backdrop-filter: blur(8px);
     box-sizing: border-box;
 }
-
-/* 日間卡片：微光琥珀暖色 */
 .weather-compact .period-card.day {
     background: linear-gradient(135deg, rgba(255, 179, 71, 0.15) 0%, rgba(255, 204, 128, 0.05) 100%);
     border: 1px solid rgba(255, 193, 70, 0.25);
 }
-
-/* 夜間卡片：微光星空藍紫 */
 .weather-compact .period-card.night {
     background: linear-gradient(135deg, rgba(100, 149, 237, 0.15) 0%, rgba(72, 61, 139, 0.08) 100%);
     border: 1px solid rgba(100, 149, 237, 0.25);
 }
-
 .weather-compact .period-card .period-label {
     font-size: 0.72rem;
     font-weight: 600;
@@ -1405,27 +1255,22 @@ body {
     letter-spacing: 0.8px;
     margin-bottom: 2px;
 }
-
 .weather-compact .period-card .period-icon {
     font-size: 1.5rem;
     margin: 2px 0;
     display: inline-block;
 }
-
 .weather-compact .period-card .period-temp {
     font-size: 1.25rem;
     font-weight: 700;
     color: #ffffff;
     line-height: 1.2;
 }
-
 .weather-compact .period-card .period-desc {
     font-size: 0.72rem;
     color: rgba(255, 255, 255, 0.75);
     margin-top: 3px;
 }
-
-/* 日出日落底部列 */
 .weather-compact .sun-info {
     display: flex;
     justify-content: space-evenly;
@@ -1435,7 +1280,6 @@ body {
     border-radius: 10px;
     border: 1px solid rgba(255, 255, 255, 0.06);
 }
-
 .weather-compact .sun-info .sun-item {
     display: flex;
     align-items: center;
@@ -1444,37 +1288,161 @@ body {
     font-weight: 500;
     color: rgba(255, 255, 255, 0.85);
 }
-
 .weather-compact .sun-info .sun-item .sun-emoji {
     font-size: 0.95rem;
 }
 
-/* 手機適應 */
+/* ===== 手機微調 ===== */
 @media (max-width: 480px) {
+    body {
+        padding-bottom: 175px;
+    }
+
+    .app-header h1 {
+        font-size: 1.0rem;
+        letter-spacing: 1px;
+    }
+    .app-header .sub {
+        font-size: 0.7rem;
+    }
+    .header-divider {
+        max-width: 140px;
+    }
+    .countdown {
+        font-size: 0.7rem;
+    }
+
+    /* Tab Nav */
+    .tab-nav {
+        height: 64px;
+    }
+    .tab-nav a .tab-icon {
+        font-size: 1.25rem;
+    }
+    .tab-nav a .tab-label {
+        font-size: 0.68rem;
+    }
+
+    /* 每日行程 */
+    .day-tabs-wrapper {
+        top: 0;
+        padding: 2px 8px 10px;
+    }
+    .day-tabs button {
+        font-size: 0.7rem;
+        padding: 6px 12px;
+    }
+    .day-detail .day-head {
+        top: 55px;
+    }
+    .day-detail .day-head .day-label {
+        font-size: 1.0rem;
+    }
+    .packing-grid {
+        grid-template-columns: 1fr;
+    }
+    .add-note-form input[type="text"] {
+        flex: 1 1 100px;
+        font-size: 0.82rem;
+    }
+
+    /* 海拔線 */
+    .altitude-footer {
+        bottom: 64px;
+        height: 95px;
+        padding: 4px 6px 6px;
+    }
+    .altitude-footer canvas {
+        height: 68px;
+    }
+
+    .day-item-meal {
+        padding: 8px 10px;
+    }
+    .train-input-area .train-row input {
+        font-size: 0.7rem;
+        padding: 3px 8px;
+        min-width: 60px;
+        flex: 1 1 80px;
+    }
+
+    /* Toast */
+    .toast-container {
+        padding: 14px 20px;
+        max-width: 280px;
+    }
+    .toast-container .toast-title {
+        font-size: 0.95rem;
+    }
+
+    /* FAB */
+    .map-fab {
+        bottom: 175px;
+        right: 12px;
+        width: 48px;
+        height: 48px;
+        font-size: 1.2rem;
+    }
+    .map-fab .tooltip {
+        display: none;
+    }
+
+    /* 返回頂部 */
+    .back-to-top {
+        bottom: 95px;
+        right: 14px;
+        width: 48px;
+        height: 48px;
+        font-size: 1.3rem;
+    }
+
+    /* 小導遊 */
+    .yunnan-mascot {
+        width: 115px;
+        height: 170px;
+        bottom: 178px;
+    }
+    .yunnan-mascot.walking {
+        animation-duration: 8s;
+    }
+
+    /* 緊急 Modal */
+    .emergency-modal {
+        padding: 18px 14px 24px;
+        max-height: 85vh;
+    }
+    .emergency-modal .modal-title {
+        font-size: 1.2rem;
+    }
+    .emergency-modal .section-title {
+        font-size: 0.82rem;
+    }
+    .emergency-modal .section-content {
+        font-size: 0.82rem;
+    }
+    .emergency-modal .level-box {
+        padding: 6px 12px;
+    }
+
+    /* 天氣 */
     .weather-card {
         padding: 14px;
     }
-    
     .weather-compact .weather-main .city {
         font-size: 1.05rem;
     }
-    
     .weather-compact .weather-main .main-temp {
         font-size: 1.25rem;
     }
-
     .weather-compact .period-card {
         padding: 8px 6px;
     }
-
     .weather-compact .period-card .period-temp {
         font-size: 1.15rem;
     }
-
     .weather-compact .sun-info {
         padding: 6px 8px;
     }
-
     .weather-compact .sun-info .sun-item {
         font-size: 0.75rem;
     }
