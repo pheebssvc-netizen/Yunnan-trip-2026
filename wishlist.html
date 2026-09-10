@@ -6,10 +6,8 @@
     <title>🎯 雲南 · 團友任務</title>
 
     <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js">
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js">
-    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
     <style>
         * {
@@ -75,29 +73,35 @@
             padding: 16px 16px 20px;
         }
 
-        /* ===== 進度條 ===== */
+        /* ===== 進度卡片與吉祥物坐姿區域 ===== */
         .progress-section {
             background: #fff;
             border-radius: 16px;
-            padding: 20px 20px 16px;
-            margin-bottom: 16px;
+            padding: 20px 20px 12px;
+            margin-bottom: 28px; /* 預留底部讓腳步伸出 */
             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            position: relative;
+            overflow: visible; /* 允許吉祥物隻腳突出方塊外部 */
         }
+
         .progress-section .progress-label {
             display: flex;
             justify-content: space-between;
-            font-size: 0.9rem;
-            font-weight: 600;
+            font-size: 0.95rem;
+            font-weight: 700;
             color: #2D241A;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
+
         .progress-section .progress-bar-bg {
             width: 100%;
-            height: 8px;
+            height: 10px;
             background: #EDE7E0;
             border-radius: 30px;
             overflow: hidden;
+            margin-bottom: 14px;
         }
+
         .progress-section .progress-bar-fill {
             height: 100%;
             background: linear-gradient(90deg, #E9C46A, #E07A5F);
@@ -105,10 +109,50 @@
             transition: width 0.5s ease;
             width: 0%;
         }
-        .progress-section .progress-emoji {
-            text-align: center;
-            font-size: 2rem;
-            margin-top: 8px;
+
+        /* 吉祥物容器：擺放於進度條下方 */
+        .mascot-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-top: 6px;
+            margin-bottom: -22px; /* 將底部位移向邊界，塑造坐喺方塊邊緣嘅感覺 */
+            position: relative;
+            z-index: 2;
+        }
+
+        .mascot-img {
+            width: 100%;
+            max-width: 220px;
+            height: auto;
+            object-fit: contain;
+            display: block;
+            /* 下方陰影增加立體懸坐感 */
+            filter: drop-shadow(0px 6px 8px rgba(0, 0, 0, 0.12));
+            transition: transform 0.3s ease;
+        }
+
+        /* 動態彈跳 */
+        .mascot-img.pop-animation {
+            animation: bouncePop 0.4s ease;
+        }
+        @keyframes bouncePop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.06); }
+            100% { transform: scale(1); }
+        }
+
+        .mascot-status-text {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #8A5A3B;
+            margin-top: 2px;
+            background: #FDF6EE;
+            padding: 3px 12px;
+            border-radius: 20px;
+            border: 1px solid #F3E5D8;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
         }
 
         /* ===== 完成慶祝 ===== */
@@ -235,6 +279,12 @@
                 font-size: 0.75rem;
                 padding: 3px 10px;
             }
+            .mascot-img {
+                max-width: 180px;
+            }
+            .mascot-container {
+                margin-bottom: -20px;
+            }
             .task-card {
                 padding: 14px 14px;
             }
@@ -264,7 +314,7 @@
 
     <!-- ===== 內容 ===== -->
     <div class="wishlist-container" id="wishlistContainer">
-        <!-- 進度條 -->
+        <!-- 進度條與吉祥物區塊 -->
         <div class="progress-section">
             <div class="progress-label">
                 <span>🏆 解鎖進度</span>
@@ -273,14 +323,19 @@
             <div class="progress-bar-bg">
                 <div class="progress-bar-fill" id="progressFill"></div>
             </div>
-            <div class="progress-emoji" id="progressEmoji">🥚</div>
+
+            <!-- 吉祥物坐喺進度條下方，隻腳微微超出方塊 -->
+            <div class="mascot-container">
+                <img id="mascotImg" class="mascot-img" src="mascot/girl-expect-1.png" alt="雲南慢遊吉祥物" />
+                <div id="mascotStatusText" class="mascot-status-text">期待大家解鎖更多任務～✨</div>
+            </div>
         </div>
 
         <!-- 慶祝區 -->
         <div class="celebration" id="celebration">
             <span class="big-emoji">🎉</span>
             <div class="title">成就解鎖：初級雲南探索</div>
-            <div class="sub">你哋已經完成晒 10 件必做小事！<br />🌟 彩蛋已經變金色，返去睇吓！</div>
+            <div class="sub">你哋已經完成晒 10 件必做小事！<br />🌟 雲南慢遊成功解鎖！</div>
         </div>
 
         <!-- 任務列表 -->
@@ -374,7 +429,7 @@
         }];
 
         // ================================================================
-        //  渲染
+        //  渲染任務列表
         // ================================================================
         function renderTasks(completedIds) {
             const container = document.getElementById('taskList');
@@ -424,7 +479,6 @@
         function getCompletedIds() {
             return new Promise((resolve) => {
                 if (!db) {
-                    // 如果 Firebase 未連線，用 localStorage 代替
                     const saved = localStorage.getItem('wishlist-completed');
                     resolve(saved ? JSON.parse(saved) : []);
                     return;
@@ -433,7 +487,6 @@
                     const val = snap.val();
                     resolve(val || []);
                 }).catch(() => {
-                    // fallback
                     const saved = localStorage.getItem('wishlist-completed');
                     resolve(saved ? JSON.parse(saved) : []);
                 });
@@ -450,7 +503,6 @@
 
         function listenTasks() {
             if (!db) {
-                // fallback: 用 localStorage
                 const saved = localStorage.getItem('wishlist-completed');
                 const ids = saved ? JSON.parse(saved) : [];
                 updateUI(ids);
@@ -469,22 +521,36 @@
             const count = ids.length;
             const total = TASKS.length;
 
-            // 更新進度
+            // 更新數字標籤與進度條
             document.getElementById('progressText').textContent = `${count} / ${total}`;
             document.getElementById('progressBadge').textContent = `${count}/${total}`;
             document.getElementById('progressFill').style.width = `${(count / total) * 100}%`;
 
-            // 更新表情符號
-            const emoji = document.getElementById('progressEmoji');
+            // ===== 吉祥物圖片與文字邏輯 =====
+            const mascotImg = document.getElementById('mascotImg');
+            const mascotStatusText = document.getElementById('mascotStatusText');
+            let targetSrc = '';
+            let targetText = '';
+
             if (count === total) {
-                emoji.textContent = '🌟';
+                targetSrc = 'mascot/girl-expect-3.png';
+                targetText = '太棒了！10 個任務全部達成！🎉';
             } else if (count >= 5) {
-                emoji.textContent = '🥚✨';
-            } else if (count >= 3) {
-                emoji.textContent = '🥚';
+                targetSrc = 'mascot/girl-expect-2.png';
+                targetText = '已經完成一半以上囉！加油～✨';
             } else {
-                emoji.textContent = '🥚';
+                targetSrc = 'mascot/girl-expect-1.png';
+                targetText = '期待大家解鎖更多任務～✨';
             }
+
+            // 觸發切換動畫
+            if (!mascotImg.src.endsWith(targetSrc)) {
+                mascotImg.src = targetSrc;
+                mascotImg.classList.remove('pop-animation');
+                void mascotImg.offsetWidth;
+                mascotImg.classList.add('pop-animation');
+            }
+            mascotStatusText.textContent = targetText;
 
             // 慶祝區
             const celebration = document.getElementById('celebration');
@@ -497,7 +563,7 @@
             // 渲染任務列表
             renderTasks(ids);
 
-            // 更新彩蛋入口（如果有）
+            // 更新彩蛋入口
             updateEggEntry(count, total);
         }
 
@@ -506,23 +572,24 @@
                 currentCompletedIds.filter(id => id !== taskId) :
                 [...currentCompletedIds, taskId];
 
-            // 先更新 UI（optimistic）
+            // 輕微彈跳動畫
+            const mascotImg = document.getElementById('mascotImg');
+            mascotImg.classList.remove('pop-animation');
+            void mascotImg.offsetWidth;
+            mascotImg.classList.add('pop-animation');
+
             updateUI(newIds);
 
-            // 然後儲存到 Firebase
             saveCompletedIds(newIds).catch(() => {
-                // 如果儲存失敗，還原
                 updateUI(currentCompletedIds);
             });
         }
 
         // ================================================================
-        //  更新首頁彩蛋入口（用 localStorage 通知 index.html）
+        //  更新首頁彩蛋入口
         // ================================================================
         function updateEggEntry(count, total) {
-            // 儲存進度到 localStorage，畀 index.html 嘅彩蛋入口讀取
             localStorage.setItem('wishlist-progress', JSON.stringify({ count, total }));
-            // 如果完成晒，set 一個 flag
             if (count === total) {
                 localStorage.setItem('wishlist-done', 'true');
             } else {
