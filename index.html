@@ -31,17 +31,20 @@
         }
 
         .pixel-egg-gif {
-            width: 60px;   /* 手機端黃金尺寸 (50px - 64px) */
-            height: 60px;
-            object-fit: contain;
-            display: block;
-            border-radius: 0;
-            /* 關鍵：保持 8-Bit 像素銳利度，不模糊 */
-            image-rendering: pixelated;
-            image-rendering: crisp-edges;
-            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
-            transition: transform 0.15s ease;
-        }
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    /* 1. 保持 8-Bit 像素清晰 */
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    
+    /* 2. 用 CSS 自定義清晰陰影，取代 GIF 內部髒亂的半透明陰影 */
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+    
+    /* 3. 防止雜色邊緣外溢 */
+    background: transparent;
+}
+
 
         /* 點擊瞬間按壓反饋 */
         .pixel-egg-link:active .pixel-egg-gif {
@@ -157,7 +160,7 @@
 
         <div class="pixel-egg-container">
             <a href="wishlist.html" class="pixel-egg-link" title="解鎖團友成就！">
-                <img id="eggImage" src="images/egg-loop-2.gif" alt="雲南慢遊彩蛋" class="pixel-egg-gif" />
+                <img id="eggImage" src="images/egg-loop.gif" alt="雲南慢遊彩蛋" class="pixel-egg-gif" />
             </a>
         </div>
 
