@@ -5,19 +5,69 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
     <title>雲南滇西12日 · 4人同行</title>
 
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js">
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js">
-    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
-    <!-- 共用樣式 -->
     <link rel="stylesheet" href="style.css" />
+
+    <style>
+        /* ===== 8-Bit 像素彩蛋專用樣式 ===== */
+        .pixel-egg-container {
+            text-align: center;
+            margin-top: 18px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .pixel-egg-link {
+            display: inline-block;
+            text-decoration: none;
+            cursor: pointer;
+            outline: none;
+            /* 上下微浮動動畫 */
+            animation: eggFloat 2.5s ease-in-out infinite;
+        }
+
+        .pixel-egg-gif {
+            width: 60px;   /* 手機端黃金尺寸 (50px - 64px) */
+            height: 60px;
+            object-fit: contain;
+            display: block;
+            border-radius: 0;
+            /* 關鍵：保持 8-Bit 像素銳利度，不模糊 */
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+            transition: transform 0.15s ease;
+        }
+
+        /* 點擊瞬間按壓反饋 */
+        .pixel-egg-link:active .pixel-egg-gif {
+            transform: scale(0.88) translateY(2px);
+        }
+
+        @keyframes eggFloat {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-6px);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .pixel-egg-gif {
+                width: 52px;
+                height: 52px;
+            }
+        }
+    </style>
 </head>
 <body>
 
-  <!-- ===== 雲南小導遊 · 吉祥物 V1.3 ===== -->
-<div id="yunnanMascot" class="yunnan-mascot" aria-hidden="true">
+  <div id="yunnanMascot" class="yunnan-mascot" aria-hidden="true">
     <img
         id="mascotIdle"
         class="mascot-idle"
@@ -34,7 +84,6 @@
     ></video>
 </div>
 
-    <!-- ===== HEADER ===== -->
     <header class="app-header" id="heroHeader">
         <div class="header-overlay"></div>
         <div class="header-content">
@@ -49,7 +98,6 @@
         </div>
     </header>
 
-    <!-- ===== TAB NAV ===== -->
     <nav class="tab-nav">
         <a href="index.html">📋 行程總覽</a>
         <a href="daily.html">📅 每日行程</a>
@@ -57,7 +105,6 @@
         <a href="bill.html">🧾 神算醒</a>
     </nav>
 
-    <!-- ===== PAGE: 行程總覽 ===== -->
     <div class="page">
         <div class="overview-card">
             <h2>🗺️ 12日行程動線</h2>
@@ -75,15 +122,13 @@
             <div style="font-size:0.7rem;color:#8A7A6A;margin-top:8px;">💡 住宿確認狀態及酒店名稱請到「重要資訊」頁面修改</div>
         </div>
 
-        <!-- 天氣小工具 -->
-<div class="overview-card" id="weatherCard">
-    <h2>☀️ 今日天氣</h2>
-    <div id="weatherContainer">
-        <div class="weather-loading">⏳ 載入天氣中...</div>
-    </div>
-</div>
+        <div class="overview-card" id="weatherCard">
+            <h2>☀️ 今日天氣</h2>
+            <div id="weatherContainer">
+                <div class="weather-loading">⏳ 載入天氣中...</div>
+            </div>
+        </div>
 
-        <!-- 私人導遊入口 -->
         <div class="overview-card" style="margin-top:14px;">
             <h2 style="font-size:1.05rem; color:#E07A5F; border-left:5px solid #E9C46A; padding-left:12px; margin-bottom:10px;">🤠 私人導遊</h2>
             <a href="guide.html" style="text-decoration:none; display:block;">
@@ -95,7 +140,7 @@
                 </div>
             </a>
         </div>
-        <!-- 緊急求助卡片 -->
+
         <div class="overview-card" style="margin-top:14px;">
             <h2 style="font-size:1.05rem; color:#D94A4A; border-left:5px solid #D94A4A; padding-left:12px; margin-bottom:10px;">🚨 緊急求助</h2>
             <button id="emergencyBtnCard" style="width:100%; background: linear-gradient(145deg, #D94A4A, #B83A3A); border:none; border-radius:16px; padding:16px 20px; color:#fff; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 12px rgba(217,74,74,0.2); cursor:pointer; transition:transform 0.15s;">
@@ -110,35 +155,24 @@
             </button>
         </div>
 
-        <!-- 彩蛋入口：進度彩蛋 -->
-        <div id="eggContainer" style="text-align:center; margin-top:14px; cursor:pointer;" onclick="location.href='wishlist.html'">
-            <div style="position:relative; display:inline-block;">
-                <!-- 彩蛋圖片 -->
-                <img id="eggImage" src="images/egg.gif" alt="彩蛋" style="width:80px; height:auto; transition:all 0.4s ease; display:block; border-radius:12px;" />
-                <!-- 狀態圖標（鎖頭 / 鑰匙 / 金盃） -->
-                <div id="eggStatusIcon" style="position:absolute; bottom:-8px; right:-8px; font-size:1.8rem; line-height:1; filter:drop-shadow(0 2px 8px rgba(0,0,0,0.15));">🔒</div>
-                <!-- 進度標籤 -->
-                <div id="eggProgressBadge" style="position:absolute; top:-6px; left:50%; transform:translateX(-50%); background:rgba(45,36,26,0.85); backdrop-filter:blur(4px); color:#fff; padding:2px 12px; border-radius:30px; font-size:0.65rem; font-weight:600; letter-spacing:0.3px; white-space:nowrap; opacity:0; transition:opacity 0.3s;">0/10</div>
-            </div>
-            <!-- 成就文字（完成時顯示） -->
-            <div id="eggAchievement" style="font-size:0.75rem; color:#E9C46A; margin-top:6px; font-weight:600; opacity:0; transition:opacity 0.5s; height:20px;">🎉 成就解鎖！雲南滇西線探索</div>
+        <div class="pixel-egg-container">
+            <a href="wishlist.html" class="pixel-egg-link" title="解鎖團友成就！">
+                <img id="eggImage" src="images/egg.gif" alt="雲南慢遊彩蛋" class="pixel-egg-gif" />
+            </a>
         </div>
 
         <div class="footer-bar">📌 詳細行程及備註請到「每日行程」頁</div>
     </div>
 
-    <!-- ===== 底部海拔線 ===== -->
     <div class="altitude-footer" id="altitudeFooter">
         <canvas id="altitudeCanvas"></canvas>
     </div>
 
-    <!-- ===== 固定地圖按鈕 ===== -->
     <a href="map.html" class="map-fab" id="mapFab" aria-label="查看地圖">
         🗺️
         <span class="tooltip">查看地圖</span>
     </a>
 
-    <!-- ===== Toast 容器 ===== -->
     <div class="toast-container" id="toastContainer">
         <span class="toast-icon" id="toastIcon">🏔️</span>
         <div class="toast-title" id="toastTitle">Day 8 · 香格里拉</div>
@@ -146,7 +180,6 @@
         <div class="toast-tip" id="toastTip">💡 今晚唔好沖涼住啦～</div>
     </div>
 
-    <!-- ===== 共用 JavaScript ===== -->
     <script src="app.js"></script>
     <script>
         // 頁面專屬初始化
@@ -157,14 +190,12 @@
         });
     </script>
 
-    <!-- ===== 緊急求助 Modal ===== -->
     <div class="emergency-overlay" id="emergencyOverlay">
         <div class="emergency-modal">
             <button class="modal-close" id="emergencyClose">✕</button>
             <div class="modal-title">🚨 緊急求助</div>
             <div class="modal-sub">高原反應 · 醫療級指引</div>
 
-            <!-- 血氧監測 -->
             <div class="section">
                 <div class="section-title">🩸 血氧監測（智慧手環）</div>
                 <div class="section-content">
@@ -180,7 +211,6 @@
 
             <div class="spacer"></div>
 
-            <!-- 輕度 -->
             <div class="section">
                 <div class="section-title">🟢 輕度（AMS-I）</div>
                 <div class="level-box green">
@@ -194,7 +224,6 @@
                 </div>
             </div>
 
-            <!-- 中度 -->
             <div class="section">
                 <div class="section-title">🟡 中度（AMS-II）</div>
                 <div class="level-box yellow">
@@ -208,7 +237,6 @@
                 </div>
             </div>
 
-            <!-- 重度 -->
             <div class="section">
                 <div class="section-title">🔴 重度（AMS-III / HACE / HAPE）</div>
                 <div class="level-box red">
@@ -217,7 +245,7 @@
                     <ul>
                         <li>🚨 立即高流量吸氧（5-6 升/分鐘）</li>
                         <li>🚨 緊急下撤，呼叫救護車</li>
-                        <li>🚨 血氧 < 85% 或任何警號</li>
+                        <li>🚨 血氧 &lt; 85% 或任何警號</li>
                     </ul>
                     <div style="font-size:0.8rem; color:#A33A2A; margin-top:4px;">⏰ 黃金救治時間 2-4 小時</div>
                 </div>
@@ -225,7 +253,6 @@
 
             <div class="spacer"></div>
 
-            <!-- 藥物備註 -->
             <div class="section">
                 <div class="section-title">💊 藥物備註（僅供參考，需遵醫囑）</div>
                 <div class="section-content">
@@ -241,7 +268,6 @@
         </div>
     </div>
 
-    <!-- ===== 返回頂部按鈕 ===== -->
     <button class="back-to-top" id="backToTopBtn" aria-label="返回頂部">⬆</button>
 
 </body>
