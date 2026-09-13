@@ -32,21 +32,26 @@
             animation: eggFloat 2.5s ease-in-out infinite;
         }
 
-        .pixel-egg-video,
-        .pixel-egg-gif {
-            width: 60px;   /* 手機黃金尺寸 */
-            height: 60px;
-            object-fit: contain;
-            display: block;
-            background-color: transparent !important; /* 強制背景透明 */
-            mix-blend-mode: normal;
-            
-            /* 保持 8-Bit 像素銳利度，防止放大變模糊 */
-            image-rendering: pixelated;
-            image-rendering: crisp-edges;
-            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.25));
-            transition: transform 0.15s ease;
-        }
+        .pixel-egg-video {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    display: block;
+    /* 1. 將影片本身的背景色設為一致 */
+    background-color: #F8F4F0;
+    
+    /* 2. 圓角邊框（可選）：確保影片四邊不會撞色 */
+    border-radius: 8px;
+    
+    /* 3. 保留 8-Bit 像素清晰度 */
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    
+    /* 4. 投影效果依然保留 */
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
+    transition: transform 0.15s ease;
+}
+
 
         /* 點擊瞬間按壓反饋 */
         .pixel-egg-link:active .pixel-egg-video,
@@ -179,9 +184,9 @@
                     muted 
                     playsinline 
                     webkit-playsinline>
-                    <source src="images/egg-loop.webm" type="video/webm">
+                    <source src="images/egg-loop-7.webm" type="video/webm">
                     <!-- 備用圖片 (舊版瀏覽器或 Safari 不支援 WebM Alpha 時) -->
-                    <img src="images/egg-loop-5.gif" alt="雲南慢遊彩蛋" class="pixel-egg-gif">
+                    <img src="images/egg-loop-6.gif" alt="雲南慢遊彩蛋" class="pixel-egg-gif">
                 </video>
             </a>
         </div>
