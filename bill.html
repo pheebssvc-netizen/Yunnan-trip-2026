@@ -123,7 +123,7 @@
             font-weight: 600;
         }
 
-        /* ===== 修改點 1：分類按鈕改為兩欄網格 ===== */
+        /* 分類按鈕網格 */
         .category-pills {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -225,6 +225,30 @@
             transform: scale(0.96);
             background: #C96A4F;
         }
+        
+        /* WhatsApp 按鈕樣式 */
+        .btn-whatsapp {
+            width: 100%;
+            margin-top: 14px;
+            padding: 10px;
+            border: none;
+            border-radius: 30px;
+            background: #25D366;
+            color: #fff;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .btn-whatsapp:active {
+            transform: scale(0.96);
+            background: #1EBE5D;
+        }
+
         .bill-item {
             display: flex;
             justify-content: space-between;
@@ -262,6 +286,11 @@
         .bill-item .left .meta {
             font-size: 0.7rem;
             color: #8A7A6A;
+        }
+        .bill-item .left .location-tag {
+            font-size: 0.72rem;
+            color: #E07A5F;
+            margin-top: 2px;
         }
         .bill-item .left .note {
             font-size: 0.75rem;
@@ -372,7 +401,6 @@
         #toast.show {
             opacity: 1;
         }
-        /* 人均支出 - 移咗去團隊總支出下面，樣式保持不變 */
         .per-person {
             font-size: 0.85rem;
             color: #6B5A4A;
@@ -405,7 +433,6 @@
                 padding: 10px 20px;
                 bottom: 70px;
             }
-            /* 細屏幕兩欄分類仍然適用 */
             .category-pills {
                 gap: 6px;
             }
@@ -461,6 +488,10 @@
                     </div>
                 </div>
                 <div class="form-row">
+                    <label>📍 地點（選擇性）</label>
+                    <input type="text" id="billLocation" placeholder="例如：大理古城、麗江、喜洲" />
+                </div>
+                <div class="form-row">
                     <label>📝 具體項目（選擇性）</label>
                     <input type="text" id="billDetail" placeholder="例如：大排檔、的士、手信" />
                 </div>
@@ -474,8 +505,8 @@
                     </div>
                 </div>
                 <div class="form-row">
-                    <label>💰 金額 (¥)</label>
-                    <input type="number" id="billAmount" placeholder="0.00" step="0.01" min="0" />
+                    <label>💰 金額 (HKD $)</label>
+                    <input type="number" id="billAmount" placeholder="0.00" step="0.01" />
                 </div>
                 <div class="form-row">
                     <label>👥 參與人 <span class="select-all" id="selectAllToggle">全選</span></label>
@@ -494,7 +525,7 @@
             </form>
         </div>
 
-        <!-- ===== 修改點 3：「歷史消費」改為「消費清單」 ===== -->
+        <!-- 消費清單 -->
         <div class="bill-card">
             <h3>📜 消費清單</h3>
             <div class="filter-bar" id="filterBar">
@@ -527,15 +558,17 @@
                     <li style="color:#B5A89A; text-align:center; padding:12px 0;">未有帳單，記第一筆數啦！</li>
                 </ul>
             </div>
-            <!-- ===== 修改點 2：團隊總支出先顯示，人均支出放下面 ===== -->
+            
             <div class="total-spend">
                 <span>🧾 團隊總支出</span>
-                <span><strong id="totalSpend">¥0.00</strong></span>
+                <span><strong id="totalSpend">HKD $0.00</strong></span>
             </div>
             <div class="per-person" id="perPersonRow">
                 <span>👤 人均支出 (4人)</span>
-                <span><strong id="perPersonAmount">¥0.00</strong></span>
+                <span><strong id="perPersonAmount">HKD $0.00</strong></span>
             </div>
+
+            <button type="button" class="btn-whatsapp" id="whatsappBtn">📲 WhatsApp 找數提醒</button>
         </div>
 
     </div>
@@ -555,7 +588,7 @@
     <script>
 
         // ================================================================
-        //  記帳邏輯（完全保留原有功能）
+        //  記帳邏輯（所有改動已整合）
         // ================================================================
         const MEMBERS = ['J', 'C', 'K', 'Z'];
         const CATEGORY_LABELS = { breakfast: '早餐', lunch: '午餐', dinner: '晚餐', snack: '咖啡小食', ticket: '門票', transport: '交通', other: '雜項' };
@@ -565,6 +598,7 @@
         let currentFilter = 'all';
         let isOnline = navigator.onLine;
         let editingId = null;
+        let currentCalculatedTransactions = [];
 
         const $ = id => document.getElementById(id);
         const billForm = $('billForm');
@@ -572,6 +606,7 @@
         const categoryPills = $('categoryPills');
         const payerButtons = $('payerButtons');
         const billAmount = $('billAmount');
+        const billLocation = $('billLocation');
         const billDetail = $('billDetail');
         const billNote = $('billNote');
         const participantGroup = $('participantGroup');
@@ -584,6 +619,7 @@
         const statusLabel = $('statusLabel');
         const filterBar = $('filterBar');
         const submitBtn = $('submitBtn');
+        const whatsappBtn = $('whatsappBtn');
 
         function showToast(msg, duration = 2000) {
             const toast = $('toast');
@@ -623,6 +659,7 @@
                 cb.addEventListener('change', updateSelectAllText);
             });
             billForm.addEventListener('submit', handleAddOrUpdateBill);
+            whatsappBtn.addEventListener('click', sendWhatsAppSummary);
         }
 
         function updateSelectAllText() {
@@ -633,6 +670,7 @@
 
         function clearForm() {
             billAmount.value = '';
+            billLocation.value = '';
             billDetail.value = '';
             billNote.value = '';
             editingId = null;
@@ -648,6 +686,7 @@
                 b.classList.toggle('active', b.dataset.payer === bill.payer);
             });
             billAmount.value = bill.amount;
+            billLocation.value = bill.location || '';
             billDetail.value = bill.detail || '';
             billNote.value = bill.note || '';
             participantGroup.querySelectorAll('input[type="checkbox"]').forEach(cb => {
@@ -669,12 +708,13 @@
             if (!activePayer) { alert('請揀付款人'); return; }
             const payer = activePayer.dataset.payer;
             const amount = parseFloat(billAmount.value);
-            if (!amount || amount <= 0) { alert('請輸入有效金額'); return; }
+            if (isNaN(amount)) { alert('請輸入有效金額'); return; }
             const participants = [];
             participantGroup.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => {
                 participants.push(cb.value);
             });
             if (participants.length === 0) { alert('至少揀一位參與人'); return; }
+            const location = billLocation.value.trim();
             const detail = billDetail.value.trim();
             const note = billNote.value.trim();
 
@@ -682,6 +722,7 @@
                 date,
                 category,
                 categoryLabel: CATEGORY_LABELS[category] || category,
+                location: location,
                 detail: detail,
                 payer,
                 amount: Math.round(amount * 100) / 100,
@@ -818,6 +859,7 @@
         function renderSettlement() {
             if (allBills.length === 0) {
                 settlementList.innerHTML = `<li style="color:#B5A89A; text-align:center; padding:12px 0;">未有帳單，記第一筆數啦！</li>`;
+                currentCalculatedTransactions = [];
                 return;
             }
             const balance = {};
@@ -847,15 +889,40 @@
                 if (d.amt < 0.005) i++;
                 if (c.amt < 0.005) j++;
             }
+            currentCalculatedTransactions = transactions;
+
             if (transactions.length === 0) {
                 settlementList.innerHTML = `<li class="settlement-clear">🎉 數已清，冇拖冇欠！</li>`;
             } else {
                 let html = '';
                 transactions.forEach(t => {
-                    html += `<li><span>👉 <strong>${t.from}</strong> 俾 <strong>${t.to}</strong></span><span class="settlement-amount">¥${t.amount.toFixed(2)}</span></li>`;
+                    html += `<li><span>👉 <strong>${t.from}</strong> 俾 <strong>${t.to}</strong></span><span class="settlement-amount">HKD $${t.amount.toFixed(2)}</span></li>`;
                 });
                 settlementList.innerHTML = html;
             }
+        }
+
+        function sendWhatsAppSummary() {
+            const total = allBills.reduce((sum, b) => sum + b.amount, 0);
+            const perPerson = total / MEMBERS.length;
+
+            let msg = `🌄 *雲南滇西12日 - 神算醒結算表*\n`;
+            msg += `-----------------------------\n`;
+            msg += `🧾 *團隊總支出:* HKD $${total.toFixed(2)}\n`;
+            msg += `👤 *人均支出 (4人):* HKD $${perPerson.toFixed(2)}\n`;
+            msg += `-----------------------------\n`;
+            msg += `📊 *結算清單:*\n`;
+
+            if (currentCalculatedTransactions.length === 0) {
+                msg += `🎉 數已清，冇拖冇欠！\n`;
+            } else {
+                currentCalculatedTransactions.forEach(t => {
+                    msg += `👉 *${t.from}* 應付 *${t.to}*: HKD $${t.amount.toFixed(2)}\n`;
+                });
+            }
+
+            const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`;
+            window.open(url, '_blank');
         }
 
         function renderBillList() {
@@ -876,6 +943,7 @@
                 const participantsStr = bill.participants.join(', ');
                 const isPending = bill.id && bill.id.startsWith('local_');
                 const pendingBadge = isPending ? `<span class="pending-badge">⏳ 同步中</span>` : '';
+                const locationHtml = bill.location ? `<div class="location-tag">📍 ${bill.location}</div>` : '';
                 const noteHtml = bill.note ? `<span class="note">📝 ${bill.note}</span>` : '';
                 html += `<div class="bill-item">
                             <div class="left">
@@ -884,11 +952,12 @@
                                     <span class="desc">${bill.date}</span>
                                     ${pendingBadge}
                                 </div>
+                                ${locationHtml}
                                 <div class="meta">👤 ${bill.payer} ｜ 👥 ${participantsStr}</div>
                                 ${noteHtml}
                             </div>
                             <div class="right">
-                                <div class="amount">¥${bill.amount.toFixed(2)}</div>
+                                <div class="amount">HKD $${bill.amount.toFixed(2)}</div>
                                 <div class="action-buttons">
                                     <button class="edit-btn" data-id="${bill.id}">✎ 編輯</button>
                                     <button class="delete-btn" data-id="${bill.id}">✕</button>
@@ -919,9 +988,9 @@
 
         function renderTotalAndPerPerson() {
             const total = allBills.reduce((sum, b) => sum + b.amount, 0);
-            totalSpend.textContent = '¥' + total.toFixed(2);
+            totalSpend.textContent = 'HKD $' + total.toFixed(2);
             const perPerson = total / MEMBERS.length;
-            perPersonAmount.textContent = '¥' + perPerson.toFixed(2);
+            perPersonAmount.textContent = 'HKD $' + perPerson.toFixed(2);
         }
 
         function deleteBill(id) {
