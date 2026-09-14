@@ -6,10 +6,8 @@
     <title>神算醒 · 雲南滇西12日</title>
 
     <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js">
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js">
-    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
     <!-- 共用樣式 -->
     <link rel="stylesheet" href="style.css" />
@@ -53,47 +51,115 @@
             color: #6B5A4A;
             vertical-align: middle;
         }
-        .settlement-list {
-            list-style: none;
-            padding: 0;
-            margin: 6px 0 0;
-        }
-        .settlement-list li {
-            padding: 6px 0;
-            font-size: 0.95rem;
-            border-bottom: 1px solid #F5F0EB;
+
+        /* 幣種選擇 Pill */
+        .currency-pills {
             display: flex;
-            justify-content: space-between;
+            gap: 10px;
         }
-        .settlement-list li:last-child {
-            border-bottom: none;
-        }
-        .settlement-amount {
-            font-weight: 700;
-            color: #2D241A;
-        }
-        .settlement-clear {
-            text-align: center;
-            color: #2ECC71;
+        .currency-pills .currency-btn {
+            flex: 1;
+            padding: 8px 12px;
+            border-radius: 30px;
+            border: 2px solid #EDE7E0;
+            background: #fff;
+            font-size: 0.9rem;
             font-weight: 600;
-            font-size: 1.05rem;
-            padding: 8px 0;
-        }
-        .total-spend {
-            font-size: 0.85rem;
             color: #6B5A4A;
-            margin-top: 6px;
+            cursor: pointer;
+            text-align: center;
+            transition: 0.15s;
+        }
+        .currency-pills .currency-btn.active {
+            background: #E07A5F;
+            color: #fff;
+            border-color: #E07A5F;
+        }
+
+        /* 分類按鈕兩欄網格 */
+        .category-pills {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        .category-pills .pill {
+            padding: 8px 12px;
+            border-radius: 30px;
+            border: 2px solid #EDE7E0;
+            background: #fff;
+            font-size: 0.78rem;
+            font-weight: 500;
+            color: #6B5A4A;
+            cursor: pointer;
+            transition: 0.15s;
+            user-select: none;
+            text-align: center;
+        }
+        .category-pills .pill:active { transform: scale(0.94); }
+        .category-pills .pill.active {
+            background: #E07A5F;
+            color: #fff;
+            border-color: #E07A5F;
+        }
+
+        .payer-buttons {
             display: flex;
-            justify-content: space-between;
-            border-top: 1px solid #EDE7E0;
-            padding-top: 8px;
+            gap: 10px;
+            flex-wrap: wrap;
         }
-        .total-spend strong {
+        .payer-buttons .payer-btn {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: 2.5px solid #EDE7E0;
+            background: #fff;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #6B5A4A;
+            cursor: pointer;
+            transition: 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .payer-buttons .payer-btn:active { transform: scale(0.92); }
+        .payer-buttons .payer-btn.active {
+            background: #E07A5F;
+            color: #fff;
+            border-color: #E07A5F;
+            box-shadow: 0 0 0 3px rgba(224, 122, 95, 0.25);
+        }
+
+        .participant-group {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .participant-group label {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.9rem;
+            font-weight: 500;
             color: #2D241A;
+            cursor: pointer;
         }
-        .bill-form .form-row {
-            margin-bottom: 12px;
+        .participant-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #E07A5F;
+            cursor: pointer;
         }
+        .participant-group .select-all {
+            font-size: 0.75rem;
+            color: #E07A5F;
+            cursor: pointer;
+            font-weight: 600;
+            margin-left: 4px;
+        }
+
+        .bill-form .form-row { margin-bottom: 12px; }
         .bill-form .form-row label {
             display: block;
             font-size: 0.8rem;
@@ -123,91 +189,6 @@
             font-weight: 600;
         }
 
-        /* 分類按鈕網格 */
-        .category-pills {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-        }
-        .category-pills .pill {
-            padding: 8px 12px;
-            border-radius: 30px;
-            border: 2px solid #EDE7E0;
-            background: #fff;
-            font-size: 0.78rem;
-            font-weight: 500;
-            color: #6B5A4A;
-            cursor: pointer;
-            transition: 0.15s;
-            user-select: none;
-            text-align: center;
-        }
-        .category-pills .pill:active {
-            transform: scale(0.94);
-        }
-        .category-pills .pill.active {
-            background: #E07A5F;
-            color: #fff;
-            border-color: #E07A5F;
-        }
-
-        .payer-buttons {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        .payer-buttons .payer-btn {
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            border: 2.5px solid #EDE7E0;
-            background: #fff;
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #6B5A4A;
-            cursor: pointer;
-            transition: 0.15s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .payer-buttons .payer-btn:active {
-            transform: scale(0.92);
-        }
-        .payer-buttons .payer-btn.active {
-            background: #E07A5F;
-            color: #fff;
-            border-color: #E07A5F;
-            box-shadow: 0 0 0 3px rgba(224, 122, 95, 0.25);
-        }
-        .participant-group {
-            display: flex;
-            gap: 14px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-        .participant-group label {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: #2D241A;
-            cursor: pointer;
-        }
-        .participant-group input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            accent-color: #E07A5F;
-            cursor: pointer;
-        }
-        .participant-group .select-all {
-            font-size: 0.75rem;
-            color: #E07A5F;
-            cursor: pointer;
-            font-weight: 600;
-            margin-left: 4px;
-        }
         .btn-add-bill {
             width: 100%;
             padding: 14px;
@@ -219,17 +200,60 @@
             font-weight: 700;
             cursor: pointer;
             transition: 0.15s;
-            letter-spacing: 0.5px;
         }
         .btn-add-bill:active {
             transform: scale(0.96);
             background: #C96A4F;
         }
-        
-        /* WhatsApp 按鈕樣式 */
+
+        /* 雙幣種結算區塊 */
+        .currency-settlement-block {
+            background: #FFFBF5;
+            border: 1px dashed #EDE7E0;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+        .currency-settlement-block h4 {
+            margin: 0 0 8px 0;
+            font-size: 0.9rem;
+            color: #E07A5F;
+            display: flex;
+            justify-content: space-between;
+        }
+        .settlement-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 8px 0;
+        }
+        .settlement-list li {
+            padding: 5px 0;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #F5F0EB;
+            display: flex;
+            justify-content: space-between;
+        }
+        .settlement-list li:last-child { border-bottom: none; }
+        .settlement-amount { font-weight: 700; color: #2D241A; }
+        .settlement-clear { text-align: center; color: #2ECC71; font-weight: 600; font-size: 0.9rem; padding: 4px 0; }
+
+        /* 每人實付細節 */
+        .member-spend-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid #EDE7E0;
+            font-size: 0.8rem;
+            color: #6B5A4A;
+        }
+        .member-spend-item strong { color: #2D241A; }
+
+        /* WhatsApp 按鈕 */
         .btn-whatsapp {
             width: 100%;
-            margin-top: 14px;
+            margin-top: 6px;
             padding: 10px;
             border: none;
             border-radius: 30px;
@@ -249,6 +273,7 @@
             background: #1EBE5D;
         }
 
+        /* 消費清單 */
         .bill-item {
             display: flex;
             justify-content: space-between;
@@ -256,9 +281,7 @@
             padding: 10px 0;
             border-bottom: 1px solid #F5F0EB;
         }
-        .bill-item:last-child {
-            border-bottom: none;
-        }
+        .bill-item:last-child { border-bottom: none; }
         .bill-item .left {
             display: flex;
             flex-direction: column;
@@ -283,27 +306,8 @@
             font-size: 0.9rem;
             color: #2D241A;
         }
-        .bill-item .left .meta {
-            font-size: 0.7rem;
-            color: #8A7A6A;
-        }
-        .bill-item .left .location-tag {
-            font-size: 0.72rem;
-            color: #E07A5F;
-            margin-top: 2px;
-        }
-        .bill-item .left .note {
-            font-size: 0.75rem;
-            color: #6B5A4A;
-            background: #F5F0EB;
-            padding: 2px 10px;
-            border-radius: 30px;
-            display: inline-block;
-            max-width: 100%;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
+        .bill-item .left .meta { font-size: 0.7rem; color: #8A7A6A; }
+        .bill-item .left .location-tag { font-size: 0.72rem; color: #E07A5F; margin-top: 2px; }
         .bill-item .right {
             text-align: right;
             display: flex;
@@ -316,126 +320,29 @@
             font-size: 1.0rem;
             color: #2D241A;
         }
-        .bill-item .action-buttons {
-            display: flex;
-            gap: 6px;
-            margin-top: 2px;
-        }
+        .bill-item .action-buttons { display: flex; gap: 6px; margin-top: 2px; }
         .bill-item .action-buttons button {
-            background: none;
-            border: none;
-            font-size: 0.8rem;
-            cursor: pointer;
-            padding: 2px 6px;
-            border-radius: 4px;
-            transition: 0.15s;
-            color: #B5A89A;
+            background: none; border: none; font-size: 0.8rem; cursor: pointer; padding: 2px 6px; border-radius: 4px; transition: 0.15s; color: #B5A89A;
         }
-        .bill-item .action-buttons .edit-btn:active,
-        .bill-item .action-buttons .delete-btn:active {
-            transform: scale(0.9);
-        }
-        .bill-item .action-buttons .edit-btn:hover {
-            color: #E07A5F;
-        }
-        .bill-item .action-buttons .delete-btn:hover {
-            color: #E07A5F;
-        }
-        .filter-bar {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-bottom: 10px;
-        }
+        .bill-item .action-buttons .edit-btn:hover, .bill-item .action-buttons .delete-btn:hover { color: #E07A5F; }
+
+        .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
         .filter-bar .filter-btn {
-            padding: 4px 14px;
-            border-radius: 30px;
-            border: 1.5px solid #EDE7E0;
-            background: #fff;
-            font-size: 0.75rem;
-            font-weight: 500;
-            color: #6B5A4A;
-            cursor: pointer;
-            transition: 0.15s;
+            padding: 4px 14px; border-radius: 30px; border: 1.5px solid #EDE7E0; background: #fff; font-size: 0.75rem; font-weight: 500; color: #6B5A4A; cursor: pointer; transition: 0.15s;
         }
-        .filter-bar .filter-btn:active {
-            transform: scale(0.94);
-        }
-        .filter-bar .filter-btn.active {
-            background: #E07A5F;
-            color: #fff;
-            border-color: #E07A5F;
-        }
-        .empty-state {
-            text-align: center;
-            padding: 24px 0;
-            color: #B5A89A;
-            font-size: 0.9rem;
-        }
-        .pending-badge {
-            font-size: 0.6rem;
-            background: #F39C12;
-            color: #fff;
-            padding: 2px 8px;
-            border-radius: 30px;
-            margin-left: 6px;
-        }
-        /* Toast 提示 */
+        .filter-bar .filter-btn.active { background: #E07A5F; color: #fff; border-color: #E07A5F; }
+        .empty-state { text-align: center; padding: 24px 0; color: #B5A89A; font-size: 0.9rem; }
+        .pending-badge { font-size: 0.6rem; background: #F39C12; color: #fff; padding: 2px 8px; border-radius: 30px; margin-left: 6px; }
+
         #toast {
-            position: fixed;
-            bottom: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #2D241A;
-            color: #fff;
-            padding: 12px 24px;
-            border-radius: 30px;
-            font-size: 0.95rem;
-            z-index: 9999;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            pointer-events: none;
-            white-space: nowrap;
+            position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: #2D241A; color: #fff; padding: 12px 24px; border-radius: 30px; font-size: 0.95rem; z-index: 9999; box-shadow: 0 4px 16px rgba(0,0,0,0.2); opacity: 0; transition: opacity 0.3s ease; pointer-events: none; white-space: nowrap;
         }
-        #toast.show {
-            opacity: 1;
-        }
-        .per-person {
-            font-size: 0.85rem;
-            color: #6B5A4A;
-            margin-top: 4px;
-            display: flex;
-            justify-content: space-between;
-            border-top: 1px dashed #EDE7E0;
-            padding-top: 6px;
-        }
-        .per-person strong {
-            color: #2D241A;
-        }
+        #toast.show { opacity: 1; }
+
         @media (max-width: 480px) {
-            .payer-buttons .payer-btn {
-                width: 48px;
-                height: 48px;
-                font-size: 1.0rem;
-            }
-            .participant-group {
-                gap: 10px;
-            }
-            .bill-item .left .top .desc {
-                font-size: 0.82rem;
-            }
-            .bill-item .right .amount {
-                font-size: 0.9rem;
-            }
-            #toast {
-                font-size: 0.85rem;
-                padding: 10px 20px;
-                bottom: 70px;
-            }
-            .category-pills {
-                gap: 6px;
-            }
+            .payer-buttons .payer-btn { width: 48px; height: 48px; font-size: 1.0rem; }
+            .participant-group { gap: 10px; }
+            .category-pills { gap: 6px; }
         }
     </style>
 </head>
@@ -467,13 +374,20 @@
     <!-- ===== PAGE ===== -->
     <div class="page">
 
-        <!-- 快速入帳 -->
+        <!-- 1. 快速入帳（置頂） -->
         <div class="bill-card">
             <h3>⚡ 快速入帳</h3>
             <form class="bill-form" id="billForm" autocomplete="off">
                 <div class="form-row">
                     <label>📅 日期</label>
                     <input type="date" id="billDate" />
+                </div>
+                <div class="form-row">
+                    <label>💱 結算貨幣</label>
+                    <div class="currency-pills" id="currencyPills">
+                        <button type="button" class="currency-btn active" data-curr="RMB">🇨🇳 人民幣 (RMB)</button>
+                        <button type="button" class="currency-btn" data-curr="HKD">🇭🇰 港幣 (HKD)</button>
+                    </div>
                 </div>
                 <div class="form-row">
                     <label>🏷️ 分類</label>
@@ -505,7 +419,7 @@
                     </div>
                 </div>
                 <div class="form-row">
-                    <label>💰 金額 (HKD $)</label>
+                    <label>💰 金額</label>
                     <input type="number" id="billAmount" placeholder="0.00" step="0.01" />
                 </div>
                 <div class="form-row">
@@ -517,15 +431,44 @@
                         <label><input type="checkbox" value="Z" checked /> Z</label>
                     </div>
                 </div>
-                <div class="form-row">
-                    <label>📝 備註 (選擇性)</label>
-                    <input type="text" id="billNote" placeholder="e.g. 古城餐廳 / 玉龍雪山門票" />
-                </div>
                 <button type="submit" class="btn-add-bill" id="submitBtn">➕ 記帳</button>
             </form>
         </div>
 
-        <!-- 消費清單 -->
+        <!-- 2. 結算總覽（放第二） -->
+        <div class="bill-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <h3 style="margin-bottom:0;">📊 結算總覽</h3>
+                <div>
+                    <span class="status-dot online" id="statusDot"></span>
+                    <span class="status-label" id="statusLabel">連線中...</span>
+                </div>
+            </div>
+
+            <!-- 人民幣雙幣結算 -->
+            <div class="currency-settlement-block">
+                <h4>🇨🇳 人民幣 (RMB) 結算 <span>總計: <strong id="totalSpendRMB">¥0.00</strong></span></h4>
+                <ul class="settlement-list" id="settlementListRMB">
+                    <li style="color:#B5A89A; text-align:center;">未有 RMB 帳單</li>
+                </ul>
+                <div style="font-size:0.75rem; color:#8A7A6A; margin-top:4px;">👤 各人實際付款（RMB）：</div>
+                <div class="member-spend-grid" id="memberSpendRMB"></div>
+            </div>
+
+            <!-- 港幣雙幣結算 -->
+            <div class="currency-settlement-block">
+                <h4>🇭🇰 港幣 (HKD) 結算 <span>總計: <strong id="totalSpendHKD">HK$0.00</strong></span></h4>
+                <ul class="settlement-list" id="settlementListHKD">
+                    <li style="color:#B5A89A; text-align:center;">未有 HKD 帳單</li>
+                </ul>
+                <div style="font-size:0.75rem; color:#8A7A6A; margin-top:4px;">👤 各人實際付款（HKD）：</div>
+                <div class="member-spend-grid" id="memberSpendHKD"></div>
+            </div>
+
+            <button type="button" class="btn-whatsapp" id="whatsappBtn">📲 WhatsApp 找數提醒</button>
+        </div>
+
+        <!-- 3. 消費清單（放最後） -->
         <div class="bill-card">
             <h3>📜 消費清單</h3>
             <div class="filter-bar" id="filterBar">
@@ -544,33 +487,6 @@
             </div>
         </div>
 
-        <!-- 結算總覽 -->
-        <div class="bill-card">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-                <h3 style="margin-bottom:0;">📊 結算總覽</h3>
-                <div>
-                    <span class="status-dot online" id="statusDot"></span>
-                    <span class="status-label" id="statusLabel">連線中...</span>
-                </div>
-            </div>
-            <div id="settlementResult">
-                <ul class="settlement-list" id="settlementList">
-                    <li style="color:#B5A89A; text-align:center; padding:12px 0;">未有帳單，記第一筆數啦！</li>
-                </ul>
-            </div>
-            
-            <div class="total-spend">
-                <span>🧾 團隊總支出</span>
-                <span><strong id="totalSpend">HKD $0.00</strong></span>
-            </div>
-            <div class="per-person" id="perPersonRow">
-                <span>👤 人均支出 (4人)</span>
-                <span><strong id="perPersonAmount">HKD $0.00</strong></span>
-            </div>
-
-            <button type="button" class="btn-whatsapp" id="whatsappBtn">📲 WhatsApp 找數提醒</button>
-        </div>
-
     </div>
 
     <!-- ===== Toast 提示 ===== -->
@@ -586,10 +502,6 @@
     <button class="back-to-top" id="backToTopBtn" aria-label="返回頂部">⬆</button>
 
     <script>
-
-        // ================================================================
-        //  記帳邏輯（所有改動已整合）
-        // ================================================================
         const MEMBERS = ['J', 'C', 'K', 'Z'];
         const CATEGORY_LABELS = { breakfast: '早餐', lunch: '午餐', dinner: '晚餐', snack: '咖啡小食', ticket: '門票', transport: '交通', other: '雜項' };
         const CATEGORY_ICONS = { breakfast: '🍞', lunch: '🍱', dinner: '🍷', snack: '☕', ticket: '🎟️', transport: '🚗', other: '🛍️' };
@@ -598,23 +510,21 @@
         let currentFilter = 'all';
         let isOnline = navigator.onLine;
         let editingId = null;
-        let currentCalculatedTransactions = [];
+        let activeCurrency = 'RMB';
+        let calculatedSettlements = { RMB: [], HKD: [] };
 
         const $ = id => document.getElementById(id);
         const billForm = $('billForm');
         const billDate = $('billDate');
+        const currencyPills = $('currencyPills');
         const categoryPills = $('categoryPills');
         const payerButtons = $('payerButtons');
         const billAmount = $('billAmount');
         const billLocation = $('billLocation');
         const billDetail = $('billDetail');
-        const billNote = $('billNote');
         const participantGroup = $('participantGroup');
         const selectAllToggle = $('selectAllToggle');
         const billList = $('billList');
-        const settlementList = $('settlementList');
-        const totalSpend = $('totalSpend');
-        const perPersonAmount = $('perPersonAmount');
         const statusDot = $('statusDot');
         const statusLabel = $('statusLabel');
         const filterBar = $('filterBar');
@@ -637,27 +547,40 @@
             const firstPayer = payerButtons.querySelector('.payer-btn');
             if (firstPayer) firstPayer.classList.add('active');
             updateSelectAllText();
+
+            currencyPills.querySelectorAll('.currency-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    currencyPills.querySelectorAll('.currency-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    activeCurrency = this.dataset.curr;
+                });
+            });
+
             categoryPills.querySelectorAll('.pill').forEach(el => {
                 el.addEventListener('click', function() {
                     categoryPills.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
                     this.classList.add('active');
                 });
             });
+
             payerButtons.querySelectorAll('.payer-btn').forEach(el => {
                 el.addEventListener('click', function() {
                     payerButtons.querySelectorAll('.payer-btn').forEach(p => p.classList.remove('active'));
                     this.classList.add('active');
                 });
             });
+
             selectAllToggle.addEventListener('click', function() {
                 const checks = participantGroup.querySelectorAll('input[type="checkbox"]');
                 const allChecked = Array.from(checks).every(c => c.checked);
                 checks.forEach(c => c.checked = !allChecked);
                 updateSelectAllText();
             });
+
             participantGroup.querySelectorAll('input[type="checkbox"]').forEach(cb => {
                 cb.addEventListener('change', updateSelectAllText);
             });
+
             billForm.addEventListener('submit', handleAddOrUpdateBill);
             whatsappBtn.addEventListener('click', sendWhatsAppSummary);
         }
@@ -672,13 +595,16 @@
             billAmount.value = '';
             billLocation.value = '';
             billDetail.value = '';
-            billNote.value = '';
             editingId = null;
             submitBtn.textContent = '➕ 記帳';
         }
 
         function fillFormForEdit(bill) {
             billDate.value = bill.date;
+            activeCurrency = bill.currency || 'RMB';
+            currencyPills.querySelectorAll('.currency-btn').forEach(b => {
+                b.classList.toggle('active', b.dataset.curr === activeCurrency);
+            });
             categoryPills.querySelectorAll('.pill').forEach(p => {
                 p.classList.toggle('active', p.dataset.cat === bill.category);
             });
@@ -688,7 +614,6 @@
             billAmount.value = bill.amount;
             billLocation.value = bill.location || '';
             billDetail.value = bill.detail || '';
-            billNote.value = bill.note || '';
             participantGroup.querySelectorAll('input[type="checkbox"]').forEach(cb => {
                 cb.checked = bill.participants.includes(cb.value);
             });
@@ -709,25 +634,26 @@
             const payer = activePayer.dataset.payer;
             const amount = parseFloat(billAmount.value);
             if (isNaN(amount)) { alert('請輸入有效金額'); return; }
+
             const participants = [];
             participantGroup.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => {
                 participants.push(cb.value);
             });
             if (participants.length === 0) { alert('至少揀一位參與人'); return; }
+
             const location = billLocation.value.trim();
             const detail = billDetail.value.trim();
-            const note = billNote.value.trim();
 
             const billData = {
                 date,
+                currency: activeCurrency,
                 category,
                 categoryLabel: CATEGORY_LABELS[category] || category,
-                location: location,
-                detail: detail,
+                location,
+                detail,
                 payer,
                 amount: Math.round(amount * 100) / 100,
                 participants,
-                note,
                 timestamp: Date.now(),
             };
 
@@ -768,8 +694,6 @@
                 sortBills();
                 renderAll();
                 showToast('✅ 更新成功！');
-            } else {
-                alert('搵唔到要更新嘅帳單');
             }
         }
 
@@ -842,39 +766,52 @@
         }
 
         function renderAll() {
-            renderSettlement();
+            renderSettlements();
             renderBillList();
-            renderTotalAndPerPerson();
         }
 
         function getDisplayCategory(bill) {
             const icon = CATEGORY_ICONS[bill.category] || '📌';
             const label = bill.categoryLabel || bill.category;
-            if (bill.detail) {
-                return `${icon} ${label} - ${bill.detail}`;
-            }
-            return `${icon} ${label}`;
+            return bill.detail ? `${icon} ${label} - ${bill.detail}` : `${icon} ${label}`;
         }
 
-        function renderSettlement() {
-            if (allBills.length === 0) {
-                settlementList.innerHTML = `<li style="color:#B5A89A; text-align:center; padding:12px 0;">未有帳單，記第一筆數啦！</li>`;
-                currentCalculatedTransactions = [];
-                return;
-            }
+        function renderSettlements() {
+            renderCurrencySettlement('RMB', '¥', $('totalSpendRMB'), $('settlementListRMB'), $('memberSpendRMB'));
+            renderCurrencySettlement('HKD', 'HK$', $('totalSpendHKD'), $('settlementListHKD'), $('memberSpendHKD'));
+        }
+
+        function renderCurrencySettlement(curr, symbol, totalEl, listEl, memberEl) {
+            const filtered = allBills.filter(b => (b.currency || 'RMB') === curr);
+            const total = filtered.reduce((sum, b) => sum + b.amount, 0);
+            totalEl.textContent = `${symbol}${total.toFixed(2)}`;
+
             const balance = {};
-            MEMBERS.forEach(m => balance[m] = 0);
-            allBills.forEach(bill => {
+            const actualPaid = {};
+            MEMBERS.forEach(m => { balance[m] = 0; actualPaid[m] = 0; });
+
+            filtered.forEach(bill => {
+                actualPaid[bill.payer] = (actualPaid[bill.payer] || 0) + bill.amount;
                 const share = bill.amount / bill.participants.length;
                 bill.participants.forEach(p => { if (balance[p] !== undefined) balance[p] -= share; });
                 if (balance[bill.payer] !== undefined) balance[bill.payer] += bill.amount;
             });
+
+            // 顯示每人實際支出
+            let memberHtml = '';
+            MEMBERS.forEach(m => {
+                memberHtml += `<div class="member-spend-item"><strong>${m}</strong> 實付: ${symbol}${(actualPaid[m] || 0).toFixed(2)}</div>`;
+            });
+            memberEl.innerHTML = memberHtml;
+
+            // 找數邏輯
             const debtors = [];
             const creditors = [];
             MEMBERS.forEach(m => {
                 if (balance[m] < -0.005) debtors.push({ name: m, amt: -balance[m] });
                 if (balance[m] > 0.005) creditors.push({ name: m, amt: balance[m] });
             });
+
             const transactions = [];
             let i = 0, j = 0;
             while (i < debtors.length && j < creditors.length) {
@@ -889,35 +826,47 @@
                 if (d.amt < 0.005) i++;
                 if (c.amt < 0.005) j++;
             }
-            currentCalculatedTransactions = transactions;
 
-            if (transactions.length === 0) {
-                settlementList.innerHTML = `<li class="settlement-clear">🎉 數已清，冇拖冇欠！</li>`;
+            calculatedSettlements[curr] = transactions;
+
+            if (filtered.length === 0) {
+                listEl.innerHTML = `<li style="color:#B5A89A; text-align:center;">未有 ${curr} 帳單</li>`;
+            } else if (transactions.length === 0) {
+                listEl.innerHTML = `<li class="settlement-clear">🎉 數已清，冇拖冇欠！</li>`;
             } else {
                 let html = '';
                 transactions.forEach(t => {
-                    html += `<li><span>👉 <strong>${t.from}</strong> 俾 <strong>${t.to}</strong></span><span class="settlement-amount">HKD $${t.amount.toFixed(2)}</span></li>`;
+                    html += `<li><span>👉 <strong>${t.from}</strong> 俾 <strong>${t.to}</strong></span><span class="settlement-amount">${symbol}${t.amount.toFixed(2)}</span></li>`;
                 });
-                settlementList.innerHTML = html;
+                listEl.innerHTML = html;
             }
         }
 
         function sendWhatsAppSummary() {
-            const total = allBills.reduce((sum, b) => sum + b.amount, 0);
-            const perPerson = total / MEMBERS.length;
-
-            let msg = `🌄 *雲南滇西12日 - 神算醒結算表*\n`;
+            let msg = `🌄 *雲南滇西12日 - 神算醒雙幣結算表*\n`;
             msg += `-----------------------------\n`;
-            msg += `🧾 *團隊總支出:* HKD $${total.toFixed(2)}\n`;
-            msg += `👤 *人均支出 (4人):* HKD $${perPerson.toFixed(2)}\n`;
-            msg += `-----------------------------\n`;
-            msg += `📊 *結算清單:*\n`;
-
-            if (currentCalculatedTransactions.length === 0) {
-                msg += `🎉 數已清，冇拖冇欠！\n`;
+            
+            // RMB
+            const totalRMB = allBills.filter(b => (b.currency || 'RMB') === 'RMB').reduce((sum, b) => sum + b.amount, 0);
+            msg += `🇨🇳 *RMB 總支出:* ¥${totalRMB.toFixed(2)}\n`;
+            if (calculatedSettlements.RMB.length === 0) {
+                msg += `└ RMB 數已清！\n`;
             } else {
-                currentCalculatedTransactions.forEach(t => {
-                    msg += `👉 *${t.from}* 應付 *${t.to}*: HKD $${t.amount.toFixed(2)}\n`;
+                calculatedSettlements.RMB.forEach(t => {
+                    msg += `└ 👉 *${t.from}* 應付 *${t.to}*: ¥${t.amount.toFixed(2)}\n`;
+                });
+            }
+
+            msg += `-----------------------------\n`;
+
+            // HKD
+            const totalHKD = allBills.filter(b => b.currency === 'HKD').reduce((sum, b) => sum + b.amount, 0);
+            msg += `🇭🇰 *HKD 總支出:* HK$${totalHKD.toFixed(2)}\n`;
+            if (calculatedSettlements.HKD.length === 0) {
+                msg += `└ HKD 數已清！\n`;
+            } else {
+                calculatedSettlements.HKD.forEach(t => {
+                    msg += `└ 👉 *${t.from}* 應付 *${t.to}*: HK$${t.amount.toFixed(2)}\n`;
                 });
             }
 
@@ -944,7 +893,8 @@
                 const isPending = bill.id && bill.id.startsWith('local_');
                 const pendingBadge = isPending ? `<span class="pending-badge">⏳ 同步中</span>` : '';
                 const locationHtml = bill.location ? `<div class="location-tag">📍 ${bill.location}</div>` : '';
-                const noteHtml = bill.note ? `<span class="note">📝 ${bill.note}</span>` : '';
+                const currSymbol = (bill.currency || 'RMB') === 'HKD' ? 'HK$' : '¥';
+
                 html += `<div class="bill-item">
                             <div class="left">
                                 <div class="top">
@@ -954,10 +904,9 @@
                                 </div>
                                 ${locationHtml}
                                 <div class="meta">👤 ${bill.payer} ｜ 👥 ${participantsStr}</div>
-                                ${noteHtml}
                             </div>
                             <div class="right">
-                                <div class="amount">HKD $${bill.amount.toFixed(2)}</div>
+                                <div class="amount">${currSymbol}${bill.amount.toFixed(2)}</div>
                                 <div class="action-buttons">
                                     <button class="edit-btn" data-id="${bill.id}">✎ 編輯</button>
                                     <button class="delete-btn" data-id="${bill.id}">✕</button>
@@ -968,29 +917,18 @@
             billList.innerHTML = html;
             billList.querySelectorAll('.delete-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
-                    const id = this.dataset.id;
-                    deleteBill(id);
+                    deleteBill(this.dataset.id);
                 });
             });
             billList.querySelectorAll('.edit-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
-                    const id = this.dataset.id;
-                    const bill = allBills.find(b => b.id === id);
+                    const bill = allBills.find(b => b.id === this.dataset.id);
                     if (bill) {
                         fillFormForEdit(bill);
                         document.querySelector('.bill-card').scrollIntoView({ behavior: 'smooth' });
-                    } else {
-                        alert('搵唔到呢筆記錄');
                     }
                 });
             });
-        }
-
-        function renderTotalAndPerPerson() {
-            const total = allBills.reduce((sum, b) => sum + b.amount, 0);
-            totalSpend.textContent = 'HKD $' + total.toFixed(2);
-            const perPerson = total / MEMBERS.length;
-            perPersonAmount.textContent = 'HKD $' + perPerson.toFixed(2);
         }
 
         function deleteBill(id) {
@@ -1024,9 +962,7 @@
                 syncPendingBills();
                 loadFromFirebase();
             });
-            window.addEventListener('offline', () => {
-                updateOnlineStatus(false);
-            });
+            window.addEventListener('offline', () => { updateOnlineStatus(false); });
             updateOnlineStatus(navigator.onLine);
             const connectedRef = db.ref('.info/connected');
             connectedRef.on('value', (snap) => {
@@ -1057,19 +993,14 @@
 
         document.addEventListener('DOMContentLoaded', init);
 
-        // 返回頂部
         const backToTopBtn = document.getElementById('backToTopBtn');
         window.addEventListener('scroll', function() {
-            if (window.scrollY > 300) {
-                backToTopBtn.classList.add('show');
-            } else {
-                backToTopBtn.classList.remove('show');
-            }
+            if (window.scrollY > 300) { backToTopBtn.classList.add('show'); }
+            else { backToTopBtn.classList.remove('show'); }
         });
         backToTopBtn.addEventListener('click', function() {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     </script>
-
 </body>
 </html>
