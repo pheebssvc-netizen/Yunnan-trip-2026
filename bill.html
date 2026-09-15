@@ -52,18 +52,28 @@
             vertical-align: middle;
         }
 
-        /* 幣種選擇 Pill */
-        .currency-pills {
+        /* 併排表單列 */
+        .form-row-group {
             display: flex;
             gap: 10px;
         }
+        .form-row-group .form-row {
+            flex: 1;
+            margin-bottom: 12px;
+        }
+
+        /* 幣種選擇 Pill */
+        .currency-pills {
+            display: flex;
+            gap: 8px;
+        }
         .currency-pills .currency-btn {
             flex: 1;
-            padding: 8px 12px;
+            padding: 8px 10px;
             border-radius: 30px;
             border: 2px solid #EDE7E0;
             background: #fff;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 600;
             color: #6B5A4A;
             cursor: pointer;
@@ -76,7 +86,7 @@
             border-color: #E07A5F;
         }
 
-        /* 分類按鈕兩欄網格 */
+        /* 分類按鈕網格 */
         .category-pills {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -102,33 +112,31 @@
             border-color: #E07A5F;
         }
 
+        /* Avatar 付款人按鈕 */
         .payer-buttons {
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
         }
         .payer-buttons .payer-btn {
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            border: 2.5px solid #EDE7E0;
+            padding: 8px 14px;
+            border-radius: 30px;
+            border: 2px solid #EDE7E0;
             background: #fff;
-            font-size: 1.1rem;
+            font-size: 0.9rem;
             font-weight: 700;
             color: #6B5A4A;
             cursor: pointer;
             transition: 0.15s;
             display: flex;
             align-items: center;
-            justify-content: center;
+            gap: 4px;
         }
         .payer-buttons .payer-btn:active { transform: scale(0.92); }
-        .payer-buttons .payer-btn.active {
-            background: #E07A5F;
-            color: #fff;
-            border-color: #E07A5F;
-            box-shadow: 0 0 0 3px rgba(224, 122, 95, 0.25);
-        }
+        .payer-buttons .payer-btn[data-payer="J"].active { background: #E07A5F; color: #fff; border-color: #E07A5F; box-shadow: 0 0 0 3px rgba(224, 122, 95, 0.25); }
+        .payer-buttons .payer-btn[data-payer="C"].active { background: #3D405B; color: #fff; border-color: #3D405B; box-shadow: 0 0 0 3px rgba(61, 64, 91, 0.25); }
+        .payer-buttons .payer-btn[data-payer="K"].active { background: #81B29A; color: #fff; border-color: #81B29A; box-shadow: 0 0 0 3px rgba(129, 178, 154, 0.25); }
+        .payer-buttons .payer-btn[data-payer="Z"].active { background: #F2CC8F; color: #2D241A; border-color: #F2CC8F; box-shadow: 0 0 0 3px rgba(242, 204, 143, 0.35); }
 
         .participant-group {
             display: flex;
@@ -168,7 +176,6 @@
             margin-bottom: 4px;
         }
         .bill-form .form-row input[type="date"],
-        .bill-form .form-row input[type="number"],
         .bill-form .form-row input[type="text"] {
             width: 100%;
             padding: 10px 14px;
@@ -184,9 +191,37 @@
             border-color: #E07A5F;
             background: #fff;
         }
-        .bill-form .form-row input[type="number"] {
-            font-size: 1.3rem;
-            font-weight: 600;
+
+        /* 金額大字體輸入框與動態幣別前綴 */
+        .amount-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .amount-input-wrapper .currency-symbol {
+            position: absolute;
+            left: 14px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #E07A5F;
+            pointer-events: none;
+        }
+        .amount-input-wrapper input[type="number"] {
+            width: 100%;
+            padding: 10px 14px 10px 48px;
+            border-radius: 30px;
+            border: 1.5px solid #EDE7E0;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #E07A5F;
+            background: #FFFBF5;
+            transition: 0.15s;
+            outline: none;
+            font-family: inherit;
+        }
+        .amount-input-wrapper input:focus {
+            border-color: #E07A5F;
+            background: #fff;
         }
 
         .btn-add-bill {
@@ -208,16 +243,25 @@
 
         /* 雙幣種結算區塊 */
         .currency-settlement-block {
-            background: #FFFBF5;
-            border: 1px dashed #EDE7E0;
             border-radius: 12px;
             padding: 12px;
             margin-bottom: 12px;
+            transition: 0.2s;
         }
+        .currency-settlement-block.rmb-block {
+            background: #FFFBF5;
+            border: 1.5px solid #F2CC8F;
+        }
+        .currency-settlement-block.hkd-block {
+            background: #F4F7F6;
+            border: 1.5px solid #81B29A;
+        }
+        .currency-settlement-block.rmb-block h4 { color: #E07A5F; }
+        .currency-settlement-block.hkd-block h4 { color: #3D405B; }
+
         .currency-settlement-block h4 {
             margin: 0 0 8px 0;
             font-size: 0.9rem;
-            color: #E07A5F;
             display: flex;
             justify-content: space-between;
         }
@@ -229,7 +273,7 @@
         .settlement-list li {
             padding: 5px 0;
             font-size: 0.9rem;
-            border-bottom: 1px solid #F5F0EB;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
             display: flex;
             justify-content: space-between;
         }
@@ -244,16 +288,55 @@
             gap: 6px;
             margin-top: 8px;
             padding-top: 8px;
-            border-top: 1px solid #EDE7E0;
+            border-top: 1px dashed rgba(0,0,0,0.1);
             font-size: 0.8rem;
             color: #6B5A4A;
         }
         .member-spend-item strong { color: #2D241A; }
 
-        /* WhatsApp 按鈕 */
-        .btn-whatsapp {
-            width: 100%;
+        /* 開支分類進度條 (Progress Bar) */
+        .cat-progress-container {
+            margin-top: 10px;
+            margin-bottom: 14px;
+        }
+        .cat-progress-bar {
+            display: flex;
+            height: 12px;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #EDE7E0;
+        }
+        .cat-progress-segment {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        .cat-legend-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
             margin-top: 6px;
+            font-size: 0.72rem;
+            color: #6B5A4A;
+        }
+        .cat-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+        .cat-legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        /* WhatsApp 與 備份按鈕 */
+        .btn-group-action {
+            display: flex;
+            gap: 8px;
+            margin-top: 6px;
+        }
+        .btn-whatsapp {
+            flex: 2;
             padding: 10px;
             border: none;
             border-radius: 30px;
@@ -272,6 +355,19 @@
             transform: scale(0.96);
             background: #1EBE5D;
         }
+        .btn-export {
+            flex: 1;
+            padding: 10px;
+            border: 1.5px solid #EDE7E0;
+            border-radius: 30px;
+            background: #fff;
+            color: #6B5A4A;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .btn-export:active { transform: scale(0.96); background: #FFFBF5; }
 
         /* 消費清單 */
         .bill-item {
@@ -306,7 +402,7 @@
             font-size: 0.9rem;
             color: #2D241A;
         }
-        .bill-item .left .meta { font-size: 0.7rem; color: #8A7A6A; }
+        .bill-item .left .meta { font-size: 0.72rem; color: #8A7A6A; }
         .bill-item .left .location-tag { font-size: 0.72rem; color: #E07A5F; margin-top: 2px; }
         .bill-item .right {
             text-align: right;
@@ -326,9 +422,9 @@
         }
         .bill-item .action-buttons .edit-btn:hover, .bill-item .action-buttons .delete-btn:hover { color: #E07A5F; }
 
-        .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+        .filter-bar { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
         .filter-bar .filter-btn {
-            padding: 4px 14px; border-radius: 30px; border: 1.5px solid #EDE7E0; background: #fff; font-size: 0.75rem; font-weight: 500; color: #6B5A4A; cursor: pointer; transition: 0.15s;
+            padding: 4px 12px; border-radius: 30px; border: 1.5px solid #EDE7E0; background: #fff; font-size: 0.75rem; font-weight: 500; color: #6B5A4A; cursor: pointer; transition: 0.15s;
         }
         .filter-bar .filter-btn.active { background: #E07A5F; color: #fff; border-color: #E07A5F; }
         .empty-state { text-align: center; padding: 24px 0; color: #B5A89A; font-size: 0.9rem; }
@@ -340,9 +436,10 @@
         #toast.show { opacity: 1; }
 
         @media (max-width: 480px) {
-            .payer-buttons .payer-btn { width: 48px; height: 48px; font-size: 1.0rem; }
-            .participant-group { gap: 10px; }
+            .payer-buttons .payer-btn { padding: 6px 10px; font-size: 0.85rem; }
+            .participant-group { gap: 8px; }
             .category-pills { gap: 6px; }
+            .form-row-group { gap: 6px; }
         }
     </style>
 </head>
@@ -374,21 +471,26 @@
     <!-- ===== PAGE ===== -->
     <div class="page">
 
-        <!-- 1. 快速入帳（置頂） -->
+        <!-- 1. 快速入帳（置頂、兩欄併排縮短屏高） -->
         <div class="bill-card">
             <h3>⚡ 快速入帳</h3>
             <form class="bill-form" id="billForm" autocomplete="off">
-                <div class="form-row">
-                    <label>📅 日期</label>
-                    <input type="date" id="billDate" />
-                </div>
-                <div class="form-row">
-                    <label>💱 結算貨幣</label>
-                    <div class="currency-pills" id="currencyPills">
-                        <button type="button" class="currency-btn active" data-curr="RMB">🇨🇳 人民幣 (RMB)</button>
-                        <button type="button" class="currency-btn" data-curr="HKD">🇭🇰 港幣 (HKD)</button>
+                
+                <!-- 併排：日期 & 貨幣 -->
+                <div class="form-row-group">
+                    <div class="form-row">
+                        <label>📅 日期</label>
+                        <input type="date" id="billDate" />
+                    </div>
+                    <div class="form-row">
+                        <label>💱 結算貨幣</label>
+                        <div class="currency-pills" id="currencyPills">
+                            <button type="button" class="currency-btn active" data-curr="RMB">🇨🇳 RMB</button>
+                            <button type="button" class="currency-btn" data-curr="HKD">🇭🇰 HKD</button>
+                        </div>
                     </div>
                 </div>
+
                 <div class="form-row">
                     <label>🏷️ 分類</label>
                     <div class="category-pills" id="categoryPills">
@@ -401,41 +503,53 @@
                         <span class="pill" data-cat="other">🛍️ 雜項</span>
                     </div>
                 </div>
-                <div class="form-row">
-                    <label>📍 地點（選擇性）</label>
-                    <input type="text" id="billLocation" placeholder="例如：大理古城、麗江、喜洲" />
+
+                <!-- 併排：地點 & 具體項目 -->
+                <div class="form-row-group">
+                    <div class="form-row">
+                        <label>📍 地點</label>
+                        <input type="text" id="billLocation" placeholder="例如：大理古城" />
+                    </div>
+                    <div class="form-row">
+                        <label>📝 具體項目</label>
+                        <input type="text" id="billDetail" placeholder="例如：大排檔" />
+                    </div>
                 </div>
-                <div class="form-row">
-                    <label>📝 具體項目（選擇性）</label>
-                    <input type="text" id="billDetail" placeholder="例如：大排檔、的士、手信" />
-                </div>
+
+                <!-- Avatar 化付款人 -->
                 <div class="form-row">
                     <label>👤 誰付款？</label>
                     <div class="payer-buttons" id="payerButtons">
-                        <button type="button" class="payer-btn" data-payer="J">J</button>
-                        <button type="button" class="payer-btn" data-payer="C">C</button>
-                        <button type="button" class="payer-btn" data-payer="K">K</button>
-                        <button type="button" class="payer-btn" data-payer="Z">Z</button>
+                        <button type="button" class="payer-btn" data-payer="J">📷 J</button>
+                        <button type="button" class="payer-btn" data-payer="C">🪙 C</button>
+                        <button type="button" class="payer-btn" data-payer="K">🥐 K</button>
+                        <button type="button" class="payer-btn" data-payer="Z">🍇 Z</button>
                     </div>
                 </div>
+
+                <!-- 金額（字體加大 + 前綴） -->
                 <div class="form-row">
                     <label>💰 金額</label>
-                    <input type="number" id="billAmount" placeholder="0.00" step="0.01" />
+                    <div class="amount-input-wrapper">
+                        <span class="currency-symbol" id="currSymbol">¥</span>
+                        <input type="number" id="billAmount" placeholder="0.00" step="0.01" />
+                    </div>
                 </div>
+
                 <div class="form-row">
                     <label>👥 參與人 <span class="select-all" id="selectAllToggle">全選</span></label>
                     <div class="participant-group" id="participantGroup">
-                        <label><input type="checkbox" value="J" checked /> J</label>
-                        <label><input type="checkbox" value="C" checked /> C</label>
-                        <label><input type="checkbox" value="K" checked /> K</label>
-                        <label><input type="checkbox" value="Z" checked /> Z</label>
+                        <label><input type="checkbox" value="J" checked /> 📷 J</label>
+                        <label><input type="checkbox" value="C" checked /> 🪙 C</label>
+                        <label><input type="checkbox" value="K" checked /> 🥐 K</label>
+                        <label><input type="checkbox" value="Z" checked /> 🍇 Z</label>
                     </div>
                 </div>
                 <button type="submit" class="btn-add-bill" id="submitBtn">➕ 記帳</button>
             </form>
         </div>
 
-        <!-- 2. 結算總覽（放第二） -->
+        <!-- 2. 結算總覽 -->
         <div class="bill-card">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
                 <h3 style="margin-bottom:0;">📊 結算總覽</h3>
@@ -446,7 +560,7 @@
             </div>
 
             <!-- 人民幣雙幣結算 -->
-            <div class="currency-settlement-block">
+            <div class="currency-settlement-block rmb-block" id="rmbBlock">
                 <h4>🇨🇳 人民幣 (RMB) 結算 <span>總計: <strong id="totalSpendRMB">¥0.00</strong></span></h4>
                 <ul class="settlement-list" id="settlementListRMB">
                     <li style="color:#B5A89A; text-align:center;">未有 RMB 帳單</li>
@@ -456,7 +570,7 @@
             </div>
 
             <!-- 港幣雙幣結算 -->
-            <div class="currency-settlement-block">
+            <div class="currency-settlement-block hkd-block" id="hkdBlock">
                 <h4>🇭🇰 港幣 (HKD) 結算 <span>總計: <strong id="totalSpendHKD">HK$0.00</strong></span></h4>
                 <ul class="settlement-list" id="settlementListHKD">
                     <li style="color:#B5A89A; text-align:center;">未有 HKD 帳單</li>
@@ -465,10 +579,20 @@
                 <div class="member-spend-grid" id="memberSpendHKD"></div>
             </div>
 
-            <button type="button" class="btn-whatsapp" id="whatsappBtn">📲 WhatsApp 找數提醒</button>
+            <!-- 消費結構進度條 -->
+            <div class="cat-progress-container" id="catProgressContainer">
+                <div style="font-size:0.78rem; font-weight:600; color:#6B5A4A; margin-bottom:4px;">📊 開支結構分析</div>
+                <div class="cat-progress-bar" id="catProgressBar"></div>
+                <div class="cat-legend-grid" id="catLegendGrid"></div>
+            </div>
+
+            <div class="btn-group-action">
+                <button type="button" class="btn-whatsapp" id="whatsappBtn">📲 WhatsApp 找數提醒</button>
+                <button type="button" class="btn-export" id="exportBtn">📥 備份 JSON</button>
+            </div>
         </div>
 
-        <!-- 3. 消費清單（放最後） -->
+        <!-- 3. 消費清單 -->
         <div class="bill-card">
             <h3>📜 消費清單</h3>
             <div class="filter-bar" id="filterBar">
@@ -503,8 +627,10 @@
 
     <script>
         const MEMBERS = ['J', 'C', 'K', 'Z'];
+        const MEMBER_AVATARS = { J: '📷 J', C: '🪙 C', K: '🥐 K', Z: '🍇 Z' };
         const CATEGORY_LABELS = { breakfast: '早餐', lunch: '午餐', dinner: '晚餐', snack: '咖啡小食', ticket: '門票', transport: '交通', other: '雜項' };
         const CATEGORY_ICONS = { breakfast: '🍞', lunch: '🍱', dinner: '🍷', snack: '☕', ticket: '🎟️', transport: '🚗', other: '🛍️' };
+        const CATEGORY_COLORS = { breakfast: '#F2CC8F', lunch: '#E07A5F', dinner: '#3D405B', snack: '#D4A373', ticket: '#81B29A', transport: '#6096BA', other: '#B5A89A' };
 
         let allBills = [];
         let currentFilter = 'all';
@@ -517,6 +643,7 @@
         const billForm = $('billForm');
         const billDate = $('billDate');
         const currencyPills = $('currencyPills');
+        const currSymbol = $('currSymbol');
         const categoryPills = $('categoryPills');
         const payerButtons = $('payerButtons');
         const billAmount = $('billAmount');
@@ -530,6 +657,7 @@
         const filterBar = $('filterBar');
         const submitBtn = $('submitBtn');
         const whatsappBtn = $('whatsappBtn');
+        const exportBtn = $('exportBtn');
 
         function showToast(msg, duration = 2000) {
             const toast = $('toast');
@@ -553,6 +681,7 @@
                     currencyPills.querySelectorAll('.currency-btn').forEach(b => b.classList.remove('active'));
                     this.classList.add('active');
                     activeCurrency = this.dataset.curr;
+                    currSymbol.textContent = activeCurrency === 'HKD' ? 'HK$' : '¥';
                 });
             });
 
@@ -583,6 +712,7 @@
 
             billForm.addEventListener('submit', handleAddOrUpdateBill);
             whatsappBtn.addEventListener('click', sendWhatsAppSummary);
+            exportBtn.addEventListener('click', exportJSONBackup);
         }
 
         function updateSelectAllText() {
@@ -602,6 +732,7 @@
         function fillFormForEdit(bill) {
             billDate.value = bill.date;
             activeCurrency = bill.currency || 'RMB';
+            currSymbol.textContent = activeCurrency === 'HKD' ? 'HK$' : '¥';
             currencyPills.querySelectorAll('.currency-btn').forEach(b => {
                 b.classList.toggle('active', b.dataset.curr === activeCurrency);
             });
@@ -767,6 +898,7 @@
 
         function renderAll() {
             renderSettlements();
+            renderCategoryAnalysis();
             renderBillList();
         }
 
@@ -777,6 +909,12 @@
         }
 
         function renderSettlements() {
+            const rmbFiltered = allBills.filter(b => (b.currency || 'RMB') === 'RMB');
+            const hkdFiltered = allBills.filter(b => b.currency === 'HKD');
+
+            $('rmbBlock').style.opacity = (rmbFiltered.length === 0 && hkdFiltered.length > 0) ? '0.6' : '1';
+            $('hkdBlock').style.opacity = (hkdFiltered.length === 0 && rmbFiltered.length > 0) ? '0.6' : '1';
+
             renderCurrencySettlement('RMB', '¥', $('totalSpendRMB'), $('settlementListRMB'), $('memberSpendRMB'));
             renderCurrencySettlement('HKD', 'HK$', $('totalSpendHKD'), $('settlementListHKD'), $('memberSpendHKD'));
         }
@@ -797,14 +935,12 @@
                 if (balance[bill.payer] !== undefined) balance[bill.payer] += bill.amount;
             });
 
-            // 顯示每人實際支出
             let memberHtml = '';
             MEMBERS.forEach(m => {
-                memberHtml += `<div class="member-spend-item"><strong>${m}</strong> 實付: ${symbol}${(actualPaid[m] || 0).toFixed(2)}</div>`;
+                memberHtml += `<div class="member-spend-item"><strong>${MEMBER_AVATARS[m]}</strong> 實付: ${symbol}${(actualPaid[m] || 0).toFixed(2)}</div>`;
             });
             memberEl.innerHTML = memberHtml;
 
-            // 找數邏輯
             const debtors = [];
             const creditors = [];
             MEMBERS.forEach(m => {
@@ -836,42 +972,94 @@
             } else {
                 let html = '';
                 transactions.forEach(t => {
-                    html += `<li><span>👉 <strong>${t.from}</strong> 俾 <strong>${t.to}</strong></span><span class="settlement-amount">${symbol}${t.amount.toFixed(2)}</span></li>`;
+                    html += `<li><span>👉 <strong>${MEMBER_AVATARS[t.from]}</strong> 俾 <strong>${MEMBER_AVATARS[t.to]}</strong></span><span class="settlement-amount">${symbol}${t.amount.toFixed(2)}</span></li>`;
                 });
                 listEl.innerHTML = html;
             }
         }
 
+        function renderCategoryAnalysis() {
+            const catTotals = {};
+            let grandTotal = 0;
+
+            allBills.forEach(b => {
+                const normAmount = b.currency === 'HKD' ? b.amount * 0.93 : b.amount;
+                catTotals[b.category] = (catTotals[b.category] || 0) + normAmount;
+                grandTotal += normAmount;
+            });
+
+            const progressBar = $('catProgressBar');
+            const legendGrid = $('catLegendGrid');
+
+            if (grandTotal === 0) {
+                progressBar.innerHTML = `<div style="width:100%; background:#EDE7E0;"></div>`;
+                legendGrid.innerHTML = `<span style="color:#B5A89A;">未有數據分析</span>`;
+                return;
+            }
+
+            let barHtml = '';
+            let legendHtml = '';
+
+            Object.keys(CATEGORY_LABELS).forEach(cat => {
+                const amt = catTotals[cat] || 0;
+                if (amt > 0) {
+                    const pct = ((amt / grandTotal) * 100).toFixed(1);
+                    const color = CATEGORY_COLORS[cat] || '#B5A89A';
+                    const icon = CATEGORY_ICONS[cat] || '';
+                    const label = CATEGORY_LABELS[cat] || cat;
+
+                    barHtml += `<div class="cat-progress-segment" style="width:${pct}%; background:${color};" title="${label}: ${pct}%"></div>`;
+                    legendHtml += `<div class="cat-legend-item"><span class="cat-legend-dot" style="background:${color};"></span>${icon}${label} ${pct}%</div>`;
+                }
+            });
+
+            progressBar.innerHTML = barHtml;
+            legendGrid.innerHTML = legendHtml;
+        }
+
         function sendWhatsAppSummary() {
             let msg = `🌄 *雲南滇西12日 - 神算醒雙幣結算表*\n`;
             msg += `-----------------------------\n`;
-            
-            // RMB
+
             const totalRMB = allBills.filter(b => (b.currency || 'RMB') === 'RMB').reduce((sum, b) => sum + b.amount, 0);
             msg += `🇨🇳 *RMB 總支出:* ¥${totalRMB.toFixed(2)}\n`;
             if (calculatedSettlements.RMB.length === 0) {
                 msg += `└ RMB 數已清！\n`;
             } else {
                 calculatedSettlements.RMB.forEach(t => {
-                    msg += `└ 👉 *${t.from}* 應付 *${t.to}*: ¥${t.amount.toFixed(2)}\n`;
+                    msg += `└ 👉 *${MEMBER_AVATARS[t.from]}* 應付 *${MEMBER_AVATARS[t.to]}*: ¥${t.amount.toFixed(2)}\n`;
                 });
             }
 
             msg += `-----------------------------\n`;
 
-            // HKD
             const totalHKD = allBills.filter(b => b.currency === 'HKD').reduce((sum, b) => sum + b.amount, 0);
             msg += `🇭🇰 *HKD 總支出:* HK$${totalHKD.toFixed(2)}\n`;
             if (calculatedSettlements.HKD.length === 0) {
                 msg += `└ HKD 數已清！\n`;
             } else {
                 calculatedSettlements.HKD.forEach(t => {
-                    msg += `└ 👉 *${t.from}* 應付 *${t.to}*: HK$${t.amount.toFixed(2)}\n`;
+                    msg += `└ 👉 *${MEMBER_AVATARS[t.from]}* 應付 *${MEMBER_AVATARS[t.to]}*: HK$${t.amount.toFixed(2)}\n`;
                 });
             }
 
             const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`;
             window.open(url, '_blank');
+        }
+
+        function exportJSONBackup() {
+            if (allBills.length === 0) {
+                alert('未有任何消費記錄可匯出');
+                return;
+            }
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(allBills, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `Yunnan_Bills_Backup_${new Date().toISOString().split('T')[0]}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            showToast('📥 備份已成功下載！');
         }
 
         function renderBillList() {
@@ -889,11 +1077,12 @@
             let html = '';
             filtered.forEach(bill => {
                 const displayCat = getDisplayCategory(bill);
-                const participantsStr = bill.participants.join(', ');
+                const participantsStr = bill.participants.map(p => MEMBER_AVATARS[p] || p).join(', ');
                 const isPending = bill.id && bill.id.startsWith('local_');
                 const pendingBadge = isPending ? `<span class="pending-badge">⏳ 同步中</span>` : '';
                 const locationHtml = bill.location ? `<div class="location-tag">📍 ${bill.location}</div>` : '';
                 const currSymbol = (bill.currency || 'RMB') === 'HKD' ? 'HK$' : '¥';
+                const payerAvatar = MEMBER_AVATARS[bill.payer] || bill.payer;
 
                 html += `<div class="bill-item">
                             <div class="left">
@@ -903,7 +1092,7 @@
                                     ${pendingBadge}
                                 </div>
                                 ${locationHtml}
-                                <div class="meta">👤 ${bill.payer} ｜ 👥 ${participantsStr}</div>
+                                <div class="meta">👤 付款: ${payerAvatar} ｜ 👥 參與: ${participantsStr}</div>
                             </div>
                             <div class="right">
                                 <div class="amount">${currSymbol}${bill.amount.toFixed(2)}</div>
