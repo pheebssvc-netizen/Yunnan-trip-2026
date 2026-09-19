@@ -16,64 +16,74 @@
     <script src="app.js"></script>
 
     <style>
+        /* 基礎字體與手機優化 */
+        body {
+            font-size: 15px;
+            color: #2D241A;
+            background-color: #F8F6F0;
+        }
+
         .bill-card {
             background: #fff;
             border-radius: 16px;
-            padding: 16px 18px;
+            padding: 16px;
             margin-bottom: 14px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
         }
         .bill-card h3 {
-            font-size: 1.0rem;
+            font-size: 1.05rem;
             color: #E07A5F;
-            border-left: 5px solid #E9C46A;
-            padding-left: 12px;
-            margin-bottom: 12px;
+            border-left: 4px solid #E9C46A;
+            padding-left: 10px;
+            margin: 0 0 12px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
         .status-dot {
             display: inline-block;
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
-            margin-right: 6px;
+            margin-right: 4px;
             vertical-align: middle;
         }
         .status-dot.online {
             background: #2ECC71;
-            box-shadow: 0 0 8px rgba(46, 204, 113, 0.5);
+            box-shadow: 0 0 6px rgba(46, 204, 113, 0.5);
         }
         .status-dot.offline {
             background: #F39C12;
-            box-shadow: 0 0 8px rgba(243, 156, 18, 0.5);
+            box-shadow: 0 0 6px rgba(243, 156, 18, 0.5);
         }
         .status-label {
-            font-size: 0.75rem;
-            color: #6B5A4A;
-            vertical-align: middle;
+            font-size: 0.72rem;
+            color: #8A7A6A;
+            font-weight: normal;
         }
 
         /* 併排表單列 */
         .form-row-group {
             display: flex;
-            gap: 10px;
+            gap: 8px;
         }
         .form-row-group .form-row {
             flex: 1;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         /* 幣種選擇 Pill */
         .currency-pills {
             display: flex;
-            gap: 8px;
+            gap: 6px;
         }
         .currency-pills .currency-btn {
             flex: 1;
-            padding: 8px 10px;
-            border-radius: 30px;
-            border: 2px solid #EDE7E0;
+            padding: 7px;
+            border-radius: 20px;
+            border: 1.5px solid #EDE7E0;
             background: #fff;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 600;
             color: #6B5A4A;
             cursor: pointer;
@@ -89,23 +99,24 @@
         /* 分類按鈕網格 */
         .category-pills {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
         }
         .category-pills .pill {
-            padding: 8px 12px;
-            border-radius: 30px;
-            border: 2px solid #EDE7E0;
+            padding: 7px 4px;
+            border-radius: 20px;
+            border: 1.5px solid #EDE7E0;
             background: #fff;
-            font-size: 0.78rem;
+            font-size: 0.75rem;
             font-weight: 500;
             color: #6B5A4A;
             cursor: pointer;
             transition: 0.15s;
             user-select: none;
             text-align: center;
+            white-space: nowrap;
         }
-        .category-pills .pill:active { transform: scale(0.94); }
+        .category-pills .pill:active { transform: scale(0.95); }
         .category-pills .pill.active {
             background: #E07A5F;
             color: #fff;
@@ -114,85 +125,90 @@
 
         /* Avatar 付款人按鈕 */
         .payer-buttons {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
         }
         .payer-buttons .payer-btn {
-            padding: 8px 14px;
-            border-radius: 30px;
-            border: 2px solid #EDE7E0;
+            padding: 8px 4px;
+            border-radius: 20px;
+            border: 1.5px solid #EDE7E0;
             background: #fff;
-            font-size: 0.9rem;
+            font-size: 0.82rem;
             font-weight: 700;
             color: #6B5A4A;
             cursor: pointer;
             transition: 0.15s;
             display: flex;
             align-items: center;
-            gap: 4px;
+            justify-content: center;
+            gap: 2px;
         }
-        .payer-buttons .payer-btn:active { transform: scale(0.92); }
-        .payer-buttons .payer-btn[data-payer="J"].active { background: #E07A5F; color: #fff; border-color: #E07A5F; box-shadow: 0 0 0 3px rgba(224, 122, 95, 0.25); }
-        .payer-buttons .payer-btn[data-payer="C"].active { background: #3D405B; color: #fff; border-color: #3D405B; box-shadow: 0 0 0 3px rgba(61, 64, 91, 0.25); }
-        .payer-buttons .payer-btn[data-payer="K"].active { background: #81B29A; color: #fff; border-color: #81B29A; box-shadow: 0 0 0 3px rgba(129, 178, 154, 0.25); }
-        .payer-buttons .payer-btn[data-payer="Z"].active { background: #F2CC8F; color: #2D241A; border-color: #F2CC8F; box-shadow: 0 0 0 3px rgba(242, 204, 143, 0.35); }
+        .payer-buttons .payer-btn:active { transform: scale(0.95); }
+        .payer-buttons .payer-btn[data-payer="J"].active { background: #E07A5F; color: #fff; border-color: #E07A5F; }
+        .payer-buttons .payer-btn[data-payer="C"].active { background: #3D405B; color: #fff; border-color: #3D405B; }
+        .payer-buttons .payer-btn[data-payer="K"].active { background: #81B29A; color: #fff; border-color: #81B29A; }
+        .payer-buttons .payer-btn[data-payer="Z"].active { background: #F2CC8F; color: #2D241A; border-color: #F2CC8F; }
 
         .participant-group {
             display: flex;
-            gap: 14px;
-            flex-wrap: wrap;
+            justify-content: space-between;
             align-items: center;
+            background: #FFFBF5;
+            padding: 8px 12px;
+            border-radius: 20px;
+            border: 1px dashed #EDE7E0;
         }
         .participant-group label {
             display: flex;
             align-items: center;
-            gap: 4px;
-            font-size: 0.9rem;
-            font-weight: 500;
+            gap: 2px;
+            font-size: 0.82rem;
+            font-weight: 600;
             color: #2D241A;
             cursor: pointer;
         }
         .participant-group input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             accent-color: #E07A5F;
-            cursor: pointer;
         }
-        .participant-group .select-all {
-            font-size: 0.75rem;
+        .select-all-btn {
+            font-size: 0.72rem;
             color: #E07A5F;
             cursor: pointer;
             font-weight: 600;
-            margin-left: 4px;
+            border: none;
+            background: none;
+            padding: 0;
         }
 
-        .bill-form .form-row { margin-bottom: 12px; }
+        .bill-form .form-row { margin-bottom: 10px; }
         .bill-form .form-row label {
             display: block;
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             font-weight: 600;
-            color: #6B5A4A;
+            color: #8A7A6A;
             margin-bottom: 4px;
         }
         .bill-form .form-row input[type="date"],
         .bill-form .form-row input[type="text"] {
             width: 100%;
-            padding: 10px 14px;
-            border-radius: 30px;
+            padding: 8px 12px;
+            border-radius: 20px;
             border: 1.5px solid #EDE7E0;
-            font-size: 0.95rem;
+            font-size: 0.88rem;
             background: #FFFBF5;
             transition: 0.15s;
             outline: none;
-            font-family: inherit;
+            box-sizing: border-box;
         }
         .bill-form .form-row input:focus {
             border-color: #E07A5F;
             background: #fff;
         }
 
-        /* 金額大字體輸入框與動態幣別前綴 */
+        /* 金額大字體輸入框 */
         .amount-input-wrapper {
             position: relative;
             display: flex;
@@ -201,23 +217,22 @@
         .amount-input-wrapper .currency-symbol {
             position: absolute;
             left: 14px;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 700;
             color: #E07A5F;
             pointer-events: none;
         }
         .amount-input-wrapper input[type="number"] {
             width: 100%;
-            padding: 10px 14px 10px 48px;
-            border-radius: 30px;
+            padding: 8px 12px 8px 42px;
+            border-radius: 20px;
             border: 1.5px solid #EDE7E0;
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             font-weight: 700;
             color: #E07A5F;
             background: #FFFBF5;
-            transition: 0.15s;
             outline: none;
-            font-family: inherit;
+            box-sizing: border-box;
         }
         .amount-input-wrapper input:focus {
             border-color: #E07A5F;
@@ -226,83 +241,121 @@
 
         .btn-add-bill {
             width: 100%;
-            padding: 14px;
+            padding: 12px;
             border: none;
-            border-radius: 30px;
+            border-radius: 25px;
             background: #E07A5F;
             color: #fff;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 700;
             cursor: pointer;
-            transition: 0.15s;
+            box-shadow: 0 4px 10px rgba(224, 122, 95, 0.2);
         }
         .btn-add-bill:active {
-            transform: scale(0.96);
+            transform: scale(0.98);
             background: #C96A4F;
         }
 
-        /* 雙幣種結算區塊 */
+        /* 折疊卡片 (Accordion Block) */
         .currency-settlement-block {
             border-radius: 12px;
-            padding: 12px;
-            margin-bottom: 12px;
-            transition: 0.2s;
+            margin-bottom: 10px;
+            overflow: hidden;
+            border: 1.5px solid #EDE7E0;
+            background: #fff;
+            transition: all 0.2s ease;
         }
-        .currency-settlement-block.rmb-block {
-            background: #FFFBF5;
-            border: 1.5px solid #F2CC8F;
-        }
-        .currency-settlement-block.hkd-block {
-            background: #F4F7F6;
-            border: 1.5px solid #81B29A;
-        }
-        .currency-settlement-block.rmb-block h4 { color: #E07A5F; }
-        .currency-settlement-block.hkd-block h4 { color: #3D405B; }
+        .currency-settlement-block.rmb-block { border-color: #F2CC8F; }
+        .currency-settlement-block.hkd-block { border-color: #81B29A; }
 
-        .currency-settlement-block h4 {
-            margin: 0 0 8px 0;
-            font-size: 0.9rem;
+        .accordion-header {
+            padding: 12px 14px;
             display: flex;
             justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            background: #FFFBF5;
         }
+        .currency-settlement-block.hkd-block .accordion-header { background: #F4F7F6; }
+
+        .accordion-header h4 {
+            margin: 0;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .accordion-header .total-summary {
+            font-size: 0.85rem;
+            color: #6B5A4A;
+        }
+        .accordion-header .arrow-icon {
+            font-size: 0.75rem;
+            color: #8A7A6A;
+            transition: transform 0.2s ease;
+            margin-left: 6px;
+        }
+
+        /* 展開狀態樣式 */
+        .currency-settlement-block.open .accordion-header .arrow-icon {
+            transform: rotate(180deg);
+        }
+        .accordion-body {
+            display: none;
+            padding: 12px 14px;
+            border-top: 1px solid rgba(0,0,0,0.05);
+            background: #fff;
+        }
+        .currency-settlement-block.open .accordion-body {
+            display: block;
+        }
+
         .settlement-list {
             list-style: none;
             padding: 0;
-            margin: 0 0 8px 0;
+            margin: 0 0 10px 0;
         }
         .settlement-list li {
-            padding: 5px 0;
-            font-size: 0.9rem;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            padding: 6px 0;
+            font-size: 0.85rem;
+            border-bottom: 1px dashed #EDE7E0;
             display: flex;
             justify-content: space-between;
+            align-items: center;
         }
         .settlement-list li:last-child { border-bottom: none; }
-        .settlement-amount { font-weight: 700; color: #2D241A; }
-        .settlement-clear { text-align: center; color: #2ECC71; font-weight: 600; font-size: 0.9rem; padding: 4px 0; }
+        .settlement-amount { font-weight: 700; color: #E07A5F; }
+        .settlement-clear { text-align: center; color: #2ECC71; font-weight: 600; font-size: 0.85rem; padding: 4px 0; }
 
-        /* 每人實付細節 */
+        /* 3 個主帳戶實付細節 */
         .member-spend-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 6px;
-            margin-top: 8px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4px;
+            margin-top: 6px;
             padding-top: 8px;
-            border-top: 1px dashed rgba(0,0,0,0.1);
-            font-size: 0.8rem;
+            border-top: 1px solid #EDE7E0;
+            font-size: 0.75rem;
             color: #6B5A4A;
+            text-align: center;
         }
-        .member-spend-item strong { color: #2D241A; }
+        .member-spend-item {
+            background: #F8F6F0;
+            padding: 6px 4px;
+            border-radius: 8px;
+        }
+        .member-spend-item strong { display: block; color: #2D241A; margin-bottom: 2px; }
 
-        /* 開支分類進度條 (Progress Bar) */
+        /* 開支分類進度條 */
         .cat-progress-container {
-            margin-top: 10px;
-            margin-bottom: 14px;
+            margin-top: 12px;
+            margin-bottom: 12px;
         }
         .cat-progress-bar {
             display: flex;
-            height: 12px;
-            border-radius: 10px;
+            height: 10px;
+            border-radius: 8px;
             overflow: hidden;
             background: #EDE7E0;
         }
@@ -313,9 +366,9 @@
         .cat-legend-grid {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 6px 12px;
             margin-top: 6px;
-            font-size: 0.72rem;
+            font-size: 0.7rem;
             color: #6B5A4A;
         }
         .cat-legend-item {
@@ -324,57 +377,50 @@
             gap: 3px;
         }
         .cat-legend-dot {
-            width: 8px;
-            height: 8px;
+            width: 7px;
+            height: 7px;
             border-radius: 50%;
         }
 
-        /* WhatsApp 與 備份按鈕 */
+        /* 按鈕組 */
         .btn-group-action {
             display: flex;
             gap: 8px;
-            margin-top: 6px;
+            margin-top: 8px;
         }
         .btn-whatsapp {
             flex: 2;
-            padding: 10px;
+            padding: 9px;
             border: none;
-            border-radius: 30px;
+            border-radius: 20px;
             background: #25D366;
             color: #fff;
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             font-weight: 700;
             cursor: pointer;
-            transition: 0.15s;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-        }
-        .btn-whatsapp:active {
-            transform: scale(0.96);
-            background: #1EBE5D;
+            gap: 4px;
         }
         .btn-export {
             flex: 1;
-            padding: 10px;
+            padding: 9px;
             border: 1.5px solid #EDE7E0;
-            border-radius: 30px;
+            border-radius: 20px;
             background: #fff;
             color: #6B5A4A;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 600;
             cursor: pointer;
-            transition: 0.15s;
         }
-        .btn-export:active { transform: scale(0.96); background: #FFFBF5; }
 
         /* 消費清單 */
         .bill-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 0;
+            padding: 8px 0;
             border-bottom: 1px solid #F5F0EB;
         }
         .bill-item:last-child { border-bottom: none; }
@@ -387,23 +433,23 @@
         .bill-item .left .top {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             flex-wrap: wrap;
         }
         .bill-item .left .top .cat {
-            font-size: 0.7rem;
+            font-size: 0.68rem;
             background: #F5F0EB;
-            padding: 2px 10px;
-            border-radius: 30px;
+            padding: 2px 8px;
+            border-radius: 12px;
             color: #6B5A4A;
         }
         .bill-item .left .top .desc {
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.82rem;
             color: #2D241A;
         }
-        .bill-item .left .meta { font-size: 0.72rem; color: #8A7A6A; }
-        .bill-item .left .location-tag { font-size: 0.72rem; color: #E07A5F; margin-top: 2px; }
+        .bill-item .left .meta { font-size: 0.7rem; color: #8A7A6A; }
+        .bill-item .left .location-tag { font-size: 0.7rem; color: #E07A5F; }
         .bill-item .right {
             text-align: right;
             display: flex;
@@ -413,34 +459,43 @@
         }
         .bill-item .right .amount {
             font-weight: 700;
-            font-size: 1.0rem;
+            font-size: 0.95rem;
             color: #2D241A;
         }
-        .bill-item .action-buttons { display: flex; gap: 6px; margin-top: 2px; }
+        .bill-item .action-buttons { display: flex; gap: 4px; }
         .bill-item .action-buttons button {
-            background: none; border: none; font-size: 0.8rem; cursor: pointer; padding: 2px 6px; border-radius: 4px; transition: 0.15s; color: #B5A89A;
+            background: none; border: none; font-size: 0.75rem; cursor: pointer; padding: 2px 4px; color: #B5A89A;
         }
-        .bill-item .action-buttons .edit-btn:hover, .bill-item .action-buttons .delete-btn:hover { color: #E07A5F; }
 
-        .filter-bar { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+        /* 篩選欄 */
+        .filter-bar {
+            display: flex;
+            gap: 4px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            margin-bottom: 8px;
+            -webkit-overflow-scrolling: touch;
+        }
+        .filter-bar::-webkit-scrollbar { display: none; }
         .filter-bar .filter-btn {
-            padding: 4px 12px; border-radius: 30px; border: 1.5px solid #EDE7E0; background: #fff; font-size: 0.75rem; font-weight: 500; color: #6B5A4A; cursor: pointer; transition: 0.15s;
+            padding: 4px 10px;
+            border-radius: 15px;
+            border: 1.5px solid #EDE7E0;
+            background: #fff;
+            font-size: 0.72rem;
+            font-weight: 500;
+            color: #6B5A4A;
+            white-space: nowrap;
+            flex-shrink: 0;
         }
         .filter-bar .filter-btn.active { background: #E07A5F; color: #fff; border-color: #E07A5F; }
-        .empty-state { text-align: center; padding: 24px 0; color: #B5A89A; font-size: 0.9rem; }
-        .pending-badge { font-size: 0.6rem; background: #F39C12; color: #fff; padding: 2px 8px; border-radius: 30px; margin-left: 6px; }
+        .empty-state { text-align: center; padding: 20px 0; color: #B5A89A; font-size: 0.85rem; }
+        .pending-badge { font-size: 0.65rem; background: #F39C12; color: #fff; padding: 1px 6px; border-radius: 10px; }
 
         #toast {
-            position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: #2D241A; color: #fff; padding: 12px 24px; border-radius: 30px; font-size: 0.95rem; z-index: 9999; box-shadow: 0 4px 16px rgba(0,0,0,0.2); opacity: 0; transition: opacity 0.3s ease; pointer-events: none; white-space: nowrap;
+            position: fixed; bottom: 70px; left: 50%; transform: translateX(-50%); background: rgba(45, 36, 26, 0.9); color: #fff; padding: 8px 18px; border-radius: 20px; font-size: 0.85rem; z-index: 9999; opacity: 0; transition: opacity 0.3s ease; pointer-events: none; white-space: nowrap;
         }
         #toast.show { opacity: 1; }
-
-        @media (max-width: 480px) {
-            .payer-buttons .payer-btn { padding: 6px 10px; font-size: 0.85rem; }
-            .participant-group { gap: 8px; }
-            .category-pills { gap: 6px; }
-            .form-row-group { gap: 6px; }
-        }
     </style>
 </head>
 <body>
@@ -471,11 +526,11 @@
     <!-- ===== PAGE ===== -->
     <div class="page">
 
-        <!-- 1. 快速入帳（置頂、兩欄併排縮短屏高） -->
+        <!-- 1. 快速入帳 -->
         <div class="bill-card">
             <h3>⚡ 快速入帳</h3>
             <form class="bill-form" id="billForm" autocomplete="off">
-                
+
                 <!-- 併排：日期 & 貨幣 -->
                 <div class="form-row-group">
                     <div class="form-row">
@@ -497,10 +552,10 @@
                         <span class="pill" data-cat="breakfast">🍞 早餐</span>
                         <span class="pill" data-cat="lunch">🍱 午餐</span>
                         <span class="pill" data-cat="dinner">🍷 晚餐</span>
-                        <span class="pill" data-cat="snack">☕ 咖啡小食</span>
+                        <span class="pill" data-cat="snack">☕ 小食</span>
                         <span class="pill" data-cat="ticket">🎟️ 門票</span>
                         <span class="pill" data-cat="transport">🚗 交通</span>
-                        <span class="pill" data-cat="other">🛍️ 雜項</span>
+                        <span class="pill" data-cat="other" style="grid-column: span 2;">🛍️ 雜項</span>
                     </div>
                 </div>
 
@@ -508,11 +563,11 @@
                 <div class="form-row-group">
                     <div class="form-row">
                         <label>📍 地點</label>
-                        <input type="text" id="billLocation" placeholder="例如：大理古城" />
+                        <input type="text" id="billLocation" placeholder="例：大理古城" />
                     </div>
                     <div class="form-row">
                         <label>📝 具體項目</label>
-                        <input type="text" id="billDetail" placeholder="例如：大排檔" />
+                        <input type="text" id="billDetail" placeholder="例：大排檔" />
                     </div>
                 </div>
 
@@ -537,12 +592,13 @@
                 </div>
 
                 <div class="form-row">
-                    <label>👥 參與人 <span class="select-all" id="selectAllToggle">全選</span></label>
                     <div class="participant-group" id="participantGroup">
-                        <label><input type="checkbox" value="J" checked /> 📷 J</label>
-                        <label><input type="checkbox" value="C" checked /> 🪙 C</label>
-                        <label><input type="checkbox" value="K" checked /> 🥐 K</label>
-                        <label><input type="checkbox" value="Z" checked /> 🍇 Z</label>
+                        <span style="font-size: 0.78rem; font-weight: 600; color: #8A7A6A;">👥 參與人</span>
+                        <label><input type="checkbox" value="J" checked /> J</label>
+                        <label><input type="checkbox" value="C" checked /> C</label>
+                        <label><input type="checkbox" value="K" checked /> K</label>
+                        <label><input type="checkbox" value="Z" checked /> Z</label>
+                        <button type="button" class="select-all-btn" id="selectAllToggle">取消全選</button>
                     </div>
                 </div>
                 <button type="submit" class="btn-add-bill" id="submitBtn">➕ 記帳</button>
@@ -551,44 +607,54 @@
 
         <!-- 2. 結算總覽 -->
         <div class="bill-card">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                <h3 style="margin-bottom:0;">📊 結算總覽</h3>
-                <div>
+            <h3>
+                <span>📊 結算總覽</span>
+                <span>
                     <span class="status-dot online" id="statusDot"></span>
-                    <span class="status-label" id="statusLabel">連線中...</span>
+                    <span class="status-label" id="statusLabel">連線中</span>
+                </span>
+            </h3>
+
+            <!-- 人民幣雙幣結算 (摺疊卡片) -->
+            <div class="currency-settlement-block rmb-block" id="rmbBlock">
+                <div class="accordion-header" onclick="toggleAccordion('rmbBlock')">
+                    <h4>🇨🇳 人民幣 (RMB) <span class="arrow-icon">▼</span></h4>
+                    <div class="total-summary">總計: <strong id="totalSpendRMB" style="color:#E07A5F;">¥0.00</strong></div>
+                </div>
+                <div class="accordion-body">
+                    <ul class="settlement-list" id="settlementListRMB">
+                        <li style="color:#B5A89A; text-align:center;">未有 RMB 帳單</li>
+                    </ul>
+                    <div style="font-size:0.72rem; color:#8A7A6A; margin-top:6px;">👤 3 大帳戶實際付款（RMB）：</div>
+                    <div class="member-spend-grid" id="memberSpendRMB"></div>
                 </div>
             </div>
 
-            <!-- 人民幣雙幣結算 -->
-            <div class="currency-settlement-block rmb-block" id="rmbBlock">
-                <h4>🇨🇳 人民幣 (RMB) 結算 <span>總計: <strong id="totalSpendRMB">¥0.00</strong></span></h4>
-                <ul class="settlement-list" id="settlementListRMB">
-                    <li style="color:#B5A89A; text-align:center;">未有 RMB 帳單</li>
-                </ul>
-                <div style="font-size:0.75rem; color:#8A7A6A; margin-top:4px;">👤 各人實際付款（RMB）：</div>
-                <div class="member-spend-grid" id="memberSpendRMB"></div>
-            </div>
-
-            <!-- 港幣雙幣結算 -->
+            <!-- 港幣雙幣結算 (摺疊卡片) -->
             <div class="currency-settlement-block hkd-block" id="hkdBlock">
-                <h4>🇭🇰 港幣 (HKD) 結算 <span>總計: <strong id="totalSpendHKD">HK$0.00</strong></span></h4>
-                <ul class="settlement-list" id="settlementListHKD">
-                    <li style="color:#B5A89A; text-align:center;">未有 HKD 帳單</li>
-                </ul>
-                <div style="font-size:0.75rem; color:#8A7A6A; margin-top:4px;">👤 各人實際付款（HKD）：</div>
-                <div class="member-spend-grid" id="memberSpendHKD"></div>
+                <div class="accordion-header" onclick="toggleAccordion('hkdBlock')">
+                    <h4>🇭🇰 港幣 (HKD) <span class="arrow-icon">▼</span></h4>
+                    <div class="total-summary">總計: <strong id="totalSpendHKD" style="color:#3D405B;">HK$0.00</strong></div>
+                </div>
+                <div class="accordion-body">
+                    <ul class="settlement-list" id="settlementListHKD">
+                        <li style="color:#B5A89A; text-align:center;">未有 HKD 帳單</li>
+                    </ul>
+                    <div style="font-size:0.72rem; color:#8A7A6A; margin-top:6px;">👤 3 大帳戶實際付款（HKD）：</div>
+                    <div class="member-spend-grid" id="memberSpendHKD"></div>
+                </div>
             </div>
 
             <!-- 消費結構進度條 -->
             <div class="cat-progress-container" id="catProgressContainer">
-                <div style="font-size:0.78rem; font-weight:600; color:#6B5A4A; margin-bottom:4px;">📊 開支結構分析</div>
+                <div style="font-size:0.75rem; font-weight:600; color:#8A7A6A; margin-bottom:4px;">📊 開支結構分析</div>
                 <div class="cat-progress-bar" id="catProgressBar"></div>
                 <div class="cat-legend-grid" id="catLegendGrid"></div>
             </div>
 
             <div class="btn-group-action">
-                <button type="button" class="btn-whatsapp" id="whatsappBtn">📲 WhatsApp 找數提醒</button>
-                <button type="button" class="btn-export" id="exportBtn">📥 備份 JSON</button>
+                <button type="button" class="btn-whatsapp" id="whatsappBtn">📲 WhatsApp 結算單</button>
+                <button type="button" class="btn-export" id="exportBtn">📥 備份</button>
             </div>
         </div>
 
@@ -598,13 +664,13 @@
             <div class="filter-bar" id="filterBar">
                 <button class="filter-btn active" data-filter="all">全部</button>
                 <button class="filter-btn" data-filter="today">今日</button>
-                <button class="filter-btn" data-filter="breakfast">🍞</button>
-                <button class="filter-btn" data-filter="lunch">🍱</button>
-                <button class="filter-btn" data-filter="dinner">🍷</button>
-                <button class="filter-btn" data-filter="snack">☕</button>
-                <button class="filter-btn" data-filter="ticket">🎟️</button>
-                <button class="filter-btn" data-filter="transport">🚗</button>
-                <button class="filter-btn" data-filter="other">🛍️</button>
+                <button class="filter-btn" data-filter="breakfast">🍞 早餐</button>
+                <button class="filter-btn" data-filter="lunch">🍱 午餐</button>
+                <button class="filter-btn" data-filter="dinner">🍷 晚餐</button>
+                <button class="filter-btn" data-filter="snack">☕ 小食</button>
+                <button class="filter-btn" data-filter="ticket">🎟️ 門票</button>
+                <button class="filter-btn" data-filter="transport">🚗 交通</button>
+                <button class="filter-btn" data-filter="other">🛍️ 雜項</button>
             </div>
             <div id="billList">
                 <div class="empty-state">📭 未有消費記錄</div>
@@ -617,17 +683,26 @@
     <div id="toast"></div>
 
     <!-- ===== 固定地圖按鈕 ===== -->
-    <a href="map.html" class="map-fab" id="mapFab" aria-label="查看地圖">
-        🗺️
-        <span class="tooltip">查看地圖</span>
-    </a>
+    <a href="map.html" class="map-fab" id="mapFab" aria-label="查看地圖">🗺️</a>
 
     <!-- ===== 返回頂部按鈕 ===== -->
     <button class="back-to-top" id="backToTopBtn" aria-label="返回頂部">⬆</button>
 
     <script>
+        // 定義個人及帳戶 mapping 關係
         const MEMBERS = ['J', 'C', 'K', 'Z'];
         const MEMBER_AVATARS = { J: '📷 J', C: '🪙 C', K: '🥐 K', Z: '🍇 Z' };
+        
+        // 3 個主結算帳戶設定 (J與C合併為 J&C)
+        const ACCOUNTS = ['Z', 'J&C', 'K'];
+        const ACCOUNT_AVATARS = { 'Z': '🍇 Z', 'J&C': '📷🪙 J&C', 'K': '🥐 K' };
+
+        // 將個別成員 Mapping 至 主帳戶
+        function getAccount(member) {
+            if (member === 'J' || member === 'C') return 'J&C';
+            return member;
+        }
+
         const CATEGORY_LABELS = { breakfast: '早餐', lunch: '午餐', dinner: '晚餐', snack: '咖啡小食', ticket: '門票', transport: '交通', other: '雜項' };
         const CATEGORY_ICONS = { breakfast: '🍞', lunch: '🍱', dinner: '🍷', snack: '☕', ticket: '🎟️', transport: '🚗', other: '🛍️' };
         const CATEGORY_COLORS = { breakfast: '#F2CC8F', lunch: '#E07A5F', dinner: '#3D405B', snack: '#D4A373', ticket: '#81B29A', transport: '#6096BA', other: '#B5A89A' };
@@ -658,6 +733,14 @@
         const submitBtn = $('submitBtn');
         const whatsappBtn = $('whatsappBtn');
         const exportBtn = $('exportBtn');
+
+        // 折疊卡片切換
+        function toggleAccordion(blockId) {
+            const block = $(blockId);
+            if (block) {
+                block.classList.toggle('open');
+            }
+        }
 
         function showToast(msg, duration = 2000) {
             const toast = $('toast');
@@ -718,7 +801,7 @@
         function updateSelectAllText() {
             const checks = participantGroup.querySelectorAll('input[type="checkbox"]');
             const allChecked = Array.from(checks).every(c => c.checked);
-            selectAllToggle.textContent = allChecked ? '全選' : '全部取消';
+            selectAllToggle.textContent = allChecked ? '取消全選' : '全選';
         }
 
         function clearForm() {
@@ -756,12 +839,12 @@
         function handleAddOrUpdateBill(e) {
             e.preventDefault();
             const date = billDate.value;
-            if (!date) { alert('請揀日期'); return; }
+            if (!date) { alert('請選擇日期'); return; }
             const activeCat = categoryPills.querySelector('.pill.active');
-            if (!activeCat) { alert('請揀分類'); return; }
+            if (!activeCat) { alert('請選擇分類'); return; }
             const category = activeCat.dataset.cat;
             const activePayer = payerButtons.querySelector('.payer-btn.active');
-            if (!activePayer) { alert('請揀付款人'); return; }
+            if (!activePayer) { alert('請選擇付款人'); return; }
             const payer = activePayer.dataset.payer;
             const amount = parseFloat(billAmount.value);
             if (isNaN(amount)) { alert('請輸入有效金額'); return; }
@@ -770,7 +853,7 @@
             participantGroup.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => {
                 participants.push(cb.value);
             });
-            if (participants.length === 0) { alert('至少揀一位參與人'); return; }
+            if (participants.length === 0) { alert('至少選擇一位參與人'); return; }
 
             const location = billLocation.value.trim();
             const detail = billDetail.value.trim();
@@ -912,13 +995,13 @@
             const rmbFiltered = allBills.filter(b => (b.currency || 'RMB') === 'RMB');
             const hkdFiltered = allBills.filter(b => b.currency === 'HKD');
 
-            $('rmbBlock').style.opacity = (rmbFiltered.length === 0 && hkdFiltered.length > 0) ? '0.6' : '1';
-            $('hkdBlock').style.opacity = (hkdFiltered.length === 0 && rmbFiltered.length > 0) ? '0.6' : '1';
+            $('rmbBlock').style.opacity = (rmbFiltered.length === 0 && hkdFiltered.length > 0) ? '0.6' : '1';$('hkdBlock').style.opacity = (hkdFiltered.length === 0 && rmbFiltered.length > 0) ? '0.6' : '1';
 
-            renderCurrencySettlement('RMB', '¥', $('totalSpendRMB'), $('settlementListRMB'), $('memberSpendRMB'));
-            renderCurrencySettlement('HKD', 'HK$', $('totalSpendHKD'), $('settlementListHKD'), $('memberSpendHKD'));
+            renderCurrencySettlement('RMB', '¥', $('totalSpendRMB'), $('settlementListRMB'),$('memberSpendRMB'));
+            renderCurrencySettlement('HKD', 'HK$', $('totalSpendHKD'), $('settlementListHKD'),$('memberSpendHKD'));
         }
 
+        // 修改：按 3 個主帳戶（Z, J&C, K）計算結算金額
         function renderCurrencySettlement(curr, symbol, totalEl, listEl, memberEl) {
             const filtered = allBills.filter(b => (b.currency || 'RMB') === curr);
             const total = filtered.reduce((sum, b) => sum + b.amount, 0);
@@ -926,26 +1009,41 @@
 
             const balance = {};
             const actualPaid = {};
-            MEMBERS.forEach(m => { balance[m] = 0; actualPaid[m] = 0; });
+            ACCOUNTS.forEach(a => { balance[a] = 0; actualPaid[a] = 0; });
 
             filtered.forEach(bill => {
-                actualPaid[bill.payer] = (actualPaid[bill.payer] || 0) + bill.amount;
-                const share = bill.amount / bill.participants.length;
-                bill.participants.forEach(p => { if (balance[p] !== undefined) balance[p] -= share; });
-                if (balance[bill.payer] !== undefined) balance[bill.payer] += bill.amount;
+                // 付款人對應的主帳戶
+                const payerAccount = getAccount(bill.payer);
+                actualPaid[payerAccount] = (actualPaid[payerAccount] || 0) + bill.amount;
+
+                // 應付（按參與人頭平攤）
+                const sharePerPerson = bill.amount / bill.participants.length;
+                
+                bill.participants.forEach(p => {
+                    const participantAccount = getAccount(p);
+                    if (balance[participantAccount] !== undefined) {
+                        balance[participantAccount] -= sharePerPerson;
+                    }
+                });
+
+                if (balance[payerAccount] !== undefined) {
+                    balance[payerAccount] += bill.amount;
+                }
             });
 
+            // 渲染 3 個帳戶的實付金額
             let memberHtml = '';
-            MEMBERS.forEach(m => {
-                memberHtml += `<div class="member-spend-item"><strong>${MEMBER_AVATARS[m]}</strong> 實付: ${symbol}${(actualPaid[m] || 0).toFixed(2)}</div>`;
+            ACCOUNTS.forEach(a => {
+                memberHtml += `<div class="member-spend-item"><strong>${ACCOUNT_AVATARS[a]}</strong>${symbol}${(actualPaid[a] || 0).toFixed(1)}</div>`;
             });
             memberEl.innerHTML = memberHtml;
 
+            // 計算 3 個帳戶之間的找數（清債） logic
             const debtors = [];
             const creditors = [];
-            MEMBERS.forEach(m => {
-                if (balance[m] < -0.005) debtors.push({ name: m, amt: -balance[m] });
-                if (balance[m] > 0.005) creditors.push({ name: m, amt: balance[m] });
+            ACCOUNTS.forEach(a => {
+                if (balance[a] < -0.005) debtors.push({ name: a, amt: -balance[a] });
+                if (balance[a] > 0.005) creditors.push({ name: a, amt: balance[a] });
             });
 
             const transactions = [];
@@ -972,7 +1070,7 @@
             } else {
                 let html = '';
                 transactions.forEach(t => {
-                    html += `<li><span>👉 <strong>${MEMBER_AVATARS[t.from]}</strong> 俾 <strong>${MEMBER_AVATARS[t.to]}</strong></span><span class="settlement-amount">${symbol}${t.amount.toFixed(2)}</span></li>`;
+                    html += `<li><span>👉 <strong>${ACCOUNT_AVATARS[t.from]}</strong> 俾 <strong>${ACCOUNT_AVATARS[t.to]}</strong></span><span class="settlement-amount">${symbol}${t.amount.toFixed(2)}</span></li>`;
                 });
                 listEl.innerHTML = html;
             }
@@ -1018,7 +1116,7 @@
         }
 
         function sendWhatsAppSummary() {
-            let msg = `🌄 *雲南滇西12日 - 神算醒雙幣結算表*\n`;
+            let msg = `🌄 *雲南滇西12日 - 神算醒結算單 (3大帳戶)*\n`;
             msg += `-----------------------------\n`;
 
             const totalRMB = allBills.filter(b => (b.currency || 'RMB') === 'RMB').reduce((sum, b) => sum + b.amount, 0);
@@ -1027,7 +1125,7 @@
                 msg += `└ RMB 數已清！\n`;
             } else {
                 calculatedSettlements.RMB.forEach(t => {
-                    msg += `└ 👉 *${MEMBER_AVATARS[t.from]}* 應付 *${MEMBER_AVATARS[t.to]}*: ¥${t.amount.toFixed(2)}\n`;
+                    msg += `└ 👉 *${ACCOUNT_AVATARS[t.from]}* 應付 *${ACCOUNT_AVATARS[t.to]}*: ¥${t.amount.toFixed(2)}\n`;
                 });
             }
 
@@ -1039,7 +1137,7 @@
                 msg += `└ HKD 數已清！\n`;
             } else {
                 calculatedSettlements.HKD.forEach(t => {
-                    msg += `└ 👉 *${MEMBER_AVATARS[t.from]}* 應付 *${MEMBER_AVATARS[t.to]}*: HK$${t.amount.toFixed(2)}\n`;
+                    msg += `└ 👉 *${ACCOUNT_AVATARS[t.from]}* 應付 *${ACCOUNT_AVATARS[t.to]}*: HK$${t.amount.toFixed(2)}\n`;
                 });
             }
 
@@ -1138,10 +1236,10 @@
             isOnline = online;
             if (online) {
                 statusDot.className = 'status-dot online';
-                statusLabel.textContent = '🟢 在線同步中';
+                statusLabel.textContent = '在線';
             } else {
                 statusDot.className = 'status-dot offline';
-                statusLabel.textContent = '🟠 離線儲存中';
+                statusLabel.textContent = '離線';
             }
         }
 
