@@ -1099,8 +1099,14 @@
             });
         }
 
+        /* 關鍵更新：依日期「由早到晚」排序 (日期相同則依建立時間由早到晚) */
         function sortBills() {
-            allBills.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+            allBills.sort((a, b) => {
+                if (a.date !== b.date) {
+                    return a.date.localeCompare(b.date);
+                }
+                return (a.timestamp || 0) - (b.timestamp || 0);
+            });
         }
 
         function renderAll() {
@@ -1115,7 +1121,6 @@
             return bill.detail ? `${icon} ${label} - ${bill.detail}` : `${icon} ${label}`;
         }
 
-        /* 關鍵：結算總覽不計算已標記為 isSettled 的帳單 */
         function renderSettlements() {
             const rmbFiltered = allBills.filter(b => (b.currency || 'RMB') === 'RMB' && !b.isSettled);
             const hkdFiltered = allBills.filter(b => b.currency === 'HKD' && !b.isSettled);
@@ -1127,7 +1132,6 @@
         }
 
         function renderCurrencySettlement(curr, symbol, totalEl, listEl, memberEl) {
-            // 過濾掉已付帳單 (!b.isSettled)
             const filtered = allBills.filter(b => (b.currency || 'RMB') === curr && !b.isSettled);
             const total = filtered.reduce((sum, b) => sum + b.amount, 0);
             totalEl.textContent = `${symbol}${total.toFixed(2)}`;
@@ -1197,7 +1201,6 @@
             }
         }
 
-        /* 關鍵：開支結構保留所有帳單（即使已付也會計算入內） */
         function renderCategoryAnalysis() {
             const groupTotalsRMB = { dining: 0, hotel: 0, ticket: 0, transport: 0, other: 0 };
             const groupTotalsHKD = { dining: 0, hotel: 0, ticket: 0, transport: 0, other: 0 };
