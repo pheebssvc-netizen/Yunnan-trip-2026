@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
-    <title>神算醒 · 雲南滇西12日</title>
+    <title>公數袋 · 雲南滇西12日</title>
 
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -628,7 +628,7 @@
         <a href="index.html">📋 行程總覽</a>
         <a href="daily.html">📅 每日行程</a>
         <a href="info.html">📌 重要資訊</a>
-        <a href="bill.html" class="active">🧾 神算醒</a>
+        <a href="bill.html" class="active">🧾 公數袋</a>
     </nav>
 
     <!-- ===== PAGE ===== -->
@@ -1363,7 +1363,7 @@
         }
 
         function sendWhatsAppSummary() {
-            let msg = `🌄 *雲南滇西12日 - 神算醒結算單 (3大帳戶)*\n`;
+            let msg = `🌄 *雲南滇西12日 - 公數袋結算單 (3大帳戶)*\n`;
             msg += `-----------------------------\n`;
 
             const unSettledRMB = allBills.filter(b => (b.currency || 'RMB') === 'RMB' && !b.isSettled);
