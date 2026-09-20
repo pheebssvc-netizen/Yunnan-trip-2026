@@ -96,7 +96,7 @@
             border-color: #E07A5F;
         }
 
-        /* 分類按鈕網格 */
+        /* 分類按鈕網格 (調整為 4 欄適應 8 個分類) */
         .category-pills {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -368,7 +368,7 @@
             flex-wrap: wrap;
             gap: 6px 12px;
             margin-top: 6px;
-            font-size: 0.7rem;
+            font-size: 0.72rem;
             color: #6B5A4A;
         }
         .cat-legend-item {
@@ -546,6 +546,7 @@
                     </div>
                 </div>
 
+                <!-- 8 個開支分類（包含酒店） -->
                 <div class="form-row">
                     <label>🏷️ 分類</label>
                     <div class="category-pills" id="categoryPills">
@@ -553,9 +554,10 @@
                         <span class="pill" data-cat="lunch">🍱 午餐</span>
                         <span class="pill" data-cat="dinner">🍷 晚餐</span>
                         <span class="pill" data-cat="snack">☕ 小食</span>
+                        <span class="pill" data-cat="hotel">🏨 酒店</span>
                         <span class="pill" data-cat="ticket">🎟️ 門票</span>
                         <span class="pill" data-cat="transport">🚗 交通</span>
-                        <span class="pill" data-cat="other" style="grid-column: span 2;">🛍️ 雜項</span>
+                        <span class="pill" data-cat="other">🛍️ 雜項</span>
                     </div>
                 </div>
 
@@ -567,7 +569,7 @@
                     </div>
                     <div class="form-row">
                         <label>📝 具體項目</label>
-                        <input type="text" id="billDetail" placeholder="例：大排檔" />
+                        <input type="text" id="billDetail" placeholder="例：大排檔 / 酒店訂金" />
                     </div>
                 </div>
 
@@ -645,7 +647,7 @@
                 </div>
             </div>
 
-            <!-- 消費結構進度條 -->
+            <!-- 開支結構進度條 (飲食已合併) -->
             <div class="cat-progress-container" id="catProgressContainer">
                 <div style="font-size:0.75rem; font-weight:600; color:#8A7A6A; margin-bottom:4px;">📊 開支結構分析</div>
                 <div class="cat-progress-bar" id="catProgressBar"></div>
@@ -664,10 +666,8 @@
             <div class="filter-bar" id="filterBar">
                 <button class="filter-btn active" data-filter="all">全部</button>
                 <button class="filter-btn" data-filter="today">今日</button>
-                <button class="filter-btn" data-filter="breakfast">🍞 早餐</button>
-                <button class="filter-btn" data-filter="lunch">🍱 午餐</button>
-                <button class="filter-btn" data-filter="dinner">🍷 晚餐</button>
-                <button class="filter-btn" data-filter="snack">☕ 小食</button>
+                <button class="filter-btn" data-filter="dining">🍔 飲食</button>
+                <button class="filter-btn" data-filter="hotel">🏨 酒店</button>
                 <button class="filter-btn" data-filter="ticket">🎟️ 門票</button>
                 <button class="filter-btn" data-filter="transport">🚗 交通</button>
                 <button class="filter-btn" data-filter="other">🛍️ 雜項</button>
@@ -703,9 +703,36 @@
             return member;
         }
 
-        const CATEGORY_LABELS = { breakfast: '早餐', lunch: '午餐', dinner: '晚餐', snack: '咖啡小食', ticket: '門票', transport: '交通', other: '雜項' };
-        const CATEGORY_ICONS = { breakfast: '🍞', lunch: '🍱', dinner: '🍷', snack: '☕', ticket: '🎟️', transport: '🚗', other: '🛍️' };
-        const CATEGORY_COLORS = { breakfast: '#F2CC8F', lunch: '#E07A5F', dinner: '#3D405B', snack: '#D4A373', ticket: '#81B29A', transport: '#6096BA', other: '#B5A89A' };
+        // 基本分類標籤與圖示
+        const CATEGORY_LABELS = { 
+            breakfast: '早餐', 
+            lunch: '午餐', 
+            dinner: '晚餐', 
+            snack: '咖啡小食', 
+            hotel: '酒店', 
+            ticket: '門票', 
+            transport: '交通', 
+            other: '雜項' 
+        };
+        const CATEGORY_ICONS = { 
+            breakfast: '🍞', 
+            lunch: '🍱', 
+            dinner: '🍷', 
+            snack: '☕', 
+            hotel: '🏨', 
+            ticket: '🎟️', 
+            transport: '🚗', 
+            other: '🛍️' 
+        };
+
+        // 結構分析合併後的分類顏色定義
+        const STRUCTURE_GROUPS = {
+            dining: { label: '飲食', icon: '🍔', color: '#E07A5F' },
+            hotel: { label: '酒店', icon: '🏨', color: '#F2CC8F' },
+            ticket: { label: '門票', icon: '🎟️', color: '#81B29A' },
+            transport: { label: '交通', icon: '🚗', color: '#6096BA' },
+            other: { label: '雜項', icon: '🛍️', color: '#B5A89A' }
+        };
 
         let allBills = [];
         let currentFilter = 'all';
@@ -987,7 +1014,7 @@
 
         function getDisplayCategory(bill) {
             const icon = CATEGORY_ICONS[bill.category] || '📌';
-            const label = bill.categoryLabel || bill.category;
+            const label = CATEGORY_LABELS[bill.category] || bill.categoryLabel || bill.category;
             return bill.detail ? `${icon} ${label} - ${bill.detail}` : `${icon} ${label}`;
         }
 
@@ -1001,7 +1028,6 @@
             renderCurrencySettlement('HKD', 'HK$', $('totalSpendHKD'), $('settlementListHKD'),$('memberSpendHKD'));
         }
 
-        // 修改：按 3 個主帳戶（Z, J&C, K）計算結算金額
         function renderCurrencySettlement(curr, symbol, totalEl, listEl, memberEl) {
             const filtered = allBills.filter(b => (b.currency || 'RMB') === curr);
             const total = filtered.reduce((sum, b) => sum + b.amount, 0);
@@ -1012,11 +1038,9 @@
             ACCOUNTS.forEach(a => { balance[a] = 0; actualPaid[a] = 0; });
 
             filtered.forEach(bill => {
-                // 付款人對應的主帳戶
                 const payerAccount = getAccount(bill.payer);
                 actualPaid[payerAccount] = (actualPaid[payerAccount] || 0) + bill.amount;
 
-                // 應付（按參與人頭平攤）
                 const sharePerPerson = bill.amount / bill.participants.length;
                 
                 bill.participants.forEach(p => {
@@ -1031,14 +1055,12 @@
                 }
             });
 
-            // 渲染 3 個帳戶的實付金額
             let memberHtml = '';
             ACCOUNTS.forEach(a => {
                 memberHtml += `<div class="member-spend-item"><strong>${ACCOUNT_AVATARS[a]}</strong>${symbol}${(actualPaid[a] || 0).toFixed(1)}</div>`;
             });
             memberEl.innerHTML = memberHtml;
 
-            // 計算 3 個帳戶之間的找數（清債） logic
             const debtors = [];
             const creditors = [];
             ACCOUNTS.forEach(a => {
@@ -1076,13 +1098,22 @@
             }
         }
 
+        // 修改：開支結構分析，將早/午/晚/小食合併歸類為「飲食」
         function renderCategoryAnalysis() {
-            const catTotals = {};
+            const groupTotals = { dining: 0, hotel: 0, ticket: 0, transport: 0, other: 0 };
             let grandTotal = 0;
 
             allBills.forEach(b => {
                 const normAmount = b.currency === 'HKD' ? b.amount * 0.93 : b.amount;
-                catTotals[b.category] = (catTotals[b.category] || 0) + normAmount;
+                let groupKey = 'other';
+
+                if (['breakfast', 'lunch', 'dinner', 'snack'].includes(b.category)) {
+                    groupKey = 'dining';
+                } else if (STRUCTURE_GROUPS[b.category]) {
+                    groupKey = b.category;
+                }
+
+                groupTotals[groupKey] += normAmount;
                 grandTotal += normAmount;
             });
 
@@ -1098,16 +1129,14 @@
             let barHtml = '';
             let legendHtml = '';
 
-            Object.keys(CATEGORY_LABELS).forEach(cat => {
-                const amt = catTotals[cat] || 0;
+            Object.keys(STRUCTURE_GROUPS).forEach(key => {
+                const amt = groupTotals[key] || 0;
                 if (amt > 0) {
                     const pct = ((amt / grandTotal) * 100).toFixed(1);
-                    const color = CATEGORY_COLORS[cat] || '#B5A89A';
-                    const icon = CATEGORY_ICONS[cat] || '';
-                    const label = CATEGORY_LABELS[cat] || cat;
+                    const group = STRUCTURE_GROUPS[key];
 
-                    barHtml += `<div class="cat-progress-segment" style="width:${pct}%; background:${color};" title="${label}: ${pct}%"></div>`;
-                    legendHtml += `<div class="cat-legend-item"><span class="cat-legend-dot" style="background:${color};"></span>${icon}${label} ${pct}%</div>`;
+                    barHtml += `<div class="cat-progress-segment" style="width:${pct}%; background:${group.color};" title="${group.label}: ${pct}%"></div>`;
+                    legendHtml += `<div class="cat-legend-item"><span class="cat-legend-dot" style="background:${group.color};"></span>${group.icon}${group.label} ${pct}%</div>`;
                 }
             });
 
@@ -1165,13 +1194,17 @@
             if (currentFilter === 'today') {
                 const today = new Date().toISOString().split('T')[0];
                 filtered = filtered.filter(b => b.date === today);
+            } else if (currentFilter === 'dining') {
+                filtered = filtered.filter(b => ['breakfast', 'lunch', 'dinner', 'snack'].includes(b.category));
             } else if (currentFilter !== 'all') {
                 filtered = filtered.filter(b => b.category === currentFilter);
             }
+
             if (filtered.length === 0) {
                 billList.innerHTML = `<div class="empty-state">📭 沒有符合嘅記錄</div>`;
                 return;
             }
+
             let html = '';
             filtered.forEach(bill => {
                 const displayCat = getDisplayCategory(bill);
