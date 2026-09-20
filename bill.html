@@ -372,6 +372,32 @@
             border-color: #3D405B;
         }
 
+        /* 匯率輸入列樣式 */
+        .rate-config-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #FFFBF5;
+            padding: 8px 12px;
+            border-radius: 12px;
+            border: 1px dashed #EDE7E0;
+            margin-bottom: 10px;
+            font-size: 0.8rem;
+            color: #6B5A4A;
+        }
+        .rate-config-row input {
+            width: 75px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            border: 1.5px solid #EDE7E0;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #E07A5F;
+            text-align: center;
+            outline: none;
+            background: #fff;
+        }
+
         /* 開支分類進度條與數據清單 */
         .cat-progress-container {
             margin-top: 4px;
@@ -410,6 +436,25 @@
         .structure-item-right {
             font-weight: 700;
             color: #2D241A;
+        }
+
+        /* 總開支 (折合 HKD) 突出顯示列 */
+        .structure-total-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            padding: 10px 12px;
+            background: #3D405B;
+            color: #fff;
+            border-radius: 10px;
+            margin-top: 8px;
+            font-weight: 700;
+            box-shadow: 0 2px 8px rgba(61, 64, 91, 0.15);
+        }
+        .structure-total-item .total-amount {
+            font-size: 1.05rem;
+            color: #F2CC8F;
         }
 
         /* 按鈕組 */
@@ -728,6 +773,12 @@
                 <button type="button" class="acc-btn" data-acc="Z">🍇 Z</button>
             </div>
 
+            <!-- 匯率自訂輸入框 -->
+            <div class="rate-config-row">
+                <span>💱 匯率設定 (1 RMB 折合 HKD)：</span>
+                <input type="number" id="rmbToHkdRate" value="1.08" step="0.01" />
+            </div>
+
             <!-- 開支結構進度條與金額列表 -->
             <div class="cat-progress-container" id="catProgressContainer">
                 <div class="cat-progress-bar" id="catProgressBar"></div>
@@ -837,6 +888,7 @@
         const whatsappBtn = $('whatsappBtn');
         const exportBtn = $('exportBtn');
         const accountSelector = $('accountSelector');
+        const rmbToHkdRateInput = $('rmbToHkdRate');
 
         // 折疊卡片切換
         function toggleAccordion(blockId) {
@@ -905,6 +957,9 @@
                     renderCategoryAnalysis();
                 });
             });
+
+            // 監聽匯率變更
+            rmbToHkdRateInput.addEventListener('input', renderCategoryAnalysis);
 
             billForm.addEventListener('submit', handleAddOrUpdateBill);
             whatsappBtn.addEventListener('click', sendWhatsAppSummary);
@@ -981,7 +1036,7 @@
                 payer,
                 amount: Math.round(amount * 100) / 100,
                 participants,
-                isSettled: false, // 預設未付
+                isSettled: false,
                 timestamp: Date.now(),
             };
 
@@ -1025,7 +1080,6 @@
             }
         }
 
-        // 切換「已付/未付」狀態
         function toggleSettled(id) {
             const bill = allBills.find(b => b.id === id);
             if (bill) {
@@ -1099,7 +1153,6 @@
             });
         }
 
-        /* 關鍵更新：依日期「由早到晚」排序 (日期相同則依建立時間由早到晚) */
         function sortBills() {
             allBills.sort((a, b) => {
                 if (a.date !== b.date) {
@@ -1201,7 +1254,10 @@
             }
         }
 
+        /* 開支結構分析：加入手動匯率 & 最終港幣總開支行 */
         function renderCategoryAnalysis() {
+            const userRate = parseFloat(rmbToHkdRateInput.value) || 1.08;
+
             const groupTotalsRMB = { dining: 0, hotel: 0, ticket: 0, transport: 0, other: 0 };
             const groupTotalsHKD = { dining: 0, hotel: 0, ticket: 0, transport: 0, other: 0 };
             let grandTotalRMB = 0;
@@ -1248,9 +1304,10 @@
             const progressBar = $('catProgressBar');
             const structureList = $('structureList');
 
-            const totalInRMB = grandTotalRMB + (grandTotalHKD * 0.93);
+            // 計算統一折合 HKD 的總金額
+            const totalConvertedInHKD = grandTotalHKD + (grandTotalRMB * userRate);
 
-            if (totalInRMB === 0) {
+            if (totalConvertedInHKD === 0) {
                 progressBar.innerHTML = `<div style="width:100%; background:#EDE7E0;"></div>`;
                 structureList.innerHTML = `<div style="text-align:center; color:#B5A89A; padding:10px 0; font-size:0.85rem;">未有相關開支數據</div>`;
                 return;
@@ -1262,10 +1319,10 @@
             Object.keys(STRUCTURE_GROUPS).forEach(key => {
                 const amtRMB = groupTotalsRMB[key] || 0;
                 const amtHKD = groupTotalsHKD[key] || 0;
-                const totalKeyNorm = amtRMB + (amtHKD * 0.93);
+                const totalKeyInHKD = amtHKD + (amtRMB * userRate);
 
-                if (totalKeyNorm > 0) {
-                    const pct = ((totalKeyNorm / totalInRMB) * 100).toFixed(1);
+                if (totalKeyInHKD > 0) {
+                    const pct = ((totalKeyInHKD / totalConvertedInHKD) * 100).toFixed(1);
                     const group = STRUCTURE_GROUPS[key];
 
                     barHtml += `<div class="cat-progress-segment" style="width:${pct}%; background:${group.color};" title="${group.label}: ${pct}%"></div>`;
@@ -1291,6 +1348,15 @@
                     `;
                 }
             });
+
+            // 最後一行：新增港幣統一結算總開支列
+            const accLabel = selectedStructureAccount === 'ALL' ? '全體' : selectedStructureAccount;
+            listHtml += `
+                <div class="structure-total-item">
+                    <span>💵 ${accLabel} 總開支 (折合港幣)</span>
+                    <span class="total-amount">HK$ ${totalConvertedInHKD.toFixed(2)}</span>
+                </div>
+            `;
 
             progressBar.innerHTML = barHtml;
             structureList.innerHTML = listHtml;
@@ -1398,7 +1464,6 @@
             });
             billList.innerHTML = html;
 
-            // 綁定按鈕事件
             billList.querySelectorAll('.settle-btn, .unsettle-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     toggleSettled(this.dataset.id);
