@@ -318,7 +318,6 @@ function updateCountdown() {
     const now = Date.now();
     const diff = target - now;
     const el = document.getElementById('countdown');
-    if (!el) return;
     if (diff <= 0) {
         el.innerHTML = '🎉 旅程已開始！';
         return;
@@ -386,63 +385,6 @@ function getTodayDayIndex() {
     if (diff >= 12) return 12;
     return diff + 1;
 }
-
-// ================================================================
-//  今日私人導遊
-//  只使用現有 DAYS_DATA，不改動原本行程資料
-// ================================================================
-const TODAY_GUIDE_DATA = {
-    1: { speech: '👧「大家好～今日我哋正式出發啦！第一站係昆明，今晚先好好休息，之後先慢慢開始滇西之旅～」', notice: '今晚抵達昆明，先休息好', tip: '早啲休息，為聽日去大理做準備' },
-    2: { speech: '👧「今日正式向大理出發！坐高鐵之後就開始包車旅程，雙廊嘅洱海風景記得留意呀～」', notice: '雙廊洱海 · 理想邦 · 洱海日落', tip: '包車正式開始，慢慢享受旅程' },
-    3: { speech: '👧「今日去沙溪古鎮。呢度唔需要趕住打卡，慢慢行入寺登街，感受一下古鎮嘅節奏。」', notice: '寺登街 · 古戲台 · 興教寺 · 玉津橋', tip: '沙溪適合慢慢行，留時間畀自己' },
-    4: { speech: '👧「今日由沙溪去麗江啦！下午可以慢慢探索古城，傍晚上獅子山睇下麗江嘅景色。」', notice: '大水車 · 四方街 · 木府 · 萬古樓', tip: '麗江海拔約2,400米，今日開始慢慢適應' },
-    5: { speech: '👧「今日我哋去瀘沽湖！沿途有麗寧十八彎，抵達之後記得留意湖面同山景。」', notice: '麗寧十八彎 · 瀘沽湖 · 大落水', tip: '海拔約2,690米，慢慢行、記得飲水' },
-    6: { speech: '👧「今日成日都係瀘沽湖～唔使趕，慢慢環湖，睇下里格半島、草海同女神灣。」', notice: '里格半島 · 草海 · 走婚橋 · 女神灣', tip: '今日車程較多，沿途風景先係主角' },
-    7: { speech: '👧「今日由瀘沽湖返麗江方向，會經過束河同白沙。下晝開始，可以慢慢感受古鎮嘅氣氛。」', notice: '束河古鎮 · 茶馬古道 · 白沙', tip: '今日車程較長，途中記得休息' },
-    8: { speech: '👧「今日正式進入高原旅程啦！我哋會去虎跳峽、白水台，最後到香格里拉。今日最重要係慢慢適應。」', notice: '虎跳峽 · 白水台 · 香格里拉', tip: '最高海拔約3,300米，唔好急、唔好劇烈活動' },
-    9: { speech: '👧「今日係普達措！呢度海拔高，景色亦好靚。唔需要行得快，舒服最重要。」', notice: '屬都湖 · 碧塔海 · 高原森林', tip: '海拔約3,300米，按自己狀態慢慢行' },
-    10: { speech: '👧「今日我哋離開香格里拉，先去納帕海同松贊林寺，之後慢慢返麗江。」', notice: '納帕海 · 松贊林寺', tip: '海拔開始下降，今晚可以好好休息' },
-    11: { speech: '👧「今日由麗江返昆明，旅程開始進入尾聲啦。唔使急，最後幾日就慢慢享受。」', notice: '麗江自由活動 · 高鐵 · 昆明', tip: '包車旅程正式結束，記得整理行李' },
-    12: { speech: '👧「今日就係最後一日啦～仲有半日時間留喺昆明，慢慢食、慢慢行，然後帶住滿滿回憶返香港！」', notice: '翠湖公園 · 雲南大學 · 昆明', tip: '旅程最後一天，記得影張4人合照 📸' }
-};
-
-function getActiveDayIndex() {
-    const testDay = new URLSearchParams(window.location.search).get('day');
-    const n = Number(testDay);
-    if (Number.isInteger(n) && n >= 1 && n <= 12) return n;
-    return getTodayDayIndex();
-}
-
-// ================================================================
-//  今日私人導遊：只更新靜態 HTML 入面嘅文字
-//  （唔再重建整塊 HTML，避免重複卡片）
-// ================================================================
-function renderTodayGuide() {
-    const dayId = getActiveDayIndex();
-    const dayData = DAYS_DATA.find(d => d.id === dayId);
-    const guideData = TODAY_GUIDE_DATA[dayId];
-    if (!dayData || !guideData) return;
-
-    const dayDate  = dayData.date || '';
-    const place    = dayData.place || '雲南';
-    const altitude = dayData.altitude ? ` · ${dayData.altitude.toLocaleString()}m` : '';
-
-    const setText = (id, text) => {
-        const el = document.getElementById(id);
-        if (el) el.textContent = text;
-    };
-
-    setText('guideDay',         `DAY ${dayId} · ${dayDate}${altitude}`);
-    setText('guidePlace',       `📍 ${place}`);
-    setText('guideSpeech',      guideData.speech);
-    setText('guideDestination', place);
-    setText('guideNotice',      guideData.notice);
-    setText('guideTip',         guideData.tip);
-}
-
-// ================================================================
-//  天氣
-// ================================================================
 function fetchWeather() {
     const container = document.getElementById('weatherContainer');
     if (!container) return;
@@ -481,38 +423,39 @@ function fetchWeather() {
             const sunriseStr = sunrise ? sunrise.toLocaleTimeString('zh-HK', { hour: '2-digit', minute: '2-digit' }) : '--:--';
             const sunsetStr = sunset ? sunset.toLocaleTimeString('zh-HK', { hour: '2-digit', minute: '2-digit' }) : '--:--';
 
-            container.innerHTML = `
-                <div class="weather-card">
-                    <div class="weather-compact">
-                        <div class="weather-main">
-                            <div class="city">📍 ${cityName}</div>
-                            <div class="main-center">
-                                <span class="main-temp">${tempDay}°C</span>
-                                <span class="main-humidity">💧 ${humidity}%</span>
-                            </div>
-                            <div class="main-icon">${icon}</div>
-                        </div>
-                        <div class="weather-periods">
-                            <div class="period-card day">
-                                <div class="period-label">日間</div>
-                                <span class="period-icon">☀️</span>
-                                <div class="period-temp">${tempDay}°C</div>
-                                <div class="period-desc">${desc}</div>
-                            </div>
-                            <div class="period-card night">
-                                <div class="period-label">夜間</div>
-                                <span class="period-icon">🌙</span>
-                                <div class="period-temp">${tempNight}°C</div>
-                                <div class="period-desc">${desc}</div>
-                            </div>
-                        </div>
-                        <div class="sun-info">
-                            <span class="sun-item"><span class="sun-emoji">🌅</span> 日出 ${sunriseStr}</span>
-                            <span class="sun-item"><span class="sun-emoji">🌇</span> 日落 ${sunsetStr}</span>
-                        </div>
-                    </div>
+container.innerHTML = `
+    <div class="weather-card">
+        <div class="weather-compact">
+            <div class="weather-main">
+                <div class="city">📍 ${cityName}</div>
+                <div class="main-center">
+                    <span class="main-temp">${tempDay}°C</span>
+                    <span class="main-humidity">💧 ${humidity}%</span>
                 </div>
-            `;
+                <div class="main-icon">${icon}</div>
+            </div>
+            <div class="weather-periods">
+                <div class="period-card day">
+                    <div class="period-label">日間</div>
+                    <span class="period-icon">☀️</span>
+                    <div class="period-temp">${tempDay}°C</div>
+                    <div class="period-desc">${desc}</div>
+                </div>
+                <div class="period-card night">
+                    <div class="period-label">夜間</div>
+                    <span class="period-icon">🌙</span>
+                    <div class="period-temp">${tempNight}°C</div>
+                    <div class="period-desc">${desc}</div>
+                </div>
+            </div>
+            <div class="sun-info">
+                <span class="sun-item"><span class="sun-emoji">🌅</span> 日出 ${sunriseStr}</span>
+                <span class="sun-item"><span class="sun-emoji">🌇</span> 日落 ${sunsetStr}</span>
+            </div>
+        </div>
+    </div>
+`;
+
         })
         .catch(err => {
             console.warn('天氣載入失敗:', err);
@@ -521,7 +464,6 @@ function fetchWeather() {
             `;
         });
 }
-
 // ================================================================
 //  7. 行程總覽
 // ================================================================
@@ -1288,9 +1230,6 @@ window.addEventListener('resize', () => {
 //  16. 頁面初始化
 // ================================================================
 document.addEventListener('DOMContentLoaded', function() {
-    // 今日私人導遊（只更新文字）
-    renderTodayGuide();
-
     // 倒數計時
     updateCountdown();
     setInterval(updateCountdown, 1000);
@@ -1368,17 +1307,62 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+// ================================================================
+//  彩蛋入口（進度同步）
+// ================================================================
+const eggImage = document.getElementById('eggImage');
+const eggStatusIcon = document.getElementById('eggStatusIcon');
+const eggProgressBadge = document.getElementById('eggProgressBadge');
+const eggAchievement = document.getElementById('eggAchievement');
+
+if (eggImage && eggStatusIcon) {
+    const progressData = localStorage.getItem('wishlist-progress');
+    const isDone = localStorage.getItem('wishlist-done') === 'true';
+
+    if (isDone) {
+        // 100% 完成
+        eggImage.className = 'done';
+        eggStatusIcon.textContent = '🏆';
+        eggProgressBadge.style.opacity = '0';
+        eggAchievement.style.opacity = '1';
+        eggAchievement.textContent = '🎉 成就解鎖！你哋已經完成雲南滇西線探索。';
+    } else if (progressData) {
+        try {
+            const { count, total } = JSON.parse(progressData);
+            eggProgressBadge.textContent = `${count}/${total}`;
+            eggProgressBadge.style.opacity = '1';
+
+            if (count >= 5) {
+                eggImage.className = 'unlocking';
+                eggStatusIcon.textContent = '🗝️';
+            } else if (count >= 1) {
+                eggImage.className = 'unlocking';
+                eggStatusIcon.textContent = '🗝️';
+            } else {
+                eggImage.className = 'locked';
+                eggStatusIcon.textContent = '🔒';
+            }
+        } catch (e) {
+            eggImage.className = 'locked';
+            eggStatusIcon.textContent = '🔒';
+        }
+    } else {
+        // 冇數據 = 未開始
+        eggImage.className = 'locked';
+        eggStatusIcon.textContent = '🔒';
+    }
+}
     console.log('🌄 雲南滇西12日行程網頁已啟動！');
     if (!db) console.warn('⚠️ Firebase 未連線');
     else console.log('✅ Firebase 已連線');
 });
-
 // ================================================================
 //  🌄 雲南小導遊 V1.3
 //  Walk Across Screen
 //
 //  左邊畫面外 → 進入 → 穿過整個畫面 → 右邊畫面外 → 停止
 // ================================================================
+
 (function initYunnanMascotV13() {
 
     const mascot = document.getElementById('yunnanMascot');
@@ -1389,43 +1373,97 @@ document.addEventListener('DOMContentLoaded', function() {
     const mascotPath = 'mascot/';
     const walkFile = 'girl-walk.webm';
 
+    // ------------------------------------------------------------
+    // 播放 Walk
+    // ------------------------------------------------------------
+
     function startWalk() {
+
+        // 確保由最左邊畫面外開始
         mascot.classList.remove('walking');
+
+        // 重新觸發 CSS animation
         void mascot.offsetWidth;
+
         mascot.classList.add('walking');
 
+        // 載入 Walk WebM
         video.src = mascotPath + walkFile;
         video.load();
 
         const playPromise = video.play();
+
         if (playPromise !== undefined) {
+
             playPromise.catch(function(error) {
-                console.warn('🌄 小導遊 Walk 無法播放：', error);
+
+                console.warn(
+                    '🌄 小導遊 Walk 無法播放：',
+                    error
+                );
+
             });
         }
     }
 
-    mascot.addEventListener('animationend', function(event) {
-        if (event.animationName !== 'mascotWalkAcross') return;
+    // ------------------------------------------------------------
+    // Walk 動畫播放完
+    //
+    // 注意：
+    // WebM 完成 ≠ 女孩已經離開畫面
+    //
+    // 所以真正停止由 CSS animationend 控制。
+    // ------------------------------------------------------------
 
+    mascot.addEventListener('animationend', function(event) {
+
+        if (event.animationName !== 'mascotWalkAcross') {
+            return;
+        }
+
+        // 停止影片
         video.pause();
+
+        // 清除影片來源
         video.removeAttribute('src');
         video.load();
 
+        // 保持女孩在畫面右邊之外
         mascot.classList.remove('walking');
-        mascot.style.transform = 'translateX(100vw)';
 
-        console.log('🌄 小導遊：Walk 完成，已離開畫面');
+        mascot.style.transform =
+            'translateX(100vw)';
+
+        console.log(
+            '🌄 小導遊：Walk 完成，已離開畫面'
+        );
+
     });
 
+    // ------------------------------------------------------------
+    // 網頁載入後開始 Walk
+    // ------------------------------------------------------------
+
     setTimeout(function() {
+
         startWalk();
+
     }, 1200);
 
+
+    // ------------------------------------------------------------
+    // 預留控制接口
+    // 之後可以再加入其他動作
+    // ------------------------------------------------------------
+
     window.yunnanMascot = {
+
         walk: function() {
+
             startWalk();
+
         }
+
     };
 
 })();
