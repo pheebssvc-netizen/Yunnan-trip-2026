@@ -146,18 +146,230 @@
             </div>
         </div>
 
-        <!-- 私人導遊入口 -->
-        <div class="overview-card" style="margin-top:14px;">
-            <h2 style="font-size:1.05rem; color:#E07A5F; border-left:5px solid #E9C46A; padding-left:12px; margin-bottom:10px;">🤠 私人導遊</h2>
-            <a href="guide.html" style="text-decoration:none; display:block;">
-                <div class="weather-card" style="cursor:pointer; transition:transform 0.15s; background: linear-gradient(145deg, #2D4A6A, #1E3A5A); border-radius:16px; padding:16px 20px; color:#fff; display:flex; align-items:center; box-shadow:0 2px 12px rgba(0,0,0,0.08);">
-                    <div>
-                        <div style="font-size:1.0rem; font-weight:600; letter-spacing:0.5px;">「每個景點背後，都有段故事等緊你。」</div>
-                        <div style="font-size:0.8rem; opacity:0.8; margin-top:2px;">歷史 · 傳說 · 習俗 · 打卡位 · 避坑 · 美食</div>
-                    </div>
+        ```html
+<!-- ===== 今日私人導遊 ===== -->
+<div class="overview-card today-guide-card">
+
+    <h2 class="today-guide-title">
+        👧 今日私人導遊
+    </h2>
+
+    <div class="today-guide-box">
+
+        <div class="today-guide-header">
+            <div class="today-guide-avatar">
+                <img src="mascot/girl-idle.png" alt="雲南小導遊">
+            </div>
+
+            <div class="today-guide-heading">
+                <div class="today-guide-day" id="guideDay">
+                    今日行程
                 </div>
-            </a>
+
+                <div class="today-guide-place" id="guidePlace">
+                    小導遊準備中…
+                </div>
+            </div>
         </div>
+
+        <div class="today-guide-speech" id="guideSpeech">
+            👧 「大家好～今日由我陪住大家慢慢玩雲南。」
+        </div>
+
+        <div class="today-guide-info">
+
+            <div class="guide-info-item">
+                <span>📍</span>
+                <div>
+                    <small>今日目的地</small>
+                    <strong id="guideDestination">載入中…</strong>
+                </div>
+            </div>
+
+            <div class="guide-info-item">
+                <span>👀</span>
+                <div>
+                    <small>今日值得留意</small>
+                    <strong id="guideNotice">慢慢睇，唔使急住行</strong>
+                </div>
+            </div>
+
+            <div class="guide-info-item">
+                <span>💡</span>
+                <div>
+                    <small>小導遊提醒</small>
+                    <strong id="guideTip">記得飲水，同大家影張合照！</strong>
+                </div>
+            </div>
+
+        </div>
+
+        <a href="guide.html" class="today-guide-button">
+            👧 進入私人導遊
+            <span>→</span>
+        </a>
+
+    </div>
+</div>
+
+<style>
+/* ===== 今日私人導遊 ===== */
+
+.today-guide-card {
+    margin-top: 14px;
+}
+
+.today-guide-title {
+    font-size: 1.05rem;
+    color: #E07A5F;
+    border-left: 5px solid #E9C46A;
+    padding-left: 12px;
+    margin-bottom: 10px;
+}
+
+.today-guide-box {
+    background: linear-gradient(145deg, #2D4A6A, #1E3A5A);
+    border-radius: 18px;
+    padding: 16px;
+    color: #fff;
+    box-shadow: 0 3px 14px rgba(0,0,0,0.12);
+}
+
+/* 頂部角色 */
+
+.today-guide-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.today-guide-avatar {
+    width: 58px;
+    height: 72px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.today-guide-avatar img {
+    width: 58px;
+    height: 72px;
+    object-fit: contain;
+}
+
+.today-guide-day {
+    font-size: 0.78rem;
+    opacity: 0.72;
+    margin-bottom: 2px;
+}
+
+.today-guide-place {
+    font-size: 1.15rem;
+    font-weight: 700;
+}
+
+/* 導遊說話 */
+
+.today-guide-speech {
+    margin-top: 13px;
+    background: rgba(255,255,255,0.11);
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 0.92rem;
+    line-height: 1.65;
+}
+
+/* 三項資訊 */
+
+.today-guide-info {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.guide-info-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 10px;
+    padding: 9px 11px;
+}
+
+.guide-info-item > span {
+    font-size: 1.2rem;
+    width: 25px;
+    text-align: center;
+}
+
+.guide-info-item small {
+    display: block;
+    font-size: 0.68rem;
+    opacity: 0.65;
+    margin-bottom: 1px;
+}
+
+.guide-info-item strong {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 500;
+}
+
+/* 按鈕 */
+
+.today-guide-button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 13px;
+    padding: 11px 14px;
+    border-radius: 11px;
+    background: #E9C46A;
+    color: #3A2A1A;
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 700;
+}
+
+.today-guide-button span {
+    font-size: 1.1rem;
+}
+
+.today-guide-button:active {
+    transform: scale(0.98);
+}
+
+/* 手機 */
+
+@media (max-width: 480px) {
+
+    .today-guide-box {
+        padding: 14px;
+    }
+
+    .today-guide-avatar {
+        width: 54px;
+        height: 68px;
+    }
+
+    .today-guide-avatar img {
+        width: 54px;
+        height: 68px;
+    }
+
+    .today-guide-place {
+        font-size: 1.08rem;
+    }
+
+    .today-guide-speech {
+        font-size: 0.88rem;
+    }
+}
+</style>
+```
+
 
         <!-- 緊急求助卡片 -->
         <div class="overview-card" style="margin-top:14px;">
