@@ -1,129 +1,482 @@
 <!DOCTYPE html>
-<html lang="zh-HK">
+<html lang="zh-Hant">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
-    <title>雲南滇西12日 · 4人同行</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#173B57">
+<meta name="description" content="雲南滇西12日 · 4人同行｜Chill · Hea · 慢慢行">
+<title>雲南滇西12日 · 4人同行</title>
 
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
-    <!-- 共用樣式 -->
-    <link rel="stylesheet" href="style.css" />
+<!-- 原有網站樣式 -->
+<link rel="stylesheet" href="style.css">
 
-    <style>
-        /* ===== 8-Bit 全透明 WebM 彩蛋專用樣式 ===== */
-        .pixel-egg-container {
-            text-align: center;
-            margin-top: 18px;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .pixel-egg-link {
-            display: inline-block;
-            text-decoration: none;
-            cursor: pointer;
-            outline: none;
-            /* 輕微上下浮動動畫 */
-            animation: eggFloat 2.5s ease-in-out infinite;
-        }
-
-        .pixel-egg-video {
-    width: 60px;
-    height: 60px;
-    object-fit: contain;
-    display: block;
-    /* 1. 將影片本身的背景色設為一致 */
-    background-color: #F8F4F0;
-    
-    /* 2. 圓角邊框（可選）：確保影片四邊不會撞色 */
-    border-radius: 8px;
-    
-    /* 3. 保留 8-Bit 像素清晰度 */
-    image-rendering: pixelated;
-    image-rendering: crisp-edges;
-    
-    /* 4. 投影效果依然保留 */
-    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
-    transition: transform 0.15s ease;
+<style>
+/* ================================================================
+   首頁 · 今日私人導遊
+   ================================================================ */
+.today-guide-card {
+    margin-top: 14px;
 }
 
+.today-guide-title {
+    margin: 0 0 10px;
+    color: #173B57;
+    font-size: 20px;
+    line-height: 1.3;
+}
 
-        /* 點擊瞬間按壓反饋 */
-        .pixel-egg-link:active .pixel-egg-video,
-        .pixel-egg-link:active .pixel-egg-gif {
-            transform: scale(0.88) translateY(2px);
-        }
+.today-guide-box {
+    position: relative;
+    overflow: hidden;
+    border-radius: 20px;
+    padding: 16px;
+    background: linear-gradient(145deg, #173B57 0%, #285A78 58%, #6E8F9C 100%);
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(23,59,87,.16);
+}
 
-        @keyframes eggFloat {
-            0%, 100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-6px);
-            }
-        }
+.today-guide-box::after {
+    content: "";
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    right: -55px;
+    top: -55px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.08);
+    pointer-events: none;
+}
 
-        @media (max-width: 480px) {
-            .pixel-egg-video,
-            .pixel-egg-gif {
-                width: 52px;
-                height: 52px;
-            }
-        }
-    </style>
+.today-guide-header {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.today-guide-avatar {
+    flex: 0 0 58px;
+    width: 58px;
+    height: 58px;
+    border-radius: 16px;
+    background: rgba(255,255,255,.92);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,.15);
+}
+
+.today-guide-avatar img {
+    display: block;
+    width: 50px;
+    height: auto;
+    max-height: 58px;
+    object-fit: contain;
+}
+
+.today-guide-heading {
+    min-width: 0;
+}
+
+.today-guide-day {
+    font-size: 13px;
+    font-weight: 700;
+    opacity: .84;
+    letter-spacing: .3px;
+}
+
+.today-guide-place {
+    margin-top: 2px;
+    font-size: 21px;
+    line-height: 1.25;
+    font-weight: 800;
+}
+
+.guide-test-badge {
+    display: none;
+    margin-left: 6px;
+    padding: 3px 7px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.18);
+    font-size: 11px;
+    vertical-align: middle;
+}
+
+.today-guide-speech {
+    position: relative;
+    z-index: 1;
+    margin-top: 14px;
+    padding: 13px 14px;
+    border-radius: 14px;
+    background: rgba(255,255,255,.12);
+    border: 1px solid rgba(255,255,255,.13);
+    font-size: 15px;
+    line-height: 1.7;
+}
+
+.today-guide-info {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.guide-info-item {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 10px;
+    border-radius: 12px;
+    background: rgba(255,255,255,.09);
+}
+
+.guide-info-item > span {
+    font-size: 18px;
+    text-align: center;
+}
+
+.guide-info-item small {
+    display: block;
+    font-size: 11px;
+    opacity: .72;
+    margin-bottom: 1px;
+}
+
+.guide-info-item strong {
+    display: block;
+    font-size: 14px;
+    line-height: 1.45;
+    font-weight: 700;
+}
+
+.today-guide-button {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 13px;
+    padding: 12px 14px;
+    border-radius: 13px;
+    background: #F2C14E;
+    color: #173B57 !important;
+    text-decoration: none !important;
+    font-weight: 800;
+    font-size: 14px;
+    box-shadow: 0 4px 12px rgba(0,0,0,.12);
+}
+
+.today-guide-button span {
+    font-size: 20px;
+    line-height: 1;
+}
+
+.today-guide-button:active {
+    transform: translateY(1px);
+}
+
+/* 小屏手機 */
+@media (max-width: 480px) {
+    .today-guide-box {
+        padding: 14px;
+        border-radius: 18px;
+    }
+
+    .today-guide-avatar {
+        flex-basis: 54px;
+        width: 54px;
+        height: 54px;
+    }
+
+    .today-guide-avatar img {
+        width: 47px;
+        max-height: 54px;
+    }
+
+    .today-guide-place {
+        font-size: 19px;
+    }
+
+    .today-guide-speech {
+        font-size: 14px;
+        line-height: 1.65;
+    }
+}
+
+/* ================================================================
+   首頁小區塊：提示、彩蛋、海拔圖
+   ================================================================ */
+.home-section-title {
+    margin: 0 0 10px;
+    color: #173B57;
+    font-size: 20px;
+}
+
+.altitude-card {
+    margin-top: 14px;
+}
+
+.altitude-caption {
+    margin: -3px 0 8px;
+    color: #777;
+    font-size: 12px;
+}
+
+/* 彩蛋區 */
+.egg-card {
+    margin-top: 14px;
+    text-decoration: none;
+    color: inherit;
+}
+
+.egg-inner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 14px;
+    border-radius: 16px;
+    background: rgba(255,255,255,.82);
+    border: 1px solid rgba(23,59,87,.08);
+}
+
+.egg-image-wrap {
+    position: relative;
+    flex: 0 0 52px;
+    width: 52px;
+    height: 52px;
+    overflow: hidden;
+    border-radius: 12px;
+    background: rgba(23,59,87,.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#eggImage {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+}
+
+#eggStatusIcon {
+    position: absolute;
+    right: 1px;
+    bottom: 1px;
+    font-size: 15px;
+}
+
+#eggProgressBadge {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    padding: 1px 4px;
+    border-radius: 999px;
+    background: #173B57;
+    color: #fff;
+    font-size: 9px;
+}
+
+.egg-text {
+    min-width: 0;
+}
+
+.egg-text strong {
+    display: block;
+    color: #173B57;
+    font-size: 14px;
+}
+
+.egg-text span {
+    display: block;
+    margin-top: 2px;
+    color: #777;
+    font-size: 12px;
+}
+
+#eggAchievement {
+    margin-top: 3px;
+    color: #B7791F;
+    font-size: 11px;
+}
+
+/* ================================================================
+   緊急 Modal：只負責版面，內容沿用你原有網站
+   ================================================================ */
+#emergencyOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+    background: rgba(0,0,0,.58);
+    padding: 12px;
+}
+
+#emergencyOverlay.show {
+    display: flex;
+}
+
+.emergency-modal {
+    position: relative;
+    width: min(680px, 100%);
+    max-height: 88vh;
+    overflow: auto;
+    border-radius: 22px 22px 12px 12px;
+    background: #fff;
+    color: #333;
+    padding: 18px;
+    box-shadow: 0 -8px 40px rgba(0,0,0,.2);
+}
+
+#emergencyClose {
+    position: sticky;
+    top: 0;
+    float: right;
+    width: 34px;
+    height: 34px;
+    border: 0;
+    border-radius: 50%;
+    background: #f1f1f1;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.emergency-modal h2 {
+    margin: 0 40px 8px 0;
+    color: #B44735;
+    font-size: 20px;
+}
+
+.emergency-modal h3 {
+    margin: 18px 0 6px;
+    font-size: 15px;
+}
+
+.emergency-modal p,
+.emergency-modal li {
+    font-size: 13px;
+    line-height: 1.65;
+}
+
+.emergency-note {
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: #FFF6E5;
+    color: #76591C;
+    font-size: 12px;
+}
+
+/* 固定按鈕 */
+#backToTopBtn {
+    position: fixed;
+    right: 14px;
+    bottom: 18px;
+    z-index: 3000;
+    width: 42px;
+    height: 42px;
+    border: 0;
+    border-radius: 50%;
+    background: #173B57;
+    color: #fff;
+    font-size: 18px;
+    box-shadow: 0 4px 14px rgba(0,0,0,.18);
+    opacity: 0;
+    pointer-events: none;
+    transition: .2s ease;
+}
+
+#backToTopBtn.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* 小導遊：保留原有透明 PNG / Walk WebM */
+.yunnan-mascot {
+    position: fixed;
+    left: 0;
+    bottom: 10px;
+    width: 96px;
+    height: 145px;
+    z-index: 2500;
+    pointer-events: none;
+    transform: translateX(-110%);
+}
+
+.yunnan-mascot .mascot-idle {
+    display: none;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.yunnan-mascot .mascot-video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.yunnan-mascot.walking {
+    animation: mascotWalkAcross 8.1s linear forwards;
+}
+
+@keyframes mascotWalkAcross {
+    from { transform: translateX(-110%); }
+    to   { transform: translateX(calc(100vw + 10%)); }
+}
+</style>
 </head>
+
 <body>
 
-  <!-- ===== 雲南小導遊 · 吉祥物 V1.3 ===== -->
+<!-- ================================================================
+     小導遊：透明 PNG + Walk WebM
+     ================================================================ -->
 <div id="yunnanMascot" class="yunnan-mascot" aria-hidden="true">
-    <img
-        id="mascotIdle"
-        class="mascot-idle"
-        src="mascot/girl-idle.png"
-        alt=""
-    />
-
-    <video
-        id="mascotVideo"
-        class="mascot-video"
-        muted
-        playsinline
-        preload="auto"
-    ></video>
+    <img id="mascotIdle" class="mascot-idle" src="mascot/girl-idle.png" alt="">
+    <video id="mascotVideo" class="mascot-video" muted playsinline preload="auto"></video>
 </div>
 
-    <!-- ===== HEADER ===== -->
-    <header class="app-header" id="heroHeader">
-        <div class="header-overlay"></div>
-        <div class="header-content">
+<!-- ================================================================
+     Hero
+     ================================================================ -->
+<header id="heroHeader" class="hero-header">
+    <div class="hero-overlay">
+        <div class="hero-content">
             <h1>🌄 雲南滇西12日 · 4人同行</h1>
-            <div class="countdown" id="countdown">⏳ 載入中...</div>
-            <div class="header-divider">
-                <span class="dot"></span>
-                <span class="line"></span>
-                <span class="dot"></span>
-            </div>
-            <div class="sub">2026.11.11 – 11.22 ｜ Chill · Hea · 慢慢行</div>
+            <div id="countdown" class="countdown">⏳ 載入中...</div>
+            <div class="hero-date">2026.11.11 – 11.22 ｜ Chill · Hea · 慢慢行</div>
         </div>
-    </header>
+    </div>
+</header>
 
-    <!-- ===== TAB NAV ===== -->
-    <nav class="tab-nav">
-        <a href="index.html">📋 行程總覽</a>
-        <a href="daily.html">📅 每日行程</a>
-        <a href="info.html">📌 重要資訊</a>
-        <a href="bill.html">🧾 公數袋</a>
-    </nav>
+<!-- ================================================================
+     主選單
+     ================================================================ -->
+<nav class="tab-nav" aria-label="主要選單">
+    <a class="active" href="index.html">📋 行程總覽</a>
+    <a href="daily.html">📅 每日行程</a>
+    <a href="info.html">📌 重要資訊</a>
+    <a href="bill.html">🧾 公數袋</a>
+</nav>
 
-    <!-- ===== PAGE: 行程總覽 ===== -->
-    <div class="page">
-        <div class="overview-card">
-            <h2>🗺️ 12日行程動線</h2>
+<main class="page-container">
+
+    <!-- ============================================================
+         12日行程總覽
+         ============================================================ -->
+    <section class="overview-card">
+        <h2 class="home-section-title">🗺️ 12日行程動線</h2>
+        <div class="table-scroll">
             <table class="route-table">
                 <thead>
                     <tr>
@@ -133,395 +486,189 @@
                         <th>住宿地點</th>
                     </tr>
                 </thead>
-                <tbody id="routeTableBody"></tbody>
+                <tbody id="routeTableBody">
+                    <tr><td colspan="4" style="text-align:center;">載入中...</td></tr>
+                </tbody>
             </table>
-            <div style="font-size:0.7rem;color:#8A7A6A;margin-top:8px;">💡 住宿確認狀態及酒店名稱請到「重要資訊」頁面修改</div>
         </div>
+        <div class="small-note">💡 住宿確認狀態及酒店名稱請到「重要資訊」頁面修改</div>
+    </section>
 
-        <!-- 天氣小工具 -->
-        <div class="overview-card" id="weatherCard">
-            <h2>☀️ 今日天氣</h2>
-            <div id="weatherContainer">
-                <div class="weather-loading">⏳ 載入天氣中...</div>
-            </div>
+    <!-- ============================================================
+         今日天氣
+         ============================================================ -->
+    <section class="overview-card weather-section">
+        <h2 class="home-section-title">☀️ 今日天氣</h2>
+        <div id="weatherContainer">
+            <div class="weather-loading">⏳ 天氣載入中...</div>
         </div>
+    </section>
 
-        ```html
-<!-- ===== 今日私人導遊 ===== -->
-<div class="overview-card today-guide-card">
+    <!-- ============================================================
+         今日私人導遊
+         ============================================================ -->
+    <section class="overview-card today-guide-card">
+        <h2 class="today-guide-title">👧 今日私人導遊</h2>
 
-    <h2 class="today-guide-title">
-        👧 今日私人導遊
-    </h2>
-
-    <div class="today-guide-box">
-
-        <div class="today-guide-header">
-            <div class="today-guide-avatar">
-                <img src="mascot/girl-idle.png" alt="雲南小導遊">
-            </div>
-
-            <div class="today-guide-heading">
-                <div class="today-guide-day" id="guideDay">
-                    今日行程
+        <div class="today-guide-box">
+            <div class="today-guide-header">
+                <div class="today-guide-avatar">
+                    <img src="mascot/girl-idle.png" alt="雲南小導遊">
                 </div>
-
-                <div class="today-guide-place" id="guidePlace">
-                    小導遊準備中…
+                <div class="today-guide-heading">
+                    <div class="today-guide-day">
+                        <span id="guideDay">今日行程</span>
+                        <span id="guideTestBadge" class="guide-test-badge">測試 Day</span>
+                    </div>
+                    <div id="guidePlace" class="today-guide-place">小導遊準備中…</div>
                 </div>
             </div>
+
+            <div id="guideSpeech" class="today-guide-speech">
+                👧「大家好～今日由我陪住大家慢慢玩雲南。」
+            </div>
+
+            <div class="today-guide-info">
+                <div class="guide-info-item">
+                    <span>📍</span>
+                    <div>
+                        <small>今日目的地</small>
+                        <strong id="guideDestination">載入中…</strong>
+                    </div>
+                </div>
+
+                <div class="guide-info-item">
+                    <span>👀</span>
+                    <div>
+                        <small>今日值得留意</small>
+                        <strong id="guideNotice">慢慢睇，唔使急住行</strong>
+                    </div>
+                </div>
+
+                <div class="guide-info-item">
+                    <span>💡</span>
+                    <div>
+                        <small>小導遊提醒</small>
+                        <strong id="guideTip">記得飲水，同大家影張合照！</strong>
+                    </div>
+                </div>
+            </div>
+
+            <a href="guide.html" class="today-guide-button">
+                <span>👧 進入私人導遊</span>
+                <span>→</span>
+            </a>
         </div>
+    </section>
 
-        <div class="today-guide-speech" id="guideSpeech">
-            👧 「大家好～今日由我陪住大家慢慢玩雲南。」
-        </div>
+    <!-- ============================================================
+         海拔線
+         ============================================================ -->
+    <section class="overview-card altitude-card">
+        <h2 class="home-section-title">🏔️ 12日海拔走勢</h2>
+        <div class="altitude-caption">點擊圖上 Day，可直接跳到該日行程</div>
+        <canvas id="altitudeCanvas" aria-label="12日海拔走勢圖"></canvas>
+    </section>
 
-        <div class="today-guide-info">
+    <!-- ============================================================
+         緊急求助
+         ============================================================ -->
+    <section class="overview-card emergency-card">
+        <button id="emergencyBtnCard" class="emergency-button" type="button">
+            <span class="emergency-icon">🚨</span>
+            <span>
+                <strong>緊急求助</strong>
+                <small>高原反應 · 醫療級指引</small>
+            </span>
+            <span class="emergency-arrow">→</span>
+        </button>
+    </section>
 
-            <div class="guide-info-item">
-                <span>📍</span>
+    <!-- ============================================================
+         私人導遊入口／完整內容
+         ============================================================ -->
+    <section class="overview-card">
+        <a href="guide.html" class="guide-entry-link">
+            <div class="weather-card guide-entry-card">
                 <div>
-                    <small>今日目的地</small>
-                    <strong id="guideDestination">載入中…</strong>
+                    <div class="guide-entry-title">📖 私人導遊筆記</div>
+                    <div class="guide-entry-subtitle">景點故事 · 習俗 · 打卡位 · 避坑 · 美食</div>
                 </div>
+                <div class="guide-entry-arrow">→</div>
             </div>
-
-            <div class="guide-info-item">
-                <span>👀</span>
-                <div>
-                    <small>今日值得留意</small>
-                    <strong id="guideNotice">慢慢睇，唔使急住行</strong>
-                </div>
-            </div>
-
-            <div class="guide-info-item">
-                <span>💡</span>
-                <div>
-                    <small>小導遊提醒</small>
-                    <strong id="guideTip">記得飲水，同大家影張合照！</strong>
-                </div>
-            </div>
-
-        </div>
-
-        <a href="guide.html" class="today-guide-button">
-            👧 進入私人導遊
-            <span>→</span>
         </a>
+    </section>
 
+    <!-- ============================================================
+         彩蛋
+         ============================================================ -->
+    <a href="wishlist.html" class="overview-card egg-card">
+        <div class="egg-inner">
+            <div class="egg-image-wrap">
+                <video id="eggImage" muted autoplay loop playsinline preload="metadata" aria-label="雲南探索彩蛋"><source src="images/egg.webm" type="video/webm"></video>
+                <span id="eggStatusIcon">🔒</span>
+                <span id="eggProgressBadge" style="opacity:0">0/0</span>
+            </div>
+            <div class="egg-text">
+                <strong>🥚 雲南小彩蛋</strong>
+                <span>慢慢探索，解鎖旅程成就</span>
+                <div id="eggAchievement" style="opacity:0"></div>
+            </div>
+        </div>
+    </a>
+
+    <div class="page-note">📌 詳細行程及團友備註請到「每日行程」頁</div>
+
+</main>
+
+<!-- ================================================================
+     地圖固定入口
+     ================================================================ -->
+<a href="map.html" class="floating-map-btn" aria-label="查看地圖">🗺️</a>
+
+<!-- ================================================================
+     緊急 Modal
+     ================================================================ -->
+<div id="emergencyOverlay" aria-hidden="true">
+    <div class="emergency-modal" role="dialog" aria-modal="true" aria-labelledby="emergencyTitle">
+        <button id="emergencyClose" type="button" aria-label="關閉">✕</button>
+        <h2 id="emergencyTitle">🚨 緊急求助 · 高原反應</h2>
+        <p class="emergency-note">血氧監測及症狀資訊只作參考，不能取代專業醫療判斷；如出現嚴重或持續惡化症狀，應立即求醫。</p>
+
+        <h3>🩸 血氧監測（智慧手環）</h3>
+        <p>靜息狀態下測量，手環讀數只可作參考，不能取代專業診斷。</p>
+
+        <h3>🟢 輕度不適</h3>
+        <ul>
+            <li>頭痛、疲勞、噁心、失眠等情況應停止上升及休息。</li>
+            <li>如症狀持續、加重或出現異常情況，應尋求醫療協助。</li>
+        </ul>
+
+        <h3>🟡 需要提高警覺</h3>
+        <ul>
+            <li>持續嘔吐、明顯步態不穩、嘴唇發紫等情況，應盡快求醫並按專業人士指示處理。</li>
+            <li>不要只依賴手環血氧數字判斷嚴重程度。</li>
+        </ul>
+
+        <h3>🔴 嚴重警號</h3>
+        <ul>
+            <li>意識模糊、嚴重步態不穩、呼吸困難或其他明顯危急症狀。</li>
+            <li>立即尋求緊急醫療協助，並按當地醫療人員指示處理。</li>
+        </ul>
+
+        <h3>💊 藥物</h3>
+        <p>任何預防或治療高原反應的處方藥，出發前應先諮詢醫生；不要自行按網站資訊用藥。</p>
+
+        <p class="emergency-note">📌 本頁不能代替專業醫療意見。緊急情況請立即聯絡當地緊急服務或前往醫療機構。</p>
     </div>
 </div>
 
-<style>
-/* ===== 今日私人導遊 ===== */
+<button id="backToTopBtn" type="button" aria-label="返回頂部">⬆</button>
 
-.today-guide-card {
-    margin-top: 14px;
-}
-
-.today-guide-title {
-    font-size: 1.05rem;
-    color: #E07A5F;
-    border-left: 5px solid #E9C46A;
-    padding-left: 12px;
-    margin-bottom: 10px;
-}
-
-.today-guide-box {
-    background: linear-gradient(145deg, #2D4A6A, #1E3A5A);
-    border-radius: 18px;
-    padding: 16px;
-    color: #fff;
-    box-shadow: 0 3px 14px rgba(0,0,0,0.12);
-}
-
-/* 頂部角色 */
-
-.today-guide-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.today-guide-avatar {
-    width: 58px;
-    height: 72px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-}
-
-.today-guide-avatar img {
-    width: 58px;
-    height: 72px;
-    object-fit: contain;
-}
-
-.today-guide-day {
-    font-size: 0.78rem;
-    opacity: 0.72;
-    margin-bottom: 2px;
-}
-
-.today-guide-place {
-    font-size: 1.15rem;
-    font-weight: 700;
-}
-
-/* 導遊說話 */
-
-.today-guide-speech {
-    margin-top: 13px;
-    background: rgba(255,255,255,0.11);
-    border-radius: 12px;
-    padding: 12px 14px;
-    font-size: 0.92rem;
-    line-height: 1.65;
-}
-
-/* 三項資訊 */
-
-.today-guide-info {
-    margin-top: 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.guide-info-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: rgba(255,255,255,0.07);
-    border-radius: 10px;
-    padding: 9px 11px;
-}
-
-.guide-info-item > span {
-    font-size: 1.2rem;
-    width: 25px;
-    text-align: center;
-}
-
-.guide-info-item small {
-    display: block;
-    font-size: 0.68rem;
-    opacity: 0.65;
-    margin-bottom: 1px;
-}
-
-.guide-info-item strong {
-    display: block;
-    font-size: 0.82rem;
-    font-weight: 500;
-}
-
-/* 按鈕 */
-
-.today-guide-button {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 13px;
-    padding: 11px 14px;
-    border-radius: 11px;
-    background: #E9C46A;
-    color: #3A2A1A;
-    text-decoration: none;
-    font-size: 0.88rem;
-    font-weight: 700;
-}
-
-.today-guide-button span {
-    font-size: 1.1rem;
-}
-
-.today-guide-button:active {
-    transform: scale(0.98);
-}
-
-/* 手機 */
-
-@media (max-width: 480px) {
-
-    .today-guide-box {
-        padding: 14px;
-    }
-
-    .today-guide-avatar {
-        width: 54px;
-        height: 68px;
-    }
-
-    .today-guide-avatar img {
-        width: 54px;
-        height: 68px;
-    }
-
-    .today-guide-place {
-        font-size: 1.08rem;
-    }
-
-    .today-guide-speech {
-        font-size: 0.88rem;
-    }
-}
-</style>
-```
-
-
-        <!-- 緊急求助卡片 -->
-        <div class="overview-card" style="margin-top:14px;">
-            <h2 style="font-size:1.05rem; color:#D94A4A; border-left:5px solid #D94A4A; padding-left:12px; margin-bottom:10px;">🚨 緊急求助</h2>
-            <button id="emergencyBtnCard" style="width:100%; background: linear-gradient(145deg, #D94A4A, #B83A3A); border:none; border-radius:16px; padding:16px 20px; color:#fff; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 12px rgba(217,74,74,0.2); cursor:pointer; transition:transform 0.15s;">
-                <div style="display:flex; align-items:center; gap:14px;">
-                    <span style="font-size:2rem;">🚨</span>
-                    <div style="text-align:left;">
-                        <div style="font-size:1.0rem; font-weight:600; letter-spacing:0.5px;">高原反應 · 醫療級指引</div>
-                        <div style="font-size:0.8rem; opacity:0.85; margin-top:2px;">血氧監測 · 症狀分級 · 緊急行動清單</div>
-                    </div>
-                </div>
-                <span style="font-size:1.2rem; opacity:0.7;">→</span>
-            </button>
-        </div>
-
-        <!-- 8-Bit WebM 全透明彩蛋入口 -->
-        <div class="pixel-egg-container">
-            <a href="wishlist.html" class="pixel-egg-link" title="解鎖團友成就！">
-                <video 
-                    class="pixel-egg-video" 
-                    autoplay 
-                    loop 
-                    muted 
-                    playsinline 
-                    webkit-playsinline>
-                    <source src="images/egg-loop-8.webm" type="video/webm">
-                    <!-- 備用圖片 (舊版瀏覽器或 Safari 不支援 WebM Alpha 時) -->
-                    <img src="images/egg-loop-5.gif" alt="雲南慢遊彩蛋" class="pixel-egg-gif">
-                </video>
-            </a>
-        </div>
-
-        <div class="footer-bar">📌 詳細行程及備註請到「每日行程」頁</div>
-    </div>
-
-    <!-- ===== 底部海拔線 ===== -->
-    <div class="altitude-footer" id="altitudeFooter">
-        <canvas id="altitudeCanvas"></canvas>
-    </div>
-
-    <!-- ===== 固定地圖按鈕 ===== -->
-    <a href="map.html" class="map-fab" id="mapFab" aria-label="查看地圖">
-        🗺️
-        <span class="tooltip">查看地圖</span>
-    </a>
-
-    <!-- ===== Toast 容器 ===== -->
-    <div class="toast-container" id="toastContainer">
-        <span class="toast-icon" id="toastIcon">🏔️</span>
-        <div class="toast-title" id="toastTitle">Day 8 · 香格里拉</div>
-        <div class="toast-sub" id="toastSub">3,300m</div>
-        <div class="toast-tip" id="toastTip">💡 今晚唔好沖涼住啦～</div>
-    </div>
-
-    <!-- ===== 共用 JavaScript ===== -->
-    <script src="app.js"></script>
-    <script>
-        // 頁面專屬初始化
-        document.addEventListener('DOMContentLoaded', function() {
-            renderRouteTable();
-            fetchWeather();
-            // 倒數計時已在 app.js 啟動
-        });
-    </script>
-
-    <!-- ===== 緊急求助 Modal ===== -->
-    <div class="emergency-overlay" id="emergencyOverlay">
-        <div class="emergency-modal">
-            <button class="modal-close" id="emergencyClose">✕</button>
-            <div class="modal-title">🚨 緊急求助</div>
-            <div class="modal-sub">高原反應 · 醫療級指引</div>
-
-            <!-- 血氧監測 -->
-            <div class="section">
-                <div class="section-title">🩸 血氧監測（智慧手環）</div>
-                <div class="section-content">
-                    <p>靜息狀態下測量，手環讀數可作參考，但 <strong>不能取代專業診斷</strong>。</p>
-                    <ul style="list-style:none; padding-left:4px; margin-top:6px;">
-                        <li style="padding:2px 0 2px 18px; position:relative;">✅ <span class="pill green">≥ 90%</span> 安全，繼續觀察</li>
-                        <li style="padding:2px 0 2px 18px; position:relative;">⚠️ <span class="pill yellow">85–89%</span> 中度缺氧，建議吸氧並下撤</li>
-                        <li style="padding:2px 0 2px 18px; position:relative;">🚨 <span class="pill red">&lt; 85%</span> 緊急，立即高流量吸氧 + 送醫</li>
-                    </ul>
-                    <p style="font-size:0.8rem; color:#6B5A4A; margin-top:4px;">💡 測量時保持安靜、手環貼合，避免移動或寒冷影響讀數。</p>
-                </div>
-            </div>
-
-            <div class="spacer"></div>
-
-            <!-- 輕度 -->
-            <div class="section">
-                <div class="section-title">🟢 輕度（AMS-I）</div>
-                <div class="level-box green">
-                    <div class="level-label">症狀：頭痛、疲勞、噁心、失眠</div>
-                    <ul>
-                        <li>✅ 停止上升，原地休息</li>
-                        <li>✅ 補充水分，可服布洛芬止痛</li>
-                        <li>✅ 血氧 ≥ 90%，通常安全</li>
-                    </ul>
-                    <div style="font-size:0.8rem; color:#2D6A2D; margin-top:4px;">❌ 禁止繼續上升、飲酒、服用安眠藥</div>
-                </div>
-            </div>
-
-            <!-- 中度 -->
-            <div class="section">
-                <div class="section-title">🟡 中度（AMS-II）</div>
-                <div class="level-box yellow">
-                    <div class="level-label">症狀：持續嘔吐、步態不穩、嘴唇發紫</div>
-                    <ul>
-                        <li>⚠️ 必須下撤 500-1000 米</li>
-                        <li>⚠️ 吸氧 2-3 升/分鐘</li>
-                        <li>⚠️ 血氧 85-89%</li>
-                    </ul>
-                    <div style="font-size:0.8rem; color:#8A6A1A; margin-top:4px;">⏱️ 1 小時內未緩解，禮貌提示及立即就醫</div>
-                </div>
-            </div>
-
-            <!-- 重度 -->
-            <div class="section">
-                <div class="section-title">🔴 重度（AMS-III / HACE / HAPE）</div>
-                <div class="level-box red">
-                    <div class="level-label">⚠️ 腦水腫：意識模糊、步態不穩、嗜睡</div>
-                    <div class="level-label" style="margin-top:4px;">⚠️ 肺水腫：呼吸困難、粉紅色泡沫痰</div>
-                    <ul>
-                        <li>🚨 立即高流量吸氧（5-6 升/分鐘）</li>
-                        <li>🚨 緊急下撤，呼叫救護車</li>
-                        <li>🚨 血氧 &lt; 85% 或任何警號</li>
-                    </ul>
-                    <div style="font-size:0.8rem; color:#A33A2A; margin-top:4px;">⏰ 黃金救治時間 2-4 小時</div>
-                </div>
-            </div>
-
-            <div class="spacer"></div>
-
-            <!-- 藥物備註 -->
-            <div class="section">
-                <div class="section-title">💊 藥物備註（僅供參考，需遵醫囑）</div>
-                <div class="section-content">
-                    <ul style="list-style:none; padding-left:4px; margin:4px 0;">
-                        <li style="padding:2px 0 2px 18px; position:relative;">• 乙醯唑胺：預防及輕中度 AMS</li>
-                        <li style="padding:2px 0 2px 18px; position:relative;">• 地塞米松：中重度 AMS 及 HACE</li>
-                    </ul>
-                    <p style="font-size:0.8rem; color:#6B5A4A; margin-top:4px;">⚠️ 以上均為處方藥，出發前請諮詢醫生。</p>
-                </div>
-            </div>
-
-            <div class="footer-note">📌 本指引不能代替專業醫療意見，緊急情況請立即就醫</div>
-        </div>
-    </div>
-
-    <!-- ===== 返回頂部按鈕 ===== -->
-    <button class="back-to-top" id="backToTopBtn" aria-label="返回頂部">⬆</button>
+<!-- ================================================================
+     JavaScript
+     ================================================================ -->
+<script src="app.js"></script>
 
 </body>
 </html>
