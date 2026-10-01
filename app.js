@@ -1115,4 +1115,243 @@ function drawAltitude(activeDayId) {
 
     const fillGrad = ctx.createLinearGradient(0, padT, 0, padT + chartH);
     fillGrad.addColorStop(0, 'rgba(224, 122, 95, 0.30)');
-    fillGrad.addColorStop(0.4, 'rgba(224, 122, 95, 0.
+    fillGrad.addColorStop(0.4, 'rgba(224, 122, 95, 0.12)');
+    fillGrad.addColorStop(1, 'rgba(224, 122, 95, 0.0)');
+    ctx.fillStyle = fillGrad;
+    ctx.fill();
+
+    const grad = ctx.createLinearGradient(0, padT, 0, padT + chartH);
+    grad.addColorStop(0, '#1A3A5C');
+    grad.addColorStop(0.3, '#2D6A4F');
+    grad.addColorStop(0.6, '#B88A3A');
+    grad.addColorStop(1, '#D97A4A');
+
+    ctx.beginPath();
+    points.forEach((p, i) => {
+        if (i === 0) ctx.moveTo(p.x, p.y);
+        else {
+            const cpX = (points[i - 1].x + p.x) / 2;
+            const cpY = (points[i - 1].y + p.y) / 2 + (i % 2 === 0 ? 1 : -1) * 0.8;
+            ctx.quadraticCurveTo(cpX, cpY, p.x, p.y);
+        }
+    });
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = 3.5;
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    ctx.stroke();
+
+    const y3000 = padT + chartH - ((3000 - minAlt) / range) * chartH;
+    ctx.beginPath();
+    ctx.moveTo(padL, y3000);
+    ctx.lineTo(w - padR, y3000);
+    ctx.strokeStyle = 'rgba(224, 122, 95, 0.30)';
+    ctx.lineWidth = 1.8;
+    ctx.setLineDash([4, 6]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = 'rgba(224, 122, 95, 0.40)';
+    ctx.font = '8px sans-serif';
+    ctx.fillText('3000m', 2, y3000 - 3);
+
+    points.forEach((p) => {
+        const isActive = p.id === activeDayId;
+        const isHigh = p.alt >= 3000;
+
+        let color;
+        if (isHigh) {
+            color = '#FF5722';
+        } else {
+            const altRatio = (p.alt - minAlt) / range;
+            const r = Math.round(50 + altRatio * 180);
+            const g = Math.round(180 - altRatio * 140);
+            const b = Math.round(80 - altRatio * 60);
+            color = `rgb(${r}, ${g}, ${b})`;
+        }
+
+        const size = isActive ? 9 : 6.5;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(Math.PI / 4);
+        ctx.beginPath();
+        ctx.rect(-size / 2, -size / 2, size, size);
+        ctx.fillStyle = color;
+        ctx.shadowColor = isActive ? 'rgba(224, 122, 95, 0.25)' : 'rgba(0,0,0,0.04)';
+        ctx.shadowBlur = isActive ? 10 : 2;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.restore();
+
+        if (isActive) {
+            const time = Date.now() / 800;
+            const pulse = 0.7 + 0.3 * Math.sin(time);
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 12 * pulse, 0, Math.PI * 2);
+            ctx.strokeStyle = `rgba(224, 122, 95, ${0.12 * pulse})`;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+
+        ctx.fillStyle = isActive ? '#E07A5F' : 'rgba(80, 70, 60, 0.35)';
+        ctx.font = isActive ? 'bold 7px sans-serif' : '6px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(p.alt + 'm', p.x, p.y - 10);
+    });
+
+    canvas._points = points;
+    canvas._activeId = activeDayId;
+}
+
+document.addEventListener('click', function(e) {
+    const canvas = document.getElementById('altitudeCanvas');
+    if (!canvas) return;
+    if (e.target === canvas || canvas.contains(e.target)) {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const points = canvas._points || [];
+        let found = null;
+        let minDist = 30;
+        points.forEach(p => {
+            const dist = Math.abs(x - p.x);
+            if (dist < minDist) {
+                minDist = dist;
+                found = p;
+            }
+        });
+        if (found) {
+            currentDayId = found.id;
+            renderDayTabs();
+            renderDayDetail(currentDayId);
+            drawAltitude(currentDayId);
+            showToast(found.id);
+            if (window.location.pathname.includes('daily.html')) {
+                // 已經喺 daily 頁
+            } else {
+                window.location.href = 'daily.html';
+            }
+        }
+    }
+});
+
+let pulseAnimId = null;
+
+function startPulseAnimation() {
+    function pulseLoop() {
+        const canvas = document.getElementById('altitudeCanvas');
+        if (canvas && canvas._activeId !== undefined) {
+            drawAltitude(canvas._activeId);
+        }
+        pulseAnimId = requestAnimationFrame(pulseLoop);
+    }
+    if (pulseAnimId) cancelAnimationFrame(pulseAnimId);
+    pulseLoop();
+}
+
+// ================================================================
+//  14. Hero Header 隨機背景圖
+// ================================================================
+(function setRandomHero() {
+    const images = [
+        'https://raw.githubusercontent.com/pheebssvc-netizen/Yunnan-trip-2026/main/images/Lijenglake.jpg',
+        'https://raw.githubusercontent.com/pheebssvc-netizen/Yunnan-trip-2026/main/images/Lijiang.jpg',
+        'https://raw.githubusercontent.com/pheebssvc-netizen/Yunnan-trip-2026/main/images/Mountain.png',
+        'https://raw.githubusercontent.com/pheebssvc-netizen/Yunnan-trip-2026/main/images/Pudacuo.jpg',
+        'https://raw.githubusercontent.com/pheebssvc-netizen/Yunnan-trip-2026/main/images/suzheng.jpeg'
+    ];
+    const randomIndex = Math.floor(Math.random() * images.length);
+    const header = document.getElementById('heroHeader');
+    if (header) {
+        header.style.backgroundImage = `url('${images[randomIndex]}')`;
+    }
+})();
+
+// ================================================================
+//  15. Resize
+// ================================================================
+let resizeTimer;
+window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+        const canvas = document.getElementById('altitudeCanvas');
+        if (canvas && canvas._activeId !== undefined) {
+            drawAltitude(canvas._activeId);
+        }
+    }, 200);
+});
+
+// ================================================================
+//  16. 頁面初始化
+// ================================================================
+document.addEventListener('DOMContentLoaded', function() {
+    renderTodayGuide();
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+
+    setTimeout(function() {
+        drawAltitude(1);
+        startPulseAnimation();
+    }, 300);
+
+    if (document.getElementById('dayTabs') || document.getElementById('dayDetailContainer')) {
+        renderDayTabs();
+        renderDayDetail(currentDayId);
+        setupAllListeners();
+    }
+
+    if (document.getElementById('statusList')) {
+        renderStatusList();
+    }
+    if (document.getElementById('trainInputArea')) {
+        initTrainInputs();
+    }
+    if (document.getElementById('groupNoteContainer')) {
+        renderGroupNotes();
+    }
+
+    if (document.getElementById('routeTableBody')) {
+        renderRouteTable();
+    }
+    if (document.getElementById('weatherContainer')) {
+        fetchWeather();
+    }
+
+    const backToTopBtn = document.getElementById('backToTopBtn');
+    if (backToTopBtn) {
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 500) {
+                backToTopBtn.classList.add('show');
+            } else {
+                backToTopBtn.classList.remove('show');
+            }
+        });
+        backToTopBtn.addEventListener('click', function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+
+    const emergencyBtnCard = document.getElementById('emergencyBtnCard');
+    const emergencyOverlay = document.getElementById('emergencyOverlay');
+    const emergencyClose = document.getElementById('emergencyClose');
+
+    if (emergencyBtnCard && emergencyOverlay) {
+        emergencyBtnCard.addEventListener('click', function() {
+            emergencyOverlay.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        });
+        emergencyClose.addEventListener('click', function() {
+            emergencyOverlay.classList.remove('show');
+            document.body.style.overflow = '';
+        });
+        emergencyOverlay.addEventListener('click', function(e) {
+            if (e.target === this) {
+                emergencyOverlay.classList.remove('show');
+                document.body.style.overflow = '';
+            }
+        });
+    }
+
+    console.log('🌄 雲南滇西12日行程網頁已啟動！');
+    if (!db) console.warn('⚠️ Firebase 未連線');
+    else console.log('✅ Firebase 已連線');
+});
