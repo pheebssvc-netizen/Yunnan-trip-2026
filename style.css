@@ -1124,43 +1124,6 @@ body {
     85% { transform: translateY(0) rotate(0deg); }
 }
 
-/* ===== 雲南小導遊 ===== */
-.yunnan-mascot {
-    position: fixed;
-    left: 0;
-    bottom: 178px;
-    width: 145px;
-    height: 210px;
-    z-index: 70;
-    pointer-events: none;
-    overflow: visible;
-    transform: translateX(-100%);
-}
-.yunnan-mascot .mascot-idle {
-    display: none;
-}
-.yunnan-mascot .mascot-video {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    height: auto;
-    display: block;
-    object-fit: contain;
-    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.12));
-}
-.yunnan-mascot.walking {
-    animation: mascotWalkAcross 9s linear forwards;
-}
-@keyframes mascotWalkAcross {
-    from {
-        transform: translateX(-100%);
-    }
-    to {
-        transform: translateX(calc(100vw));
-    }
-}
-
 /* ===== 天氣小工具主卡片 ===== */
 .weather-card {
     background: linear-gradient(145deg, rgba(30, 58, 90, 0.85), rgba(15, 32, 54, 0.95));
@@ -1394,16 +1357,6 @@ body {
         width: 48px;
         height: 48px;
         font-size: 1.3rem;
-    }
-
-    /* 小導遊 */
-    .yunnan-mascot {
-        width: 115px;
-        height: 170px;
-        bottom: 178px;
-    }
-    .yunnan-mascot.walking {
-        animation-duration: 8s;
     }
 
     /* 緊急 Modal */
